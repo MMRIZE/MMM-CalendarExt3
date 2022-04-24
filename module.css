@@ -1,0 +1,225 @@
+.CX3 {
+  /* you CAN modify these values; but SHOULD NOT to remove */
+  --celllinecolor: #333;
+  --cellbgcolor: rgba(0, 0, 0, 0.2);
+  --cellheaderheight: 25px;
+  --cellfooterheight: 2px;
+  --defaultcolor: #FFF;
+  --eventheight: calc(var(--fontsize) + 4px);
+  --totalheight: calc(var(--eventheight) * var(--maxeventlines));
+  font-size: var(--fontsize);
+  color: var(--defaultcolor);
+  line-height: calc(var(--eventheight))
+}
+
+
+
+.CX3 * {
+  box-sizing: border-box;
+}
+
+
+
+.CX3.bodice {
+  width: 100%;
+}
+
+.CX3 .week {
+  width: 95vw;
+  padding: 0 5px;
+  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
+  position: relative;
+}
+
+.CX3 .weekGrid {
+  display: grid;
+  width: 100%;
+  grid-template-columns:
+    repeat(7, [cell-start] 1fr [cell-end])
+  ;
+  grid-auto-columns: 0fr;
+}
+
+.CX3 .weekGridRow {
+  grid-template-rows:
+    repeat(var(--maxeventlines), [event-start] minmax(0, 1fr) [event-end])
+  ;
+  grid-auto-rows: 0;
+  overflow-y: hidden;
+  grid-auto-flow: column dense;
+}
+
+.CX3 .cellContainer {
+  width: 100%;
+  z-index: 1;
+  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.CX3 .eventContainer {
+  z-index: 10;
+  position: absolute;
+  bottom: var(--cellfooterheight);
+  left: 0;
+  width: 100%;
+  height: calc(var(--eventheight) * var(--maxeventlines));
+
+}
+
+.CX3 .cell {
+  border: 1px solid var(--celllinecolor);
+  background-color: var(--cellbgcolor);
+  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
+}
+
+.CX3 .cellHeader {
+  text-align: right;
+  height: var(--cellheaderheight);
+  padding: 2px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 90%;
+}
+
+.CX3 .cellFooter {
+  text-align: left;
+  height: var(--cellfooterheight);
+  padding: 2px;
+}
+
+.CX3 .cellBody {
+  height: calc(var(--eventheight) * var(--maxeventlines));
+}
+
+.CX3 .cw {
+  font-size: 80%;
+  color: goldenrod;
+}
+
+.CX3 .cw::before {
+  content: 'CW '
+}
+
+.CX3 .cell.today {
+  border: 1px solid #FFF;
+}
+
+.CX3 .today .cellDate {
+  font-weight: bold;
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+  padding: 1px 8px;
+  margin: 1px;
+}
+
+.CX3 .thisMonth {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.CX3 .cellDate .literal {
+  margin-right: 3px;
+}
+
+.CX3 .cellDate :not(.day) {
+  display: none;
+}
+
+.CX3 .today .cellDate :not(.day) {
+  display: inline-block;
+}
+
+.CX3 .date_1 .cellDate :not(.day) {
+  display: inline-block;
+}
+
+.CX3 .week:nth-child(2) .cell:first-child .cellDate * {
+  display: inline-block;
+}
+
+
+.CX3 .event {
+  margin: 1px 2px 1px 2px;
+  padding: 0 2px;
+  text-align: left;
+  grid-row: span 1;
+  color: var(--defaultcolor);
+  display: flex;
+  justify-content: flex-start;
+  gap: 2px;
+  text-overflow:ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.CX3 .event .title {
+  font-size: 75%;
+  font-weight: bold;
+  text-overflow:ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left: 2px;
+
+}
+
+.CX3 .event.fullday,
+.CX3 .event.multiday {
+  background-color: var(--calendarColor);
+  mix-blend-mode: difference;
+  border-radius: 4px;
+  color: var(--defaultcolor);
+}
+
+.CX3 .event.singleday::before {
+  content: '⬤';
+  color: var(--calendarColor);
+  display: inline-block;
+  padding-right: 2px;
+  font-size: 75%;
+}
+
+.CX3 .event.fullday .eventTime {
+  display: none;
+}
+
+.CX3 .event:not(.fullday) .eventTime {
+  display: inline-block;
+  padding-right: 2px;
+  font-size: 75%;
+  color: #EEE;
+}
+
+
+
+.CX3 .event.continueFromPreviousWeek .eventTime {
+  display: none;
+}
+
+.CX3 .event.passed {
+  filter: brightness(0.6) grayscale(0.33);
+}
+
+.CX3 .event.current {
+  filter: saturate(2);
+}
+
+
+.CX3 .weekday_0 {
+  color: #933;
+}
+
+.CX3 .weekday_6 {
+  color: #339;
+}
+
+
+/*
+.event.fullDayEvent.calendar_us_holiday {
+  background-color: red;
+}
+*/
+
