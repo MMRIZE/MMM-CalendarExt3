@@ -17,7 +17,7 @@ My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty 
 ## Features
 ### What's different with `CX2`.
 - Only focusing on how it shows; Parsing is delegated to original MagicMirror module `calendar`. (It means the `calendar` module is REQUIRED to use this module.)
-- Only `week` and `month` views. I found that people are rarely interested in other views on `CX2`. So I omit different views.
+- Only `week` and `month` views. I found that people are rarely interested in other views on `CX2`. So I drop out different views.
 - Respect to original MM's hide/show mechanism. Now you can hide/show this module easily with other scheduler or control modules. (By the way, Look at this module also. - [MMM-Scenes](https://github.com/MMRIZE/MMM-Scenes))
 - No dependency on the 3rd party modules (e.g. momentJS or Luxon, etc.). This is built with pure JS and CSS only.
 
