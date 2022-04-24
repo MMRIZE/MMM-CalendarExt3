@@ -11,21 +11,21 @@ MagicMirror module for calendar view.
 
 ## Concept
 
-My previous module `MMM-CalendarExt2` was always notorious with its difficulty to use. I need more easy and light one. So I rewrite from scratch. 
+My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty to use. I need a more easy and light one. So I rewrite this from scratch newly. 
 
 
 ## Features
-### What's different with `CX2`
-- Only focusing to how it shows; Parsing is delegated original MagicMirror module `calendar`. (It means, `calendar` module is REQURIRED to use this module.)
-- Only `week` and `month` views. I found that people are rare interested in other views on `CX2`. So I omit other views.
-- Respect to original MM's hide/show mechanism. Now you can hide/show this module easily with other scheduler or control module. (By the way, Look this module also. - [MMM-Scenes](https://github.com/MMRIZE/MMM-Scenes))
-- No dependency to the 3rd party modules (e.g. momentJS or Luxon, ...). Built with pure JS and CSS only.
+### What's different with `CX2`.
+- Only focusing on how it shows; Parsing is delegated to original MagicMirror module `calendar`. (It means the `calendar` module is REQUIRED to use this module.)
+- Only `week` and `month` views. I found that people are rarely interested in other views on `CX2`. So I omit different views.
+- Respect to original MM's hide/show mechanism. Now you can hide/show this module easily with other scheduler or control modules. (By the way, Look at this module also. - [MMM-Scenes](https://github.com/MMRIZE/MMM-Scenes))
+- No dependency on the 3rd party modules (e.g. momentJS or Luxon, etc.). This is built with pure JS and CSS only.
 
 ### Main Features
 - `week` view or `month` view
 - locale-aware calendar
-- customizing events : filtering, sorting, transforming
-- multi instance available. You don't need copy and rename module. Just add one more configuration in your `config.js`
+- customizing events: filtering, sorting, transforming
+- multi-instance available. You don't need to copy and rename the module. Just add one more configuration in your `config.js`.
 
 
 ## Install
@@ -35,7 +35,7 @@ git clone https://github.com/MMRIZE/MMM-CalendarExt3
 ```
 
 ## Config
-Anyway even this simplest will work.
+Anyway, even this simplest will work.
 ```js
 {
   module: "MMM-CalendarExt3",
@@ -86,20 +86,20 @@ All the properties are omittable, and if omitted, a default value will be applie
 |**property**|**default**|**description**|
 |---|---|---|
 |`mode`| 'week' | Calendar view type. You can choose between 'week' and 'month'|
-|`weekIndex`| -1 | Which week starts in a view. `-1` is the previous week of current focusing moment. `0` is the focusing week of the moment. `1` will be the next week, and so on.<br>Ignored on `mode:'month'`|
+|`weekIndex`| -1 | Which week starts in a view. `-1` is the previous week of the current focusing moment. `0` is the focusing week of the moment. `1` will be the next week, and so on.<br>Ignored on `mode:'month'`|
 |`weeksInView` | 3 | How many weeks from the index. <br> `weekIndex:-1`, `weeksInView:3` means 3 weeks view from the last week. <br> Ignored on `mode:'month'`|
-|`instanceId` | (auto-generated) | When you want more than 1 instance of this module, each instance would need this value to distinguish each others. If you doesn't assign this property, `identifier` of the module instance will be assigned automatically, but not recommended to use it. (Hard to guess the implicited value.)|
+|`instanceId` | (auto-generated) | When you want more than 1 instance of this module, each instance would need this value to distinguish each other. If you don't assign this property, the `identifier` of the module instance will be assigned automatically but not recommended to use it. (Hard to guess the auto-assigned value.)|
 |`firstDayOfWeek`| 1 | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 |
-|`minimalDaysOfNewYear` | 4 | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system is different with standards. In US, **containing 1 January** defines the first week. In that case set this value to `1`. And under the some other culture, you might need to modify this. |
+|`minimalDaysOfNewYear` | 4 | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. |
 |`locale` | (`language` of MM config) | `de` or `ko-KR` or `ja-Jpan-JP-u-ca-japanese-hc-h12`. It defines how to handle and display your date-time values by the locale. When omitted, the default `language` config value of MM. |
-|`calendarSet` | [] | When you want to display only selected calendars, fulfill this array with the targeted calendar name(of the default `calendar` module). <br>e.g) `calendarSet: ['us_holiday', 'office'],`<br> `[]` or `null` will allow all the calendars. |
-|`maxEventLines` | 5 | How much events will be displayed in 1 day cell. The overflowed events will be hidden. |
+|`calendarSet` | [] | When you want to display only selected calendars, fulfil this array with the targeted calendar name(of the default `calendar` module). <br>e.g) `calendarSet: ['us_holiday', 'office'],`<br> `[]` or `null` will allow all the calendars. |
+|`maxEventLines` | 5 | How many events will be displayed in 1-day cell. The overflowed events will be hidden. |
 |`fontSize` | '18px' | Default font size of this module. |
 |`eventHeight` | '22px' | The height of each event. |
-|`cellDateOptions` | {month: 'short', <br>day: 'numeric'} | The format of day cell date. It varies by the `locale` and this option. <br>`locale:'en-US'`, the default displaying will be something like `Jun 1` or `1`. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) | 
-|`eventTimeOptions` | {timeStyle: 'short'} | The format of event time. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be something like `3:45 pm`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) | 
-|`headerWeekDayOptions`|{weekday: 'long'} | The format of weekday header. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be something like `Tuesday`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
-|`headerTitleOptions`|{month: 'long'} | The format of module header of the month view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be something like `December`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
+|`cellDateOptions` | {month: 'short', <br>day: 'numeric'} | The format of day cell date. It varies by the `locale` and this option. <br>`locale:'en-US'`, the default displaying will be `Jun 1` or `1`. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) | 
+|`eventTimeOptions` | {timeStyle: 'short'} | The format of event time. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `3:45 pm`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) | 
+|`headerWeekDayOptions`|{weekday: 'long'} | The format of weekday header. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `Tuesday`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
+|`headerTitleOptions`|{month: 'long'} | The format of module header of the month view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `December`. In `mode:'week'`, this will be ignored.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`eventFitler`| callback function | See the `Filtering` part.|
 |`eventSorter`| callback function | See the `Sorting` part.|
 |`eventTransformer`| callback function | See the `Transforming` part.|
@@ -109,7 +109,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 #### `CX3_MOVE_CALENDAR`, payload: {instanceId, step}
 Move calendar to another moment. 
 - `instanceId` : If you have more than 1 instance of this module, you can specify the instance to manipulate. If omitted or `null`, all instances would obey this notification order. 
-- `step` : How many leaps of the current view. In `mode:'week'` 1 step will be a week. In `mode:'month'` 1 step will be a month. Negative value be allowed.
+- `step` : How many leaps of the current view. In `mode:'week'` 1 step will be a week. In `mode:'month'` 1 step will be a month. Negative value is allowed.
 
 #### `CX3_SET_DATE`, payload: {instanceId, date}
 Set the date of specific view. 
@@ -117,13 +117,13 @@ Set the date of specific view.
 - `date` : Specific date to move. e.g) In `mode:'month'`, `date: "2022-12-25"` would display calendar view of `2022 Decemeber`. Be aware of `weekIndex` of `mode:'week'`. The view range will be calculated with `weekIndex`, `weeksInView` and this value.
 
 #### `CALENDAR_EVENTS`
-Any module which can emit this notification could the source of this module. Generally, default `calendar` module would be.
+Any module which can emit this notification could become the source of this module. Generally, the default `calendar` module would be.
 
 ### Outgoing Notification
 Nothing yet.  (Does it need?)
 
 ## Styling with CSS
-You can handle almost all of visual stuffs with CSS. See the `module.css` and override your needs into your `custom.css`.
+You can handle almost all of the visual things with CSS. See the `module.css` and override your needs into your `custom.css`.
 - `CX3`, `CX3_{instanceId}`, `mode_week` or `mode_month` : The root selector. Each instance of this module will have `CX3_{instanceId}` as another root selector. With this CSS selector, you can assign individual look to each instance.
 ```css
 .CX3 {
@@ -140,7 +140,7 @@ You can handle almost all of visual stuffs with CSS. See the `module.css` and ov
   line-height: calc(var(--eventheight))
 }
 ```
-Most common used values would be defined in `.CX3` selector as variables. 
+Most commonly used values would be defined in `.CX3` selector as variables. 
 
 `--fontsize`, `--maxeventlines`, `--eventheight` would be imported from configuration for your setup convenience.
 
@@ -158,7 +158,7 @@ Most common used values would be defined in `.CX3` selector as variables.
 
 And `event` also has `dataSet` (`data-*`) as its attributes. (e.g. data-title="...", data-start-date="...") You can use these attributes also.
 
-- `.weekGrid`, `.weekGridRow` : Defition of calendar grid. You can adjust the grid itself. (e.g. Shrink the width of weekends cells)
+- `.weekGrid`, `.weekGridRow` : Definition of calendar grid. You can adjust the grid itself. (e.g. Shrink the width of weekends cells)
 
 ## Handling Events
 Each event object has this structure.
@@ -194,16 +194,16 @@ eventFilter: (ev) => {
   return true
 }
 ```
-This example shows how you can filter out some event which is 'fullday' event.
+This example shows how you can filter out 'fullday' events.
 
 ### Sorting
-You can sort each event by its condition. However, this module arrange events masonly with density. So displaying would not fit with your sorting intention. Anyway, try it if you need.
+You can sort each event by its condition. However, this module arranges events masonry with density. So displaying would not fit with your sorting intention. Anyway, try if you need it.
 ```js
 eventSorter: (a, b) => {
   return a.calendarSeq - b.calendarSeq
 }
 ```
-This example tries to sort event by calendar order in `calendarSet`.
+This example tries to sort events by calendar order in `calendarSet`.
 
 ### Transforming
 You can manipulate or change the properties of the event.
@@ -217,9 +217,9 @@ This example shows how you can transform the color of events when the event titl
 
 
 ## Not the bug, but...
-- Weirdly, the default `calendar` module cannot emit the exact starting time of `multidays-fullday event which is passing current moment`. Always it starts from today despite of original event starting time. So these kinds of multidays-fullday event will be displayed faulty.
-- I am not considering 5-weekdays-view at this moment. Only-Weekdays-view might be useful, but in some culture/locale, Locale-aware `Weekdays` are not easy to normalize. Friday and Sunday are weekends in Brunei. Iran adopts Friday only. I cannot calculate any convenient way to normalize for this kind of grid view.
-- I'll add `TimeLine` and `TimeTable` view or extended module in some future.
+- The default `calendar` module cannot emit the exact starting time of `multidays-fullday-event which is passing current moment`. Always it starts from today despite of original event starting time. So this module displays these kinds of multidays-fullday-event weirdly.
+- I am not considering 5-weekdays-view at this moment. Only-Weekdays-view might be useful, but in some cultures/locales, Locale-aware `Weekdays` are not easy to normalize. Friday and Sunday are weekends in Brunei. Iran adopts Friday only. I cannot calculate any convenient way to normalize this kind of grid view.
+- I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
 ### 1.0.0 (2022-04-24)
