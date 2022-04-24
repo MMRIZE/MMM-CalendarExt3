@@ -5,7 +5,7 @@ MagicMirror module for calendar view.
 
 
 ## Screenshot
-
+![screenshot](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/calendarext3.png)
 
 
 
@@ -217,4 +217,16 @@ This example shows how you can transform the color of events when the event titl
 
 
 ## Not the bug, but...
-- Weirdly, the default `calendar` module doesn't emit the exact starting time of `multidays-fullday event including current moment`. Always it would be the current  .... Writing ...
+- Weirdly, the default `calendar` module cannot emit the exact starting time of `multidays-fullday event which is passing current moment`. Always it starts from today despite of original event starting time. So these kinds of multidays-fullday event will be displayed faulty.
+- I am not considering 5-weekdays-view at this moment. Only-Weekdays-view might be useful, but in some culture/locale, Locale-aware `Weekdays` are not easy to normalize. Friday and Sunday are weekends in Brunei. Iran adopts Friday only. I cannot calculate any convenient way to normalize for this kind of grid view.
+- I'll add `TimeLine` and `TimeTable` view or extended module in some future.
+
+## History
+### 1.0.0 (2022-04-24)
+- Released.
+
+## Author
+- Seongnoh Yi (eouia0819@gmail.com)
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y56IFLK)
+
