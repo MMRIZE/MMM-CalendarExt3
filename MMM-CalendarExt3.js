@@ -280,9 +280,9 @@ Module.register('MMM-CalendarExt3', {
       })
     }
 
-    if (typeof this.config.eventTransform === 'function') {
+    if (typeof this.config.eventTransformer === 'function') {
       events = events.map((ev) => {
-        return this.config.eventTransform(ev)
+        return this.config.eventTransformer(ev)
       })
     }
 
