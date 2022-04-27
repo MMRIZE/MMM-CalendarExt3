@@ -190,7 +190,7 @@ You can use these values to handle events.
 You can filter each event by its condition.
 ```js
 eventFilter: (ev) => {
-  if (ev.title.isFullday) return false
+  if (ev.isFullday) return false
   return true
 }
 ```
