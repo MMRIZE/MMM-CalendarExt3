@@ -33,6 +33,9 @@ Module.register('MMM-CalendarExt3', {
     eventFilter: (ev) => { return true },
     eventSorter: (a, b) => { return 1 },
     eventTransformer: (ev) => { return ev },
+
+    minimalRefreshInterval: 1000 * 60,
+    waitFetch: 1000 *  5
   },
 
   getStyles: function () {
@@ -45,8 +48,10 @@ Module.register('MMM-CalendarExt3', {
     this.weekIndex = (this.config.mode === 'month') ? 0 : this.config.weekIndex
     this.weeksInView = (this.config.mode === 'month') ? 6 : this.config.weeksInView
     this.moment = new Date()
+    this.stepIndex = 0
     this.config.mode = (this.config.mode === 'month') ? 'month' : 'week'
     this.newCalendar(this.moment, 0)
+    this.fetchTimer = null
   },
   
   notificationReceived: function(notification, payload, sender) {
@@ -64,7 +69,15 @@ Module.register('MMM-CalendarExt3', {
           return ev
         })
       }
-      this.updateDom(1000)
+      if (this.fetchTimer) {
+        clearTimeout(this.fetchTimer)
+        this.fetchTimer = null
+      }
+      this.fetchTimer = setTimeout(() => {
+        clearTimeout(this.fetchTimer)
+        this.fetchTimer = null
+        this.updateDom(1000)
+      }, this.config.waitFetch)      
     }
     if (notification === 'CX3_MOVE_CALENDAR') {
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
@@ -84,16 +97,18 @@ Module.register('MMM-CalendarExt3', {
   },
 
   newCalendar: function (moment, s = 0) {
+    this.stepIndex = s
     let m = new Date(moment.valueOf())
     if (this.config.mode === 'month') {
-      this.moment = new Date(m.getFullYear(), m.getMonth() + s, m.getDate())
+      this.moment = new Date(m.getFullYear(), m.getMonth() + this.stepIndex, m.getDate())
     } else {
-      this.moment = new Date(m.getFullYear(), m.getMonth(), m.getDate() + (s * 7))
+      this.moment = new Date(m.getFullYear(), m.getMonth(), m.getDate() + (this.stepIndex * 7))
     }
     this.updateDom(1000)
   },
 
   getDom: function() {
+
     let dom = document.createElement('div')
     dom.innerHTML = ""
     dom.classList.add('bodice', 'CX3_' + this.instanceId, 'CX3', 'mode_' + this.config.mode)
@@ -102,7 +117,6 @@ Module.register('MMM-CalendarExt3', {
     dom.style.setProperty('--eventheight', this.config.eventHeight)
     dom = this.draw(dom)
     return dom
-
   },
 
   draw: function (dom) {
@@ -396,11 +410,6 @@ Module.register('MMM-CalendarExt3', {
       
       dom.appendChild(wDom)
     }    
-
-
-
-
-
     return dom
   },
 
