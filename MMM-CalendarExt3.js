@@ -34,27 +34,49 @@ Module.register('MMM-CalendarExt3', {
     eventSorter: (a, b) => { return 1 },
     eventTransformer: (ev) => { return ev },
 
-    minimalRefreshInterval: 1000 * 60,
-    waitFetch: 1000 *  5
+    refreshInterval: 1000 * 60 * 30,
+
+    waitFetch: 1000 *  5,
+    glanceTime: 1000 * 60,
+    updateTime: 1000
   },
 
   getStyles: function () {
     return ['module.css']
   },
 
+
+  getMoment: function() {
+    let moment = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
+    moment = (this.mode === 'month') ?
+      new Date(moment.getFullYear(), moment.getMonth() + (this.stepIndex), 1) :
+      new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.stepIndex))
+    return moment
+  },
+
   start: function() {
+    this.mode = (this.config.mode === 'month') ? 'month' : 'week'
     this.locale = Intl.getCanonicalLocales(this.config.locale ?? config.language )?.[0] ?? ''
     this.instanceId = this.config.instanceId ?? this.identifier
-    this.weekIndex = (this.config.mode === 'month') ? 0 : this.config.weekIndex
-    this.weeksInView = (this.config.mode === 'month') ? 6 : this.config.weeksInView
-    this.moment = new Date()
+    this.weekIndex = (this.mode === 'month') ? 0 : this.config.weekIndex
+    this.weeksInView = (this.mode === 'month') ? 6 : this.config.weeksInView
     this.stepIndex = 0
-    this.config.mode = (this.config.mode === 'month') ? 'month' : 'week'
-    this.newCalendar(this.moment, 0)
+    this.viewMoment = new Date()
     this.fetchTimer = null
+    this.viewTimer = null
+    this.refreshTimer = null
+    this.tempMoment = null
   },
   
   notificationReceived: function(notification, payload, sender) {
+    const resetCalendar = () => {
+      clearTimeout(this.viewTimer)
+      this.viewTimer = null
+      this.stepIndex = 0
+      this.tempMoment = null
+      this.updateDom(this.config.updateTime)
+    }
+
     if (notification === 'CALENDAR_EVENTS') {
       this.storedEvents = JSON.parse(JSON.stringify(payload))
       let calendarSet = (Array.isArray(this.config.calendarSet)) ? [...this.config.calendarSet] : []
@@ -76,46 +98,45 @@ Module.register('MMM-CalendarExt3', {
       this.fetchTimer = setTimeout(() => {
         clearTimeout(this.fetchTimer)
         this.fetchTimer = null
-        this.updateDom(1000)
+        this.updateDom(this.config.updateTime)
       }, this.config.waitFetch)      
     }
-    if (notification === 'CX3_MOVE_CALENDAR') {
+    
+    if (notification === 'CX3_MOVE_CALENDAR' || notification === 'CX3_GLANCE_CALENDAR') {
+      if (notification === 'CX3_MOVE_CALENDAR') {
+        Log.warn (`[DEPRECATED]'CX3_MOVE_CALENDAR' notification will be deprecated. Use 'CX3_GLANCE_CALENDAR' instead.`)
+      }
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
-        this.newCalendar(this.moment, payload?.step ?? 0)
-        this.updateDom(1000)
+        this.stepIndex += payload?.step ?? 0
+        this.updateDom(this.config.updateTime)
+        this.viewTimer = setTimeout(resetCalendar, this.config.glanceTime)
       } 
     }
 
     if (notification === 'CX3_SET_DATE') {
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
-        let nf = new Date(payload?.date ?? null)
-        this.moment = new Date(nf.getFullYear(), nf.getMonth(), nf.getDate())
-        this.newCalendar(this.moment, 0)
-        this.updateDom(1000)
+        this.tempMoment = new Date(payload?.date ?? null)
+        this.stepIndex = 0
+        this.updateDom(this.config.updateTime)
+        this.viewTimer = setTimeout(resetCalendar, this.config.glanceTime)
       } 
     }
-  },
-
-  newCalendar: function (moment, s = 0) {
-    this.stepIndex = s
-    let m = new Date(moment.valueOf())
-    if (this.config.mode === 'month') {
-      this.moment = new Date(m.getFullYear(), m.getMonth() + this.stepIndex, m.getDate())
-    } else {
-      this.moment = new Date(m.getFullYear(), m.getMonth(), m.getDate() + (this.stepIndex * 7))
-    }
-    this.updateDom(1000)
+    
   },
 
   getDom: function() {
-
     let dom = document.createElement('div')
     dom.innerHTML = ""
-    dom.classList.add('bodice', 'CX3_' + this.instanceId, 'CX3', 'mode_' + this.config.mode)
+    dom.classList.add('bodice', 'CX3_' + this.instanceId, 'CX3', 'mode_' + this.mode)
     if (this.config.fontSize) dom.style.setProperty('--fontsize', this.config.fontSize)
     dom.style.setProperty('--maxeventlines', this.config.maxEventLines)
     dom.style.setProperty('--eventheight', this.config.eventHeight)
     dom = this.draw(dom)
+    this.refreshTimer = setTimeout(() => {
+      clearTimeout(this.refreshTimer)
+      this.refreshTimer = null
+      this.updateDom(this.config.updateTime)
+    }, this.config.refreshInterval)
     return dom
   },
 
@@ -147,19 +168,9 @@ Module.register('MMM-CalendarExt3', {
       return new Date(d.getFullYear(), d.getMonth(), d.getDate() - (d.getDay() - this.config.firstDayOfWeek + 7 ) % 7)
     }
 
-    const getBeginOfCalendar = (d) => {
-      let m
-      if (this.config.mode === 'month') {
-        m = new Date(d.getFullYear(), d.getMonth(), 1)
-      } else {
-        m = new Date(d.getFullYear(), d.getMonth(), d.getDate() + this.weekIndex * 7)
-      }
-      
-      return getBeginOfWeek(m)
-    }
-
-    const getEndOfCalendar = (boc) => {
-      return new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * this.weeksInView), 23, 59, 59, 999)
+    const getEndOfWeek = (d) => {
+      let b = getBeginOfWeek(d)
+      return new Date(b.getFullYear(), b.getMonth(), b.getDate() + 6, 23, 59, 59, 999)
     }
 
     const getWeekNo = (d) => {
@@ -192,7 +203,6 @@ Module.register('MMM-CalendarExt3', {
       let h = document.createElement('div')
       h.classList.add('cellHeader')
 
-      
       let cwDom = document.createElement('div')
       if (seq === 0) {
         cwDom.innerHTML = getWeekNo(tm)
@@ -212,7 +222,6 @@ Module.register('MMM-CalendarExt3', {
 
       h.appendChild(dateDom)
       
-
       let b = document.createElement('div')
       b.classList.add('cellBody')
 
@@ -246,18 +255,23 @@ Module.register('MMM-CalendarExt3', {
         || (s.getFullYear() !== e.getFullYear()))
     }
     
+    let moment = this.getMoment()
 
 
-    let moment = new Date(this.moment.valueOf())
+    let boc = (this.mode === 'month') ?
+      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1)) :
+      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.weekIndex)))
+    
+    let eoc = (this.mode === 'month') ?
+      getEndOfWeek(new Date(moment.getFullYear(), moment.getMonth() + 1, 0)) :
+      getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (this.weeksInView - 1))))
 
-    let boc = getBeginOfCalendar(getBeginOfWeek(moment))
-    let eoc = getEndOfCalendar(boc)
+    let boeoc = getBeginOfWeek(eoc)
 
     let tboc = boc.getTime()
     let teoc = eoc.getTime()
 
-
-    let events = this.storedEvents ?? []
+    let events = [...(this.storedEvents ?? [])]
 
     events = events.filter((ev) => {
       return !(+ev.endDate <= tboc || +ev.startDate >= teoc)
@@ -279,7 +293,6 @@ Module.register('MMM-CalendarExt3', {
       return ((a.isFullday || a.isMultiday) && (b.isFullday || b.isMultiday)) 
         ? bDur - aDur
         : ((a.startDate === b.startDate) ? a.endDate - b.endDate : a.startDate - b.startDate)
-
     })
 
     if (typeof this.config.eventFilter === 'function') {
@@ -315,9 +328,8 @@ Module.register('MMM-CalendarExt3', {
 
     dom.appendChild(dayDom)
 
+    do {
 
-    for (w = 0; w < this.weeksInView; w++) {
-      if (w) wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
       let wDom = document.createElement('div')
       wDom.classList.add('week')
       wDom.dataset.weekNo = getWeekNo(wm)
@@ -409,14 +421,21 @@ Module.register('MMM-CalendarExt3', {
       wDom.appendChild(ecDom)
       
       dom.appendChild(wDom)
-    }    
+      wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
+    } while(wm.valueOf() <= eoc.valueOf())
+
+
+    this.viewMoment = moment
+
     return dom
   },
 
   getHeader: function () {
-    if (this.config.mode === 'month') {
-      return new Intl.DateTimeFormat(this.locale, this.config.headerTitleOptions).format(new Date(this.moment.valueOf()))
+    if (this.mode === 'month') {
+      let moment = this.getMoment()
+      return new Intl.DateTimeFormat(this.locale, this.config.headerTitleOptions).format(new Date(moment.valueOf()))
     }
     return this.data.header
   }
+
 })
