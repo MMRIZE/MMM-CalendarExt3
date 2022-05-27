@@ -38,7 +38,9 @@ Module.register('MMM-CalendarExt3', {
 
     waitFetch: 1000 *  5,
     glanceTime: 1000 * 60,
-    updateTime: 1000
+    updateTime: 1000,
+
+    useSymbol: true
   },
 
   getStyles: function () {
@@ -394,6 +396,7 @@ Module.register('MMM-CalendarExt3', {
         eDom.dataset.today = event.today
         eDom.classList.add('calendar_' + encodeURI(event.calendarName))
         eDom.classList.add(event.class)
+        
         eDom.style.setProperty('--calendarColor', event.color)
         if (event.fullDayEvent) eDom.classList.add('fullday')
         if (event.isPassed) eDom.classList.add('passed')
@@ -401,6 +404,13 @@ Module.register('MMM-CalendarExt3', {
         if (event.isFuture) eDom.classList.add('future')
         if (event.isMultiday) eDom.classList.add('multiday')
         if (!(event.isMultiday || event.fullDayEvent)) eDom.classList.add('singleday')
+        if (this.config.useSymbol) {
+          eDom.classList.add('useSymbol') 
+        }
+        let exDom = document.createElement('span')
+        exDom.classList.add('symbol', 'fa-solid')
+        exDom.classList.add(...event.symbol.map((s) => {return 'fa-' + s}))
+        eDom.appendChild(exDom)
         let etDom = document.createElement('div')
         etDom.classList.add('title')
         etDom.innerHTML = event.title
