@@ -103,11 +103,17 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`eventFitler`| callback function | See the `Filtering` part.|
 |`eventSorter`| callback function | See the `Sorting` part.|
 |`eventTransformer`| callback function | See the `Transforming` part.|
+|`waitFetch`| 5000 | (ms) waiting the fetching of last calendar to prevent flickering view by too frequent fetching. |
+|`refreshInterval`| 1800000 | (ms) refresh view by force if you need it. |
+|`glanceTime` | 60000 | (ms) Return to original view when you move to other moment by notificatioon. |
+|`animationSpeed` | 1000 | (ms) Refreshing the view smoothly. |
+|`useSymbol` | true | Whether to show font-awesome symbold instead of simple dot icon. |
 
 ## Notification
 ### Incoming Notifications
-#### `CX3_MOVE_CALENDAR`, payload: {instanceId, step}
-Move calendar to another moment. 
+#### **(deprecated)** `CX3_MOVE_CALENDAR`, payload: {instanceId, step} 
+#### `CX3_GLANCE_CALENDAR`, payload: {instanceId, step} 
+Jump calendar view to another moment. It will return after `glanceTime` from last notification command.
 - `instanceId` : If you have more than 1 instance of this module, you can specify the instance to manipulate. If omitted or `null`, all instances would obey this notification order. 
 - `step` : How many leaps of the current view. In `mode:'week'` 1 step will be a week. In `mode:'month'` 1 step will be a month. Negative value is allowed.
 
@@ -215,6 +221,10 @@ eventTransformer: (ev) => {
 ```
 This example shows how you can transform the color of events when the event title has specific text.
 
+## Fun things
+### Weather forecast
+When you are using MM's default `weather` forecasting, weather icon will be displayed on the day cell.
+
 
 ## Not the bug, but...
 - The default `calendar` module cannot emit the exact starting time of `multidays-fullday-event which is passing current moment`. Always it starts from today despite of original event starting time. So this module displays these kinds of multidays-fullday-event weirdly.
@@ -222,6 +232,10 @@ This example shows how you can transform the color of events when the event titl
 - I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
+
+### 1.1.0 (2022-05-29)
+- https://github.com/MMRIZE/MMM-CalendarExt3/issues/4
+![1.1.0](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/cx3_110_2.png)
 ### 1.0.0 (2022-04-24)
 - Released.
 

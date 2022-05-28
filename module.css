@@ -174,12 +174,27 @@
   color: var(--defaultcolor);
 }
 
-.CX3 .event.singleday::before {
+.CX3 .event.singleday:not(.useSymbol)::before {
   content: '⬤';
   color: var(--calendarColor);
   display: inline-block;
   padding-right: 2px;
   font-size: 75%;
+}
+
+.CX3 .event:not(.useSymbol) .symbol {
+  display: none;
+}
+
+.CX3 .event.useSymbol .symbol {
+  display: inline-block;
+  padding-right: 2px;
+  font-size: 75%;
+  align-self: center;
+}
+
+.CX3 .event.singleday.useSymbol .symbol {
+  color: var(--calendarColor);
 }
 
 .CX3 .event.fullday .eventTime {
@@ -216,10 +231,46 @@
   color: #339;
 }
 
-
-/*
-.event.fullDayEvent.calendar_us_holiday {
-  background-color: red;
+.CX3 .cellHeader .cellDate {
+  flex-grow: 3;
 }
-*/
 
+.CX3 .cellHeader .cellWeather {
+  color: white;
+  margin: 2px;
+  font-size: 100%;
+  align-self: center;
+}
+
+.CX3 .cellHeader .cellWeather .icon{
+  font-size: 100%;
+  font-weight: bold;
+}
+
+.CX3 .cellHeader .cellWeather .maxTemp {
+  color: white;
+  font-weight: bold;
+  font-size: 90%;
+}
+
+.CX3 .cellHeader .cellWeather .minTemp {
+  color: lightgray;
+  font-weight: normal;
+  font-size: 90%;
+}
+
+.CX3 .cellHeader .cellWeather .temperature {
+  display: none;
+}
+
+.CX3 .cellHeader .cellWeather .maxTemp::before {
+  content: ' ↑';
+}
+
+.CX3 .cellHeader .cellWeather .minTemp::before {
+  content: ' ↓';
+}
+
+.CX3 .cellHeader .cellWeather .temperature::after {
+  content: '° '
+}
