@@ -38,7 +38,7 @@ Module.register('MMM-CalendarExt3', {
 
     waitFetch: 1000 *  5,
     glanceTime: 1000 * 60,
-    updateTime: 1000,
+    animationSpeed: 1000,
 
     useSymbol: true
   },
@@ -68,6 +68,7 @@ Module.register('MMM-CalendarExt3', {
     this.viewTimer = null
     this.refreshTimer = null
     this.tempMoment = null
+    this.forecast = []
   },
   
   notificationReceived: function(notification, payload, sender) {
@@ -76,7 +77,7 @@ Module.register('MMM-CalendarExt3', {
       this.viewTimer = null
       this.stepIndex = 0
       this.tempMoment = null
-      this.updateDom(this.config.updateTime)
+      this.updateDom(this.config.animationSpeed)
     }
 
     if (notification === 'CALENDAR_EVENTS') {
@@ -100,7 +101,7 @@ Module.register('MMM-CalendarExt3', {
       this.fetchTimer = setTimeout(() => {
         clearTimeout(this.fetchTimer)
         this.fetchTimer = null
-        this.updateDom(this.config.updateTime)
+        this.updateDom(this.config.animationSpeed)
       }, this.config.waitFetch)      
     }
     
@@ -110,7 +111,7 @@ Module.register('MMM-CalendarExt3', {
       }
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
         this.stepIndex += payload?.step ?? 0
-        this.updateDom(this.config.updateTime)
+        this.updateDom(this.config.animationSpeed)
         this.viewTimer = setTimeout(resetCalendar, this.config.glanceTime)
       } 
     }
@@ -119,11 +120,20 @@ Module.register('MMM-CalendarExt3', {
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
         this.tempMoment = new Date(payload?.date ?? null)
         this.stepIndex = 0
-        this.updateDom(this.config.updateTime)
+        this.updateDom(this.config.animationSpeed)
         this.viewTimer = setTimeout(resetCalendar, this.config.glanceTime)
       } 
     }
-    
+
+    if (notification === 'WEATHER_UPDATED') {
+      if (payload?.forecastArray && Array.isArray(payload.forecastArray) && payload.forecastArray.length) {
+        this.forecast = [...payload.forecastArray].map((o) => {
+          let d = new Date(o.date)
+          o.dateId = d.toLocaleDateString('en-CA')
+          return o
+        })
+      }
+    }
   },
 
   getDom: function() {
@@ -137,7 +147,7 @@ Module.register('MMM-CalendarExt3', {
     this.refreshTimer = setTimeout(() => {
       clearTimeout(this.refreshTimer)
       this.refreshTimer = null
-      this.updateDom(this.config.updateTime)
+      this.updateDom(this.config.animationSpeed)
     }, this.config.refreshInterval)
     return dom
   },
@@ -212,6 +222,28 @@ Module.register('MMM-CalendarExt3', {
       }
       
       h.appendChild(cwDom)
+
+      let forecasted = this.forecast.find((e) => {
+        return (tm.toLocaleDateString('en-CA') === e.dateId)
+      })
+
+      if (forecasted && forecasted?.weatherType) {
+        let weatherDom = document.createElement('div')
+        weatherDom.classList.add('cellWeather')
+        let icon = document.createElement('span')
+        icon.classList.add('wi', 'wi-' + forecasted.weatherType)
+        weatherDom.appendChild(icon)
+        let maxTemp = document.createElement('span')
+        maxTemp.classList.add('maxTemp', 'temperature')
+        maxTemp.innerHTML = Math.round(forecasted.maxTemperature)
+        weatherDom.appendChild(maxTemp)
+        let minTemp = document.createElement('span')
+        minTemp.classList.add('minTemp', 'temperature')
+        minTemp.innerHTML = Math.round(forecasted.minTemperature)
+        weatherDom.appendChild(minTemp)
+        h.appendChild(weatherDom)
+      }
+
       
       let dateDom = document.createElement('div')
       dateDom.classList.add('cellDate')
