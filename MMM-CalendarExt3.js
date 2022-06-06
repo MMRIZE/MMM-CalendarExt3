@@ -40,7 +40,7 @@ Module.register('MMM-CalendarExt3', {
     glanceTime: 1000 * 60,
     animationSpeed: 1000,
 
-    useSymbol: true
+    useSymbol: true,
   },
 
   getStyles: function () {
@@ -69,6 +69,7 @@ Module.register('MMM-CalendarExt3', {
     this.refreshTimer = null
     this.tempMoment = null
     this.forecast = []
+    this.eventPool = new Map()
   },
   
   notificationReceived: function(notification, payload, sender) {
@@ -81,10 +82,10 @@ Module.register('MMM-CalendarExt3', {
     }
 
     if (notification === 'CALENDAR_EVENTS') {
-      this.storedEvents = JSON.parse(JSON.stringify(payload))
+      this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(payload)))
       let calendarSet = (Array.isArray(this.config.calendarSet)) ? [...this.config.calendarSet] : []
       if (calendarSet.length > 0) {
-        this.storedEvents = this.storedEvents.filter((ev) => {
+        this.eventPool.set(sender.identifier, this.eventPool.get(sender.identifier).filter((ev) => {
           return (calendarSet.includes(ev.calendarName))
         }).map((ev) => {
           let i = calendarSet.findIndex((name) => {
@@ -92,8 +93,12 @@ Module.register('MMM-CalendarExt3', {
           }) + 1
           ev.calendarSeq = i 
           return ev
-        })
+        }))
       }
+      this.storedEvents = [...this.eventPool.values()].reduce((result, cur) => {
+        return [...result, ...cur]
+      }, [])
+
       if (this.fetchTimer) {
         clearTimeout(this.fetchTimer)
         this.fetchTimer = null
@@ -102,7 +107,7 @@ Module.register('MMM-CalendarExt3', {
         clearTimeout(this.fetchTimer)
         this.fetchTimer = null
         this.updateDom(this.config.animationSpeed)
-      }, this.config.waitFetch)      
+      }, this.config.waitFetch)
     }
     
     if (notification === 'CX3_MOVE_CALENDAR' || notification === 'CX3_GLANCE_CALENDAR') {
