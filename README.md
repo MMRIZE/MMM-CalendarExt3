@@ -233,6 +233,9 @@ When you are using MM's default `weather` forecasting, weather icon will be disp
 
 ## History
 
+### 1.2.0 (2022-06-15)
+- Support multi notifications from multi-calendar providers. (It will prevent events reset.)
+
 ### 1.1.0 (2022-05-29)
 - https://github.com/MMRIZE/MMM-CalendarExt3/issues/4
 ![1.1.0](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/cx3_110_2.png)
