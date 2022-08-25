@@ -19,13 +19,17 @@
 }
 
 
+.CX3_MAGIC {
+  display: none;
+}
+
 
 .CX3.bodice {
   width: 100%;
 }
 
 .CX3 .week {
-  width: 95vw;
+  width: 90vw;
   padding: 0 5px;
   height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
   position: relative;
@@ -171,7 +175,7 @@
   background-color: var(--calendarColor);
   mix-blend-mode: difference;
   border-radius: 4px;
-  color: var(--defaultcolor);
+  color: var(--oppositeColor);
 }
 
 .CX3 .event.singleday:not(.useSymbol)::before {

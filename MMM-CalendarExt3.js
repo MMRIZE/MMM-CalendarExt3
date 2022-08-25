@@ -44,7 +44,7 @@ Module.register('MMM-CalendarExt3', {
   },
 
   getStyles: function () {
-    return ['module.css']
+    return ['MMM-CalendarExt3.css']
   },
 
 
@@ -91,7 +91,7 @@ Module.register('MMM-CalendarExt3', {
           let i = calendarSet.findIndex((name) => {
             return name === ev.calendarName
           }) + 1
-          ev.calendarSeq = i 
+          ev.calendarSeq = i
           return ev
         }))
       }
@@ -159,6 +159,25 @@ Module.register('MMM-CalendarExt3', {
 
   draw: function (dom) {
     dom.innerHTML = ''
+
+    const getL = (rgba) => {
+      let [r, g, b, a] = rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1)
+      r /= 255
+      g /= 255
+      b /= 255
+      const l = Math.max(r, g, b)
+      const s = l - Math.min(r, g, b)
+      const h = s ? l === r ? (g - b) / s : l === g ? 2 + (b - r) / s : 4 + (r - g) / s : 0
+      let rh = 60 * h < 0 ? 60 * h + 360 : 60 * h
+      let rs = 100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0)
+      let rl = (100 * (2 * l - s)) / 2
+      return rl
+    }
+
+    let magic = document.createElement('div')
+    magic.classList.add('CX3_MAGIC')
+    magic.id = 'CX3_MAGIC_' + this.instanceId
+    dom.appendChild(magic)
 
     const isToday = (d) => {
       let tm = new Date()
@@ -435,6 +454,11 @@ Module.register('MMM-CalendarExt3', {
         eDom.classList.add(event.class)
         
         eDom.style.setProperty('--calendarColor', event.color)
+        let magic = document.getElementById('CX3_MAGIC_' + this.instanceId)
+        magic.style.color = event.color
+        let l = getL(window.getComputedStyle(magic).getPropertyValue('color'))
+        eDom.style.setProperty('--oppositeColor', (l > 50) ? 'black' : 'white')
+
         if (event.fullDayEvent) eDom.classList.add('fullday')
         if (event.isPassed) eDom.classList.add('passed')
         if (event.isCurrent) eDom.classList.add('current')

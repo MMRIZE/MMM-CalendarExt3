@@ -233,6 +233,9 @@ When you are using MM's default `weather` forecasting, weather icon will be disp
 
 ## History
 
+### 1.2.1 (2022-08-25)
+- **Added** Magic opposite color for full-day event (This feature could solve the issue of no-color assigend.)
+- **Fixed** CSS file renamed (module.css => MMM-CalendarExt3.css)
 ### 1.2.0 (2022-06-15)
 - Support multi notifications from multi-calendar providers. (It will prevent events reset.)
 
