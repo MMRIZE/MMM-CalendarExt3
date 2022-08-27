@@ -225,6 +225,19 @@ This example shows how you can transform the color of events when the event titl
 ### Weather forecast
 When you are using MM's default `weather` forecasting, weather icon will be displayed on the day cell.
 
+### Font Awesome icons with brands
+You can set `brands` icons like this; (However, default calendar module cannot accept FA brands icons AFAIK.)
+```js
+/* In your default calendar config */
+symbol: ['fa-brands fa-canadian-maple-leaf'],
+/* or */
+symbol: ['brands canadian-maple-leaf'],
+/* of course below are also allowed */
+symbol: 'brands canadian-maple-leaf',
+/* But if you want multi-icons, use array */
+symbol: ['brands google-drive', 'solid calendar'],
+```
+
 
 ## Not the bug, but...
 - The default `calendar` module cannot emit the exact starting time of `multidays-fullday-event which is passing current moment`. Always it starts from today despite of original event starting time. So this module displays these kinds of multidays-fullday-event weirdly.
@@ -233,8 +246,11 @@ When you are using MM's default `weather` forecasting, weather icon will be disp
 
 ## History
 
+### 1.2.2 (2022-08-26)
+- **Added** Multi icons
+- **Added** Font-awesome 'brands' icons
 ### 1.2.1 (2022-08-25)
-- **Added** Magic opposite color for full-day event (This feature could solve the issue of no-color assigend.)
+- **Added** Magic opposite color for the full-day event (This feature could solve the issue of no-color assigned.)
 - **Fixed** CSS file renamed (module.css => MMM-CalendarExt3.css)
 ### 1.2.0 (2022-06-15)
 - Support multi notifications from multi-calendar providers. (It will prevent events reset.)

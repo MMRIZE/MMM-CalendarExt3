@@ -468,10 +468,14 @@ Module.register('MMM-CalendarExt3', {
         if (this.config.useSymbol) {
           eDom.classList.add('useSymbol') 
         }
-        let exDom = document.createElement('span')
-        exDom.classList.add('symbol', 'fa-solid')
-        exDom.classList.add(...event.symbol.map((s) => {return 'fa-' + s}))
-        eDom.appendChild(exDom)
+
+        event.symbol.forEach((symbol) => {
+          let exDom = document.createElement('span')
+          exDom.classList.add('symbol', 'fa', ...(symbol.split(' ').map((s) => {
+            return 'fa-' + (s.replace(/^fa\-/i, ''))
+          })))
+          eDom.appendChild(exDom)
+        })
         let etDom = document.createElement('div')
         etDom.classList.add('title')
         etDom.innerHTML = event.title
