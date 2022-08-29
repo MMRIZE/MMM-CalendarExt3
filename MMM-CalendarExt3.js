@@ -306,8 +306,8 @@ Module.register('MMM-CalendarExt3', {
     }
 
     const isMultiday = (ev) => {
-      let s = new Date(ev.startDate)
-      let e = new Date(ev.endDate)
+      let s = new Date(+ev.startDate)
+      let e = new Date(+ev.endDate)
       return ((s.getDate() !== e.getDate())
         || (s.getMonth() !== e.getMonth())
         || (s.getFullYear() !== e.getFullYear()))
@@ -330,6 +330,12 @@ Module.register('MMM-CalendarExt3', {
     let teoc = eoc.getTime()
 
     let events = [...(this.storedEvents ?? [])]
+
+    if (typeof this.config.eventTransformer === 'function') {
+      events = events.map((ev) => {
+        return this.config.eventTransformer(ev)
+      })
+    }
 
     events = events.filter((ev) => {
       return !(+ev.endDate <= tboc || +ev.startDate >= teoc)
@@ -362,12 +368,6 @@ Module.register('MMM-CalendarExt3', {
     if (typeof this.config.eventSorter === 'function') {
       events = events.sort((a, b) => {
         return this.config.eventSorter(a, b)
-      })
-    }
-
-    if (typeof this.config.eventTransformer === 'function') {
-      events = events.map((ev) => {
-        return this.config.eventTransformer(ev)
       })
     }
 
