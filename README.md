@@ -238,6 +238,16 @@ symbol: 'brands canadian-maple-leaf',
 symbol: ['brands google-drive', 'solid calendar'],
 ```
 
+### Compatible with `randomBrainstormer/MMM-GoogleCalendar`
+```js
+eventTransformer: (e) => {
+  e.startDate = new Date(e.start?.date || e.start?.dateTime).valueOf()
+  e.endDate = new Date(e.end?.date || e.end?.dateTime).valueOf()
+  e.title = e.summary
+  e.fulldayEvent = (e.start?.date) ? true : false
+  return e
+}
+```
 
 ## Not the bug, but...
 - The default `calendar` module cannot emit the exact starting time of `multidays-fullday-event which is passing current moment`. Always it starts from today despite of original event starting time. So this module displays these kinds of multidays-fullday-event weirdly.
@@ -246,7 +256,10 @@ symbol: ['brands google-drive', 'solid calendar'],
 
 ## History
 
-### 1.2.2 (2022-08-26)
+### 1.2.3 (2022-08-29)
+- **Fixed** Move `eventFormatter` to prior to get compatibility with other calendar module (e.g GoogleCalendar module)
+
+### 1.2.2 (2022-08-27)
 - **Added** Multi icons
 - **Added** Font-awesome 'brands' icons
 ### 1.2.1 (2022-08-25)
