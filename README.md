@@ -256,6 +256,9 @@ eventTransformer: (e) => {
 
 ## History
 
+### 1.2.4 (2022-08-30)
+- **Fixed** Urgent fix for `useSymbol` issue since #1.2.2
+- **Fixed** `symbol:null` issue resolved
 ### 1.2.3 (2022-08-29)
 - **Fixed** Move `eventFormatter` to prior to get compatibility with other calendar module (e.g GoogleCalendar module)
 

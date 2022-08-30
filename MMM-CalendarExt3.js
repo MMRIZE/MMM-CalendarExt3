@@ -471,9 +471,14 @@ Module.register('MMM-CalendarExt3', {
 
         event.symbol.forEach((symbol) => {
           let exDom = document.createElement('span')
-          exDom.classList.add('symbol', 'fa', ...(symbol.split(' ').map((s) => {
-            return 'fa-' + (s.replace(/^fa\-/i, ''))
-          })))
+          exDom.classList.add('symbol')
+          if (symbol) {
+            exDom.classList.add('fa', ...(symbol.split(' ').map((s) => {
+              return 'fa-' + (s.replace(/^fa\-/i, ''))
+            })))
+          } else {
+            exDom.classList.add('noSymbol')
+          }
           eDom.appendChild(exDom)
         })
         let etDom = document.createElement('div')
