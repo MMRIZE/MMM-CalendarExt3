@@ -178,7 +178,8 @@
   color: var(--oppositeColor);
 }
 
-.CX3 .event.singleday:not(.useSymbol)::before {
+.CX3 .event.singleday:not(.useSymbol)::before,
+.CX3 .event.singleday.useSymbol .symbol.noSymbol::before {
   content: '⬤';
   color: var(--calendarColor);
   display: inline-block;
