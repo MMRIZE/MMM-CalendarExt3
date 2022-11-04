@@ -1,15 +1,11 @@
 Module.register('MMM-CalendarExt3', {
   defaults: {
     mode: 'week', // or 'month'
-    
     weekIndex: -1, // Which week from this week starts in a view. Ignored on mode 'month' 
     weeksInView: 3, //  How many weeks will be displayed. Ignored on mode 'month'
-
     instanceId: null,
-    
     firstDayOfWeek: 1, // 0: Sunday, 1: Monday
     minimalDaysOfNewYear: 4, // When the first week of new year starts in your country.
-    
     locale: null, // 'de' or 'en-US' or prefer array like ['en-CA', 'en-US', 'en']
     cellDateOptions: {
       month: 'short',
@@ -24,29 +20,24 @@ Module.register('MMM-CalendarExt3', {
     headerTitleOptions: {
       month: 'long'
     },
-
     calendarSet: [],
-    
     maxEventLines: 5, // How many events will be shown in a day cell.
     fontSize: '18px',
     eventHeight: '22px',
     eventFilter: (ev) => { return true },
     eventSorter: (a, b) => { return 1 },
     eventTransformer: (ev) => { return ev },
-
     refreshInterval: 1000 * 60 * 30,
-
     waitFetch: 1000 *  5,
     glanceTime: 1000 * 60,
     animationSpeed: 1000,
-
     useSymbol: true,
+    displayLegend: false,
   },
 
   getStyles: function () {
     return ['MMM-CalendarExt3.css']
   },
-
 
   getMoment: function() {
     let moment = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
@@ -268,7 +259,6 @@ Module.register('MMM-CalendarExt3', {
         h.appendChild(weatherDom)
       }
 
-      
       let dateDom = document.createElement('div')
       dateDom.classList.add('cellDate')
       let dParts = new Intl.DateTimeFormat(this.locale, this.config.cellDateOptions).formatToParts(tm)
@@ -314,7 +304,6 @@ Module.register('MMM-CalendarExt3', {
     }
     
     let moment = this.getMoment()
-
 
     let boc = (this.mode === 'month') ?
       getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1)) :
@@ -387,7 +376,6 @@ Module.register('MMM-CalendarExt3', {
     dom.appendChild(dayDom)
 
     do {
-
       let wDom = document.createElement('div')
       wDom.classList.add('week')
       wDom.dataset.weekNo = getWeekNo(wm)
@@ -457,7 +445,8 @@ Module.register('MMM-CalendarExt3', {
         let magic = document.getElementById('CX3_MAGIC_' + this.instanceId)
         magic.style.color = event.color
         let l = getL(window.getComputedStyle(magic).getPropertyValue('color'))
-        eDom.style.setProperty('--oppositeColor', (l > 50) ? 'black' : 'white')
+        event.oppositeColor = (l > 50) ? 'black' : 'white'
+        eDom.style.setProperty('--oppositeColor', event.oppositeColor)
 
         if (event.fullDayEvent) eDom.classList.add('fullday')
         if (event.isPassed) eDom.classList.add('passed')
@@ -504,6 +493,46 @@ Module.register('MMM-CalendarExt3', {
       wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
     } while(wm.valueOf() <= eoc.valueOf())
 
+    if (this.config.displayLegend) {
+      let lDom = document.createElement('div')
+      lDom.classList.add('legends')
+      let legendData = new Map()
+      for (let ev of events) {
+        if (!legendData.has(ev.calendarName)) legendData.set(ev.calendarName, {
+          name: ev.calendarName,
+          color: ev.color ?? null,
+          oppositeColor: ev.oppositeColor,
+          symbol: ev.symbol ?? []
+        })
+      }
+      for (let l of legendData.values()) {
+        let ld = document.createElement('div')
+        ld.classList.add('legend')
+        if (this.config.useSymbol) {
+          ld.classList.add('useSymbol') 
+        }
+        l.symbol.forEach((symbol) => {
+          let exDom = document.createElement('span')
+          exDom.classList.add('symbol')
+          if (symbol) {
+            exDom.classList.add('fa', ...(symbol.split(' ').map((s) => {
+              return 'fa-' + (s.replace(/^fa\-/i, ''))
+            })))
+          } else {
+            exDom.classList.add('noSymbol')
+          }
+          ld.appendChild(exDom)
+        })
+        let t = document.createElement('span')
+        t.classList.add('title')
+        t.innerHTML = l.name
+        ld.appendChild(t)
+        ld.style.setProperty('--calendarColor', l.color)
+        ld.style.setProperty('--oppositeColor', l.oppositeColor)
+        lDom.appendChild(ld)
+      }
+      dom.appendChild(lDom)
+    }
 
     this.viewMoment = moment
 

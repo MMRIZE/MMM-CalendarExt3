@@ -108,6 +108,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`glanceTime` | 60000 | (ms) Return to original view when you move to other moment by notificatioon. |
 |`animationSpeed` | 1000 | (ms) Refreshing the view smoothly. |
 |`useSymbol` | true | Whether to show font-awesome symbold instead of simple dot icon. |
+|`displayLegend` | false | If you set as true, legend will be displayed. (Only the clanear which has name assigned)|
 
 ## Notification
 ### Incoming Notifications
@@ -256,6 +257,9 @@ eventTransformer: (e) => {
 
 ## History
 
+### 1.2.5 (2022-11-04)
+- **Added** Display legend of calendar (displayLegend: true and when you set the calendar name on calendar module)
+- **Fixed** Some CSS fixture (.week should 90vw -> 100%)
 ### 1.2.4 (2022-08-30)
 - **Fixed** Urgent fix for `useSymbol` issue since #1.2.2
 - **Fixed** `symbol:null` issue resolved

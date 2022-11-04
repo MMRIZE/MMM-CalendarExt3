@@ -29,7 +29,7 @@
 }
 
 .CX3 .week {
-  width: 90vw;
+  width: 100%;
   padding: 0 5px;
   height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
   position: relative;
@@ -278,4 +278,29 @@
 
 .CX3 .cellHeader .cellWeather .temperature::after {
   content: '° '
+}
+
+.CX3 .legends {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: center;
+  padding: 10px;
+
+}
+
+.CX3 .legends .legend {
+  font-size: 75%;
+  background-color: var(--calendarColor);
+  color: var(--oppositeColor);
+  padding: 2px 5px;
+  border-radius: 5px;
+  display: block;
+}
+
+.CX3 .legend.useSymbol .symbol {
+  display: inline-block;
+  padding-right: 2px;
+  font-size: 90%;
+  align-self: center;
 }
