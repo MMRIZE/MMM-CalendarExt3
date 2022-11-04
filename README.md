@@ -258,8 +258,8 @@ eventTransformer: (e) => {
 ## History
 
 ### 1.2.5 (2022-11-04)
-- **Added** Display legend of calendar (displayLegend: true and when you set the calendar name on calendar module)
-- **Fixed** Some CSS fixture (.week should 90vw -> 100%)
+- **Added** Display legend of the calendar (`displayLegend: true` and when you set the calendar name on `calendar` module)
+- **Fixed** Some CSS fixture
 ### 1.2.4 (2022-08-30)
 - **Fixed** Urgent fix for `useSymbol` issue since #1.2.2
 - **Fixed** `symbol:null` issue resolved
