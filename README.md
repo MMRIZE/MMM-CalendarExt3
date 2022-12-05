@@ -268,6 +268,10 @@ eventTransformer: (e) => {
 
 ## History
 
+### 1.2.6 (2022-12-05)
+- **Added** `useWeather` option. (true/false)
+- **Added** `weatherLocationName` option (some partial text to distinguish location)
+
 ### 1.2.5 (2022-11-04)
 - **Added** Display legend of the calendar (`displayLegend: true` and when you set the calendar name on `calendar` module)
 - **Fixed** Some CSS fixture
