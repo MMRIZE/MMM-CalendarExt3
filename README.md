@@ -109,6 +109,8 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`animationSpeed` | 1000 | (ms) Refreshing the view smoothly. |
 |`useSymbol` | true | Whether to show font-awesome symbold instead of simple dot icon. |
 |`displayLegend` | false | If you set as true, legend will be displayed. (Only the clanear which has name assigned)|
+|`useWeather` | true | Whether to show forecasted weather information of default weather module. |
+|`weatherLocationName` | null | When you have multi forecasting instances of several locations, you can describe specific weather location to show. |
 
 ## Notification
 ### Incoming Notifications
@@ -125,6 +127,9 @@ Set the date of specific view.
 
 #### `CALENDAR_EVENTS`
 Any module which can emit this notification could become the source of this module. Generally, the default `calendar` module would be.
+
+#### `WEATHER_UPDATED`
+Any module which can emit this notification could become the source of weather forecasting. Generally, the default `weather` module would be.
 
 ### Outgoing Notification
 Nothing yet.  (Does it need?)
@@ -225,6 +230,12 @@ This example shows how you can transform the color of events when the event titl
 ## Fun things
 ### Weather forecast
 When you are using MM's default `weather` forecasting, weather icon will be displayed on the day cell.
+```js
+useWeather: true,
+weatherLocationName: 'New York',
+// Original weather module might have its location name with more details. (e.g. 'New York City, US'), but the partial text included would be acceptable for this attribute.
+// When the location name would not match, warning messgage will be shown on dev console. Check it.
+```
 
 ### Font Awesome icons with brands
 You can set `brands` icons like this; (However, default calendar module cannot accept FA brands icons AFAIK.)

@@ -25,7 +25,7 @@ Module.register('MMM-CalendarExt3', {
     fontSize: '18px',
     eventHeight: '22px',
     eventFilter: (ev) => { return true },
-    eventSorter: (a, b) => { return 1 },
+    eventSorter: null,
     eventTransformer: (ev) => { return ev },
     refreshInterval: 1000 * 60 * 30,
     waitFetch: 1000 *  5,
@@ -33,6 +33,8 @@ Module.register('MMM-CalendarExt3', {
     animationSpeed: 1000,
     useSymbol: true,
     displayLegend: false,
+    useWeather: true,
+    weatherLocationName: null,
   },
 
   getStyles: function () {
@@ -122,12 +124,21 @@ Module.register('MMM-CalendarExt3', {
     }
 
     if (notification === 'WEATHER_UPDATED') {
-      if (payload?.forecastArray && Array.isArray(payload.forecastArray) && payload.forecastArray.length) {
+      if (
+        (this.config.useWeather 
+          && ((this.config.weatherLocationName && payload.locationName.includes(this.config.weatherLocationName)) 
+          || !this.config.weatherLocationName))
+        && (Array.isArray(payload?.forecastArray) && payload?.forecastArray.length)
+      ) {
         this.forecast = [...payload.forecastArray].map((o) => {
           let d = new Date(o.date)
           o.dateId = d.toLocaleDateString('en-CA')
           return o
         })
+      } else {
+        if (this.config.weatherLocationName && !payload.locationName.includes(this.config.weatherLocationName)) {
+          Log.warn(`"weatherLocationName: '${this.config.weatherLocationName}'" doesn't match with location of weather module ('${payload.locationName}')`)
+        }
       }
     }
   },
