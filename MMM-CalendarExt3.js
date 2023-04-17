@@ -422,18 +422,11 @@ Module.register('MMM-CalendarExt3', {
       let dateCells = ccDom.querySelectorAll('.cell')
       for (let i = 0; i < dateCells.length; i++) {
         let dateCell = dateCells[i]
-        console.log('@', dateCell.dataset.date)
         let dateStart = new Date(+dateCell.dataset.date)
         let dateEnd = new Date(dateStart.getFullYear(), dateStart.getMonth(), dateStart.getDate(), 23, 59, 59, 999)
-        console.log('#', dateStart, dateEnd)
         let thatDayEvents = eventsOfWeek.filter((ev) => {
-          // event should between dateStart and dateEnd
-          //console.log('##', ev.startDate, ev.endDate, dateStart.valueOf(), dateEnd.valueOf())
-          //console.log(ev.endDate <= dateStart.valueOf(), ev.startDate > dateEnd.valueOf())
-          //console.log(new Date(ev.startDate).toLocaleDateString('en-CA'), new Date(dateStart).toLocaleDateString('en-CA'))
           return !(ev.endDate <= dateStart.valueOf() || ev.startDate > dateEnd.valueOf())
         })
-        console.log(thatDayEvents)
         dateCell.dataset.events = thatDayEvents.length
         dateCell.dataset.hasEvents = (thatDayEvents.length > 0) ? 'true' : 'false'
         if (typeof config.manipulateDateCell === 'function') {
