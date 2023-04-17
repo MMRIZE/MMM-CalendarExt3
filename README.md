@@ -59,7 +59,7 @@ Anyway, even this simplest will work.
 ```js
 {
   module: "MMM-CalendarExt3",
-  position: "bottom_center",
+  position: "bottom_bar",
 },
 
 ```
@@ -68,7 +68,7 @@ More conventional;
 ```js
 {
   module: "MMM-CalendarExt3",
-  position: "bottom_center",
+  position: "bottom_bar",
   title: "",
   config: {
     mode: "month",
