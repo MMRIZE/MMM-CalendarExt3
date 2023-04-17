@@ -1,7 +1,7 @@
 # MMM-CalendarExt3
 MagicMirror module for calendar view.
 
-> `1.3.0` has many changes from `1.2.x` and still beta staged. If you want to use the old version, checkout `dev-1.2.6` branch
+> `1.3.0` has many changes from `1.2.x` and still beta staged. If you want to use the old version, checkout `snap-1.2.6` branch
 
 
 ## Screenshot
@@ -50,7 +50,7 @@ git submodule update --init --recursive
 If you want to return to `1.2.6` version,
 ```sh
 cd ~/MagicMirror/modules/MMM-CalendarExt3
-git checkout dev-1.2.6
+git checkout snap-1.2.6
 ```
 
 ## Config
