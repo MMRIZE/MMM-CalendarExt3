@@ -1,7 +1,7 @@
 # MMM-CalendarExt3
 MagicMirror module for calendar view.
 
-
+> `1.3.0` has many changes from `1.2.x` and still beta staged. If you want to use the old version, checkout `snap-1.2.6` branch
 
 
 ## Screenshot
@@ -32,6 +32,26 @@ My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty 
 ```sh
 cd ~/MagicMirror/modules
 git clone https://github.com/MMRIZE/MMM-CalendarExt3
+npm install
+```
+
+## Update (to `1.3.0`)
+```sh
+cd ~/MagicMirror/modules/MMM-CalendarExt3
+git pull
+npm install
+```
+
+When some `submodule` is not updated, try this.
+```sh
+cd ~/MagicMirror/modules/MMM-CalendarExt3
+git submodule update --init --recursive
+```
+
+If you want to return to `1.2.6` version,
+```sh
+cd ~/MagicMirror/modules/MMM-CalendarExt3
+git checkout snap-1.2.6
 ```
 
 ## Config
@@ -39,7 +59,7 @@ Anyway, even this simplest will work.
 ```js
 {
   module: "MMM-CalendarExt3",
-  position: "bottom_center",
+  position: "bottom_bar",
 },
 
 ```
@@ -48,7 +68,7 @@ More conventional;
 ```js
 {
   module: "MMM-CalendarExt3",
-  position: "bottom_center",
+  position: "bottom_bar",
   title: "",
   config: {
     mode: "month",
@@ -105,18 +125,20 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`eventTransformer`| callback function | See the `Transforming` part.|
 |`waitFetch`| 5000 | (ms) waiting the fetching of last calendar to prevent flickering view by too frequent fetching. |
 |`refreshInterval`| 1800000 | (ms) refresh view by force if you need it. |
-|`glanceTime` | 60000 | (ms) Return to original view when you move to other moment by notificatioon. |
 |`animationSpeed` | 1000 | (ms) Refreshing the view smoothly. |
 |`useSymbol` | true | Whether to show font-awesome symbold instead of simple dot icon. |
 |`displayLegend` | false | If you set as true, legend will be displayed. (Only the clanear which has name assigned)|
 |`useWeather` | true | Whether to show forecasted weather information of default weather module. |
 |`weatherLocationName` | null | When you have multi forecasting instances of several locations, you can describe specific weather location to show. |
+|`preProcessor` | callback function | See the `preProcessing` part. |
+|`manipulateDateCell` | callback function | See the `manipulating dateCell` part. |
+
 
 ## Notification
 ### Incoming Notifications
 #### **(deprecated)** `CX3_MOVE_CALENDAR`, payload: {instanceId, step} 
 #### `CX3_GLANCE_CALENDAR`, payload: {instanceId, step} 
-Jump calendar view to another moment. It will return after `glanceTime` from last notification command.
+Jump calendar view to another moment. It will return after `refreshInterval` from last notification command.
 - `instanceId` : If you have more than 1 instance of this module, you can specify the instance to manipulate. If omitted or `null`, all instances would obey this notification order. 
 - `step` : How many leaps of the current view. In `mode:'week'` 1 step will be a week. In `mode:'month'` 1 step will be a month. Negative value is allowed.
 
@@ -124,6 +146,9 @@ Jump calendar view to another moment. It will return after `glanceTime` from las
 Set the date of specific view. 
 - `instanceId` : See the above
 - `date` : Specific date to move. e.g) In `mode:'month'`, `date: "2022-12-25"` would display calendar view of `2022 Decemeber`. Be aware of `weekIndex` of `mode:'week'`. The view range will be calculated with `weekIndex`, `weeksInView` and this value.
+
+#### `CX3_RESET`
+Return to the default view instantly. (no payload)
 
 #### `CALENDAR_EVENTS`
 Any module which can emit this notification could become the source of this module. Generally, the default `calendar` module would be.
@@ -227,6 +252,40 @@ eventTransformer: (ev) => {
 ```
 This example shows how you can transform the color of events when the event title has specific text.
 
+### preProcessing
+```js
+preProcessor: (ev) => {
+  if (ev.title.includes('test')) return null
+  if (ev.calendarName === 'Specific calendar') ev.startDate += 2 * 60 * 60 * 1000
+  return ev
+}
+```
+This example shows 
+
+1) if the title of event has test, drop the event off
+
+2) then add 2 hours to the start time of events on specific calendar.
+
+Unlike eventTransformer, the preProcessor would be applied to raw data format of events from the default calendar module or equivalent after receiving notification. 
+
+This is the better place to adjust event itself to make it compatible with this module before main logic of the module handle and regularize events.
+
+### manipulating dateCell
+```js
+manipulateDateCell: (cellDom, events) => {
+  if (Array.isArray(events) && events.some(e => e.calendarName === 'Holidays')) {
+    let dateIcon = document.createElement('span')
+    dateIcon.classList.add('fa', 'fa-fas', 'fa-fw', 'fa-gift')
+    let header = cellDom.querySelector('.cellHeader')
+    let celldate = header.querySelector('.cellDate')
+    header.insertBefore(dateIcon, celldate)
+    // you don't need to return anything.
+  }
+}
+```
+If you want to handle date cell with events of that day, you can use it.
+
+
 ## Fun things
 ### Weather forecast
 When you are using MM's default `weather` forecasting, weather icon will be displayed on the day cell.
@@ -252,13 +311,54 @@ symbol: ['brands google-drive', 'solid calendar'],
 
 ### Compatible with `randomBrainstormer/MMM-GoogleCalendar`
 ```js
-eventTransformer: (e) => {
+preProcessor: (e) => {
   e.startDate = new Date(e.start?.date || e.start?.dateTime).valueOf()
   e.endDate = new Date(e.end?.date || e.end?.dateTime).valueOf()
   e.title = e.summary
   e.fulldayEvent = (e.start?.date) ? true : false
   return e
 }
+```
+> This tip doesn't consider different timezone. You might need to adjsut startDate and endDate additionally to convert event into your timezone if the timezone of the calendar might be different with your system.
+
+
+### simple `eouia/MMM-TelegramBot` implementation
+Add these codes into your `MMM-TelegramBot` configuration
+```js
+customCommands: [
+  {
+    command: 'cx3_prev',
+    description: '[CX3] Glance previous step',
+    callback: (commandj, handler, self) => {
+      self.sendNotification('CX3_GLANCE_CALENDAR', {step: -1})
+      handler.reply('TEXT', 'PREV 1 step ')
+    }
+  },
+  {
+    command: 'cx3_next',
+    description: '[CX3] Glance next step',
+    callback: (commandj, handler, self) => {
+      self.sendNotification('CX3_GLANCE_CALENDAR', {step: 1})
+      handler.reply('TEXT', 'NEXT 1 step')
+    }
+  },
+  {
+    command: 'cx3_set',
+    description: '[CX3] Glance specific date: e.g) /cx3_set 2023-12-25',
+    callback: (commandj, handler, self) => {
+      self.sendNotification('CX3_SET_DATE', {date: handler.args})
+      handler.reply('TEXT', 'SET to ' + handler.args)
+    }
+  },
+  {
+    command: 'cx3_reset',
+    description: '[CX3] Return to default instantly'
+    callback: (commandj, handler, self) => {
+      self.sendNotification('CX3_RESET_DATE')
+      handler.reply('TEXT', 'RESET')
+    }
+  }
+],
 ```
 
 ## Not the bug, but...
@@ -267,6 +367,16 @@ eventTransformer: (e) => {
 - I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
+
+### 1.3.0 (2023-04-17)
+- **CHANGED**: Shared library to fix many issues.
+- **FIXED**: some typo.
+- **FIXED**: flickering for many reasons (logic error to treat notifications)
+- **ADDED**: `CX3_RESET_DATE` notification (to reset instantly from glancing)
+- **ADDED**: `MMM-TelegramBot` user implementation example
+- **ADDED**: `preProcessor` for better handling of raw-data priorly
+- **ADDED**: `manipulateDateCell` to manipulate date cell DOM after drawing
+- **CHANGED**: Timing of `eventFilter` and `eventTransformer` for better-handling event data after regularized
 
 ### 1.2.6 (2022-12-05)
 - **Added** `useWeather` option. (true/false)

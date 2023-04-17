@@ -27,14 +27,18 @@ Module.register('MMM-CalendarExt3', {
     eventFilter: (ev) => { return true },
     eventSorter: null,
     eventTransformer: (ev) => { return ev },
-    refreshInterval: 1000 * 60 * 30,
+    refreshInterval: 1000 * 60,
     waitFetch: 1000 *  5,
-    glanceTime: 1000 * 60,
+    glanceTime: 1000 * 60, // deprecated, use refreshInterval instead.
     animationSpeed: 1000,
     useSymbol: true,
     displayLegend: false,
     useWeather: true,
     weatherLocationName: null,
+
+    notification: 'CALENDAR_EVENTS', /* reserved */
+
+    manipulateDateCell: (cellDom, events) => {},
   },
 
   getStyles: function () {
@@ -56,51 +60,77 @@ Module.register('MMM-CalendarExt3', {
     this.weekIndex = (this.mode === 'month') ? 0 : this.config.weekIndex
     this.weeksInView = (this.mode === 'month') ? 6 : this.config.weeksInView
     this.stepIndex = 0
-    this.viewMoment = new Date()
     this.fetchTimer = null
-    this.viewTimer = null
     this.refreshTimer = null
     this.tempMoment = null
     this.forecast = []
     this.eventPool = new Map()
+
+    this._ready = false
+
+    let _moduleLoaded = new Promise((resolve, reject) => {
+      import('/' + this.file('CX3_Shared/CX3_shared.mjs')).then((m) => {
+        this.library = m
+        this.library.initModule(this, config.language)
+        resolve()
+      }).catch((err) => {
+        console.error(err)
+        reject(err)
+      })
+    })
+
+    let _firstData = new Promise((resolve, reject) => {
+      this._receiveFirstData = resolve
+    })
+
+    let _firstFetched = new Promise((resolve, reject) => {
+      this._firstDataFetched = resolve
+    })
+
+    let _domCreated = new Promise((resolve, reject) => {
+      this._domReady = resolve
+    })
+
+    Promise.allSettled([_moduleLoaded, _firstData, _domCreated]).then ((result) => {
+      this._ready = true
+      this.library.prepareMagic()
+      let {payload, sender} = result[1].value
+      this.fetch(payload, sender)
+      this._firstDataFetched()
+    })
+
+    Promise.allSettled([_firstFetched]).then (() => {
+      setTimeout(() => {
+        this.updateDom(this.config.animationSpeed)
+      }, this.config.waitFetch)
+      
+    })
+  },
+
+  fetch: function(payload, sender) {
+    this.storedEvents = this.library.regularizeEvents({
+      storedEvents: this.storedEvents,
+      eventPool: this.eventPool,
+      payload,
+      sender,
+      config: this.config
+    })
   },
   
   notificationReceived: function(notification, payload, sender) {
-    const resetCalendar = () => {
-      clearTimeout(this.viewTimer)
-      this.viewTimer = null
-      this.stepIndex = 0
-      this.tempMoment = null
-      this.updateDom(this.config.animationSpeed)
+    if (notification === this.config.notification) {
+      if (this?.storedEvents?.length == 0 && payload.length > 0) {
+        this._receiveFirstData({payload, sender})
+      }
+      if (this?.library?.loaded) {
+        this.fetch(payload, sender)  
+      } else {
+        Log.warn('[CX3] Module is not prepared yet, wait a while.')
+      }
     }
 
-    if (notification === 'CALENDAR_EVENTS') {
-      this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(payload)))
-      let calendarSet = (Array.isArray(this.config.calendarSet)) ? [...this.config.calendarSet] : []
-      if (calendarSet.length > 0) {
-        this.eventPool.set(sender.identifier, this.eventPool.get(sender.identifier).filter((ev) => {
-          return (calendarSet.includes(ev.calendarName))
-        }).map((ev) => {
-          let i = calendarSet.findIndex((name) => {
-            return name === ev.calendarName
-          }) + 1
-          ev.calendarSeq = i
-          return ev
-        }))
-      }
-      this.storedEvents = [...this.eventPool.values()].reduce((result, cur) => {
-        return [...result, ...cur]
-      }, [])
-
-      if (this.fetchTimer) {
-        clearTimeout(this.fetchTimer)
-        this.fetchTimer = null
-      }
-      this.fetchTimer = setTimeout(() => {
-        clearTimeout(this.fetchTimer)
-        this.fetchTimer = null
-        this.updateDom(this.config.animationSpeed)
-      }, this.config.waitFetch)
+    if (notification === 'DOM_OBJECTS_CREATED') {
+      this._domReady()
     }
     
     if (notification === 'CX3_MOVE_CALENDAR' || notification === 'CX3_GLANCE_CALENDAR') {
@@ -110,8 +140,7 @@ Module.register('MMM-CalendarExt3', {
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
         this.stepIndex += payload?.step ?? 0
         this.updateDom(this.config.animationSpeed)
-        this.viewTimer = setTimeout(resetCalendar, this.config.glanceTime)
-      } 
+      }
     }
 
     if (notification === 'CX3_SET_DATE') {
@@ -119,8 +148,15 @@ Module.register('MMM-CalendarExt3', {
         this.tempMoment = new Date(payload?.date ?? null)
         this.stepIndex = 0
         this.updateDom(this.config.animationSpeed)
-        this.viewTimer = setTimeout(resetCalendar, this.config.glanceTime)
       } 
+    }
+
+    if (notification === 'CX3_RESET') {
+      if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
+        this.tempMoment = null
+        this.stepIndex = 0
+        this.updateDom(this.config.animationSpeed)
+      }
     }
 
     if (notification === 'WEATHER_UPDATED') {
@@ -150,36 +186,28 @@ Module.register('MMM-CalendarExt3', {
     if (this.config.fontSize) dom.style.setProperty('--fontsize', this.config.fontSize)
     dom.style.setProperty('--maxeventlines', this.config.maxEventLines)
     dom.style.setProperty('--eventheight', this.config.eventHeight)
-    dom = this.draw(dom)
-    this.refreshTimer = setTimeout(() => {
-      clearTimeout(this.refreshTimer)
-      this.refreshTimer = null
-      this.updateDom(this.config.animationSpeed)
-    }, this.config.refreshInterval)
+    dom = this.draw(dom, this.config)
+    if (this.library?.loaded) {
+      if (this.refreshTimer) {
+        clearTimeout(this.refreshTimer)
+        this.refreshTimer = null
+      }
+      this.refreshTimer = setTimeout(() => {
+        clearTimeout(this.refreshTimer)
+        this.refreshTimer = null
+        this.tempMoment = null
+        this.stepIndex = 0
+        this.updateDom(this.config.animationSpeed)
+      }, this.config.refreshInterval)
+    } else {
+      Log.warn('[CX3] Module is not prepared yet, wait a while.')
+    }
     return dom
   },
 
-  draw: function (dom) {
+  draw: function (dom, config) {
+    if (!this.library?.loaded) return dom
     dom.innerHTML = ''
-
-    const getL = (rgba) => {
-      let [r, g, b, a] = rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1)
-      r /= 255
-      g /= 255
-      b /= 255
-      const l = Math.max(r, g, b)
-      const s = l - Math.min(r, g, b)
-      const h = s ? l === r ? (g - b) / s : l === g ? 2 + (b - r) / s : 4 + (r - g) / s : 0
-      let rh = 60 * h < 0 ? 60 * h + 360 : 60 * h
-      let rs = 100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0)
-      let rl = (100 * (2 * l - s)) / 2
-      return rl
-    }
-
-    let magic = document.createElement('div')
-    magic.classList.add('CX3_MAGIC')
-    magic.id = 'CX3_MAGIC_' + this.instanceId
-    dom.appendChild(magic)
 
     const isToday = (d) => {
       let tm = new Date()
@@ -237,6 +265,7 @@ Module.register('MMM-CalendarExt3', {
         'date_' + tm.getDate(),
         'weekday_' + tm.getDay()
       )
+      cell.dataset.date = new Date(tm.getFullYear(), tm.getMonth(), tm.getDate()).valueOf()
       
       let h = document.createElement('div')
       h.classList.add('cellHeader')
@@ -293,26 +322,6 @@ Module.register('MMM-CalendarExt3', {
       return cell
     }
 
-    const isPassed = (ev) => {
-      return (ev.endDate < Date.now())
-    }
-
-    const isFuture = (ev) => {
-      return (ev.startDate > Date.now())
-    }
-
-    const isCurrent = (ev) => {
-      let tm = Date.now()
-      return (ev.endDate >= tm && ev.startDate <= tm)
-    }
-
-    const isMultiday = (ev) => {
-      let s = new Date(+ev.startDate)
-      let e = new Date(+ev.endDate)
-      return ((s.getDate() !== e.getDate())
-        || (s.getMonth() !== e.getMonth())
-        || (s.getFullYear() !== e.getFullYear()))
-    }
     
     let moment = this.getMoment()
 
@@ -324,52 +333,11 @@ Module.register('MMM-CalendarExt3', {
       getEndOfWeek(new Date(moment.getFullYear(), moment.getMonth() + 1, 0)) :
       getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (this.weeksInView - 1))))
 
-    let boeoc = getBeginOfWeek(eoc)
-
-    let tboc = boc.getTime()
-    let teoc = eoc.getTime()
-
-    let events = [...(this.storedEvents ?? [])]
-
-    if (typeof this.config.eventTransformer === 'function') {
-      events = events.map((ev) => {
-        return this.config.eventTransformer(ev)
-      })
-    }
-
-    events = events.filter((ev) => {
-      return !(+ev.endDate <= tboc || +ev.startDate >= teoc)
-    }).map((ev) => {
-      ev.startDate = +ev.startDate
-      ev.endDate = +ev.endDate
-      let et = new Date(+ev.endDate)
-      if (et.getHours() === 0 && et.getMinutes() === 0 && et.getSeconds() === 0 && et.getMilliseconds() === 0) ev.endDate = ev.endDate - 1
-      ev.isPassed = isPassed(ev)
-      ev.isCurrent = isCurrent(ev)
-      ev.isFuture = isFuture(ev)
-      ev.isFullday = ev.fullDayEvent
-      ev.isMultiday = isMultiday(ev)
-      return ev
-    }).sort((a, b) => {
-      let aDur = a.endDate - a.startDate
-      let bDur = b.endDate - b.startDate
-
-      return ((a.isFullday || a.isMultiday) && (b.isFullday || b.isMultiday)) 
-        ? bDur - aDur
-        : ((a.startDate === b.startDate) ? a.endDate - b.endDate : a.startDate - b.startDate)
+    let events = this.library.prepareEvents({
+      storedEvents: this.storedEvents,
+      config: config,
+      range: [boc, eoc]
     })
-
-    if (typeof this.config.eventFilter === 'function') {
-      events = events.filter((ev) => {
-        return this.config.eventFilter(ev)
-      })
-    }
-
-    if (typeof this.config.eventSorter === 'function') {
-      events = events.sort((a, b) => {
-        return this.config.eventSorter(a, b)
-      })
-    }
 
     let wm = new Date(boc.valueOf())
 
@@ -414,8 +382,9 @@ Module.register('MMM-CalendarExt3', {
       })
 
       for (let event of eventsOfWeek) {
-        let eDom = document.createElement('div')
-        eDom.classList.add('event')
+        let eDom = this.library.renderEvent(event, {
+          useSymbol: config.useSymbol
+        })
 
         let startLine = 0
         if (event.startDate >= boundary.at(0)) {
@@ -437,55 +406,9 @@ Module.register('MMM-CalendarExt3', {
 
         eDom.style.gridColumnStart = startLine + 1
         eDom.style.gridColumnEnd = endLine + 1
-        eDom.dataset.calendarSeq = event?.calendarSeq ?? 0
-        eDom.dataset.calendarName = event.calendarName
-        eDom.dataset.color = event.color
-        eDom.dataset.description = event.description
-        eDom.dataset.title = event.title
-        eDom.dataset.fullDayEvent = event.fullDayEvent
-        eDom.dataset.geo = event.geo
-        eDom.dataset.location = event.location
-        eDom.dataset.startDate = event.startDate
-        eDom.dataset.endDate = event.endDate
-        eDom.dataset.symbol = event.symbol.join(' ')
-        eDom.dataset.today = event.today
-        eDom.classList.add('calendar_' + encodeURI(event.calendarName))
-        eDom.classList.add(event.class)
-        
-        eDom.style.setProperty('--calendarColor', event.color)
-        let magic = document.getElementById('CX3_MAGIC_' + this.instanceId)
-        magic.style.color = event.color
-        let l = getL(window.getComputedStyle(magic).getPropertyValue('color'))
-        event.oppositeColor = (l > 50) ? 'black' : 'white'
-        eDom.style.setProperty('--oppositeColor', event.oppositeColor)
 
-        if (event.fullDayEvent) eDom.classList.add('fullday')
-        if (event.isPassed) eDom.classList.add('passed')
-        if (event.isCurrent) eDom.classList.add('current')
-        if (event.isFuture) eDom.classList.add('future')
-        if (event.isMultiday) eDom.classList.add('multiday')
-        if (!(event.isMultiday || event.fullDayEvent)) eDom.classList.add('singleday')
-        if (this.config.useSymbol) {
-          eDom.classList.add('useSymbol') 
-        }
-
-        event.symbol.forEach((symbol) => {
-          let exDom = document.createElement('span')
-          exDom.classList.add('symbol')
-          if (symbol) {
-            exDom.classList.add('fa', ...(symbol.split(' ').map((s) => {
-              return 'fa-' + (s.replace(/^fa\-/i, ''))
-            })))
-          } else {
-            exDom.classList.add('noSymbol')
-          }
-          eDom.appendChild(exDom)
-        })
-        let etDom = document.createElement('div')
-        etDom.classList.add('title')
-        etDom.innerHTML = event.title
         let esDom = document.createElement('div')
-        esDom.classList.add('eventTime')
+        esDom.classList.add('eventTime', 'time')
         let dParts = new Intl.DateTimeFormat(this.locale, this.config.eventTimeOptions).formatToParts(new Date(event.startDate))
         let dateHTML = dParts.reduce((prev, cur, curIndex, arr) => {
           prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex}">${cur.value}</span>`
@@ -493,8 +416,22 @@ Module.register('MMM-CalendarExt3', {
         }, '')
         esDom.innerHTML = dateHTML
         eDom.appendChild(esDom)
-        eDom.appendChild(etDom)
         ecDom.appendChild(eDom)
+      }
+
+      let dateCells = ccDom.querySelectorAll('.cell')
+      for (let i = 0; i < dateCells.length; i++) {
+        let dateCell = dateCells[i]
+        let dateStart = new Date(+dateCell.dataset.date)
+        let dateEnd = new Date(dateStart.getFullYear(), dateStart.getMonth(), dateStart.getDate(), 23, 59, 59, 999)
+        let thatDayEvents = eventsOfWeek.filter((ev) => {
+          return !(ev.endDate <= dateStart.valueOf() || ev.startDate > dateEnd.valueOf())
+        })
+        dateCell.dataset.events = thatDayEvents.length
+        dateCell.dataset.hasEvents = (thatDayEvents.length > 0) ? 'true' : 'false'
+        if (typeof config.manipulateDateCell === 'function') {
+          config.manipulateDateCell(dateCell, thatDayEvents)
+        }
       }
 
       wDom.appendChild(ccDom)
@@ -504,48 +441,7 @@ Module.register('MMM-CalendarExt3', {
       wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
     } while(wm.valueOf() <= eoc.valueOf())
 
-    if (this.config.displayLegend) {
-      let lDom = document.createElement('div')
-      lDom.classList.add('legends')
-      let legendData = new Map()
-      for (let ev of events) {
-        if (!legendData.has(ev.calendarName)) legendData.set(ev.calendarName, {
-          name: ev.calendarName,
-          color: ev.color ?? null,
-          oppositeColor: ev.oppositeColor,
-          symbol: ev.symbol ?? []
-        })
-      }
-      for (let l of legendData.values()) {
-        let ld = document.createElement('div')
-        ld.classList.add('legend')
-        if (this.config.useSymbol) {
-          ld.classList.add('useSymbol') 
-        }
-        l.symbol.forEach((symbol) => {
-          let exDom = document.createElement('span')
-          exDom.classList.add('symbol')
-          if (symbol) {
-            exDom.classList.add('fa', ...(symbol.split(' ').map((s) => {
-              return 'fa-' + (s.replace(/^fa\-/i, ''))
-            })))
-          } else {
-            exDom.classList.add('noSymbol')
-          }
-          ld.appendChild(exDom)
-        })
-        let t = document.createElement('span')
-        t.classList.add('title')
-        t.innerHTML = l.name
-        ld.appendChild(t)
-        ld.style.setProperty('--calendarColor', l.color)
-        ld.style.setProperty('--oppositeColor', l.oppositeColor)
-        lDom.appendChild(ld)
-      }
-      dom.appendChild(lDom)
-    }
-
-    this.viewMoment = moment
+    if (config.displayLegend) this.library.displayLegend(dom, events, {useSymbol: config.useSymbol})
 
     return dom
   },
@@ -557,5 +453,4 @@ Module.register('MMM-CalendarExt3', {
     }
     return this.data.header
   }
-
 })

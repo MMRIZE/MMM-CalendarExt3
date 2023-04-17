@@ -167,7 +167,15 @@
   overflow: hidden;
   white-space: nowrap;
   padding-left: 2px;
+  order: 3;
+}
 
+.CX3 .event .symbol {
+  order:1;
+}
+
+.CX3 .event .time {
+  order:2;
 }
 
 .CX3 .event.fullday,
@@ -304,3 +312,4 @@
   font-size: 90%;
   align-self: center;
 }
+

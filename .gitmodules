@@ -1,0 +1,3 @@
+[submodule "CX3_Shared"]
+	path = CX3_Shared
+	url = https://github.com/MMRIZE/CX3_Shared
