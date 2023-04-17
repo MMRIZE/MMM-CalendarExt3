@@ -32,6 +32,7 @@ My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty 
 ```sh
 cd ~/MagicMirror/modules
 git clone https://github.com/MMRIZE/MMM-CalendarExt3
+npm install
 ```
 
 ## Update (to `1.3.0`)
