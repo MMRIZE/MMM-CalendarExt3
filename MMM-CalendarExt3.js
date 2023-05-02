@@ -36,9 +36,23 @@ Module.register('MMM-CalendarExt3', {
     useWeather: true,
     weatherLocationName: null,
 
-    notification: 'CALENDAR_EVENTS', /* reserved */
+    //notification: 'CALENDAR_EVENTS', /* reserved */
 
     manipulateDateCell: (cellDom, events) => {},
+    weatherNotification: 'WEATHER_UPDATED',
+    weatherPayload: (payload) => { return payload },
+    eventNotification: 'CALENDAR_EVENTS',
+    eventPayload: (payload) => { return payload },
+
+    displayEndTime: false,
+    displayWeatherTemp: false, 
+  },
+
+  defaulNotifications: {
+    weatherNotification: 'WEATHER_UPDATED',
+    weatherPayload: (payload) => { return payload },
+    eventNotification: 'CALENDAR_EVENTS',
+    eventPayload: (payload) => { return payload },
   },
 
   getStyles: function () {
@@ -65,6 +79,13 @@ Module.register('MMM-CalendarExt3', {
     this.tempMoment = null
     this.forecast = []
     this.eventPool = new Map()
+
+    this.notifications = {
+      weatherNotification: this.config.weatherNotification ?? this.defaulNotifications.weatherNotification,
+      weatherPayload: (typeof this.config.weatherPayload === 'function') ? this.config.weatherPayload : this.defaulNotifications.weatherPayload,
+      eventNotification: this.config.eventNotification ?? this.defaulNotifications.eventNotification,
+      eventPayload: (typeof this.config.eventPayload === 'function') ? this.config.eventPayload : this.defaulNotifications.eventPayload,
+    }
 
     this._ready = false
 
@@ -118,12 +139,13 @@ Module.register('MMM-CalendarExt3', {
   },
   
   notificationReceived: function(notification, payload, sender) {
-    if (notification === this.config.notification) {
+    if (notification === this.notifications.eventNotification) {
+      let conveertedPayload = this.notifications.eventPayload(payload)
       if (this?.storedEvents?.length == 0 && payload.length > 0) {
-        this._receiveFirstData({payload, sender})
+        this._receiveFirstData({payload: conveertedPayload, sender})
       }
       if (this?.library?.loaded) {
-        this.fetch(payload, sender)  
+        this.fetch(conveertedPayload, sender)  
       } else {
         Log.warn('[CX3] Module is not prepared yet, wait a while.')
       }
@@ -159,21 +181,22 @@ Module.register('MMM-CalendarExt3', {
       }
     }
 
-    if (notification === 'WEATHER_UPDATED') {
+    if (notification === this.notifications.weatherNotification) {
+      let convertedPayload = this.notifications.weatherPayload(payload)
       if (
         (this.config.useWeather 
-          && ((this.config.weatherLocationName && payload.locationName.includes(this.config.weatherLocationName)) 
+          && ((this.config.weatherLocationName && convertedPayload.locationName.includes(this.config.weatherLocationName)) 
           || !this.config.weatherLocationName))
-        && (Array.isArray(payload?.forecastArray) && payload?.forecastArray.length)
+        && (Array.isArray(convertedPayload?.forecastArray) && convertedPayload?.forecastArray.length)
       ) {
-        this.forecast = [...payload.forecastArray].map((o) => {
+        this.forecast = [...convertedPayload.forecastArray].map((o) => {
           let d = new Date(o.date)
           o.dateId = d.toLocaleDateString('en-CA')
           return o
         })
       } else {
-        if (this.config.weatherLocationName && !payload.locationName.includes(this.config.weatherLocationName)) {
-          Log.warn(`"weatherLocationName: '${this.config.weatherLocationName}'" doesn't match with location of weather module ('${payload.locationName}')`)
+        if (this.config.weatherLocationName && !convertedPayload.locationName.includes(this.config.weatherLocationName)) {
+          Log.warn(`"weatherLocationName: '${this.config.weatherLocationName}'" doesn't match with location of weather module ('${convertedPayload.locationName}')`)
         }
       }
     }
@@ -186,6 +209,8 @@ Module.register('MMM-CalendarExt3', {
     if (this.config.fontSize) dom.style.setProperty('--fontsize', this.config.fontSize)
     dom.style.setProperty('--maxeventlines', this.config.maxEventLines)
     dom.style.setProperty('--eventheight', this.config.eventHeight)
+    dom.style.setProperty('--displayEndTime', (this.config.displayEndTime) ? 'inherit' : 'none')
+    dom.style.setProperty('--displayWeatherTemp', (this.config.displayWeatherTemp) ? 'inline-block' : 'none')
     dom = this.draw(dom, this.config)
     if (this.library?.loaded) {
       if (this.refreshTimer) {

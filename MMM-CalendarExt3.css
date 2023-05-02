@@ -7,6 +7,8 @@
   --defaultcolor: #FFF;
   --eventheight: calc(var(--fontsize) + 4px);
   --totalheight: calc(var(--eventheight) * var(--maxeventlines));
+  --displayEndTime: none;
+  --displayWeatherTemp: none;
   font-size: var(--fontsize);
   color: var(--defaultcolor);
   line-height: calc(var(--eventheight))
@@ -241,12 +243,22 @@
   display: none;
 }
 
+.CX3 .event .time.endTime {
+  display: var(--displayEndTime);
+}
+
+.CX3 .event:not(.fullday) .headline .time.endTime {
+  display: var(--displayEndTime);
+}
+
 
 .CX3 .event .startTime::after {
+  display: var(--displayEndTime);
   content: ' -';
 }
 
 .CX3 .event .startTime.notInDay + .endTime.inDay::before {
+  display: var(--displayEndTime);
   content: '- ';
 }
 .CX3 .event.continueFromPreviousWeek .headline .time {
@@ -299,21 +311,22 @@
 }
 
 .CX3 .cellHeader .cellWeather .minTemp {
-  color: lightgray;
+  color: darkgray;
   font-weight: normal;
-  font-size: 90%;
 }
 
 .CX3 .cellHeader .cellWeather .temperature {
-  display: none;
+  display: var(--displayWeatherTemp);
+  padding-left: 5px;
+  font-size: 90%;
 }
 
 .CX3 .cellHeader .cellWeather .maxTemp::before {
-  content: ' ↑';
+  content: ' ⏶';
 }
 
 .CX3 .cellHeader .cellWeather .minTemp::before {
-  content: ' ↓';
+  content: ' ⏷';
 }
 
 .CX3 .cellHeader .cellWeather .temperature::after {

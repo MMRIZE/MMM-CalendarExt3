@@ -134,8 +134,10 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`weatherLocationName` | null | When you have multi forecasting instances of several locations, you can describe specific weather location to show. |
 |`weatherNotification`| 'WEATHER_UPDATED' | A carrier notification of weather forecasting source |
 |`weatherPayload` | callback function | A converter for weather foracasting payload before using it. |
+|`displayWeatherTemp` | false | If you want to show the temperature of the forecasting, set this to `true`|
 |`preProcessor` | callback function | See the `preProcessing` part. |
 |`manipulateDateCell` | callback function | See the `manipulating dateCell` part. |
+|`displayEndTime`| false | If you want to show the end time of the event, set this to `true`|
 
 
 ## Notification
@@ -198,6 +200,20 @@ Most commonly used values would be defined in `.CX3` selector as variables.
   - `.multiday`, `.singleday`, `.fullday`
 
 And `event` also has `dataSet` (`data-*`) as its attributes. (e.g. data-title="...", data-start-date="...") You can use these attributes also.
+
+  - `.event`
+    - `.headline`
+      - `.symbol`
+      - `.time.startTime`
+        - `.dateParts`
+      - `.time.endTime`
+        - `.dateParts`
+      - `.title`
+    - `.description`
+    - `.location`
+
+Each event component would be shown/hidden by the virtues of events. Of course, you can redeclare its behaviours with CSS.
+
 
 - `.weekGrid`, `.weekGridRow` : Definition of calendar grid. You can adjust the grid itself. (e.g. Shrink the width of weekends cells)
 
