@@ -7,6 +7,8 @@
   --defaultcolor: #FFF;
   --eventheight: calc(var(--fontsize) + 4px);
   --totalheight: calc(var(--eventheight) * var(--maxeventlines));
+  --displayEndTime: none;
+  --displayWeatherTemp: none;
   font-size: var(--fontsize);
   color: var(--defaultcolor);
   line-height: calc(var(--eventheight))
@@ -160,7 +162,17 @@
   min-width: 0;
 }
 
-.CX3 .event .title {
+.CX3 .event .headline {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.CX3 .event .headline .title {
   font-size: 75%;
   font-weight: bold;
   text-overflow:ellipsis;
@@ -170,12 +182,13 @@
   order: 3;
 }
 
-.CX3 .event .symbol {
+.CX3 .event .headline .symbol {
   order:1;
 }
 
-.CX3 .event .time {
+.CX3 .event .headline .time {
   order:2;
+  display: inline-block;
 }
 
 .CX3 .event.fullday,
@@ -186,8 +199,8 @@
   color: var(--oppositeColor);
 }
 
-.CX3 .event.singleday:not(.useSymbol)::before,
-.CX3 .event.singleday.useSymbol .symbol.noSymbol::before {
+.CX3 .event.singleday .headline:not(.useSymbol)::before,
+.CX3 .event.singleday .headline.useSymbol .symbol.noSymbol::before {
   content: '⬤';
   color: var(--calendarColor);
   display: inline-block;
@@ -195,37 +208,68 @@
   font-size: 75%;
 }
 
-.CX3 .event:not(.useSymbol) .symbol {
+.CX3 .event .headline:not(.useSymbol) .symbol {
   display: none;
 }
 
-.CX3 .event.useSymbol .symbol {
+.CX3 .event .headline.useSymbol .symbol {
   display: inline-block;
   padding-right: 2px;
   font-size: 75%;
   align-self: center;
 }
 
-.CX3 .event.singleday.useSymbol .symbol {
+.CX3 .event .headline.singleday.useSymbol .symbol {
   color: var(--calendarColor);
 }
 
-.CX3 .event.fullday .eventTime {
+.CX3 .event.fullday .headline .time {
   display: none;
 }
 
-.CX3 .event:not(.fullday) .eventTime {
+.CX3 .event:not(.fullday) .headline .time {
   display: inline-block;
   padding-right: 2px;
   font-size: 75%;
   color: #EEE;
 }
 
+.CX3 .event .time {
+  font-size: 75%;
+  vertical-align: text-bottom;
+}
 
-
-.CX3 .event.continueFromPreviousWeek .eventTime {
+.CX3 .event .time.notInDay {
   display: none;
 }
+
+.CX3 .event .time.endTime {
+  display: var(--displayEndTime);
+}
+
+.CX3 .event:not(.fullday) .headline .time.endTime {
+  display: var(--displayEndTime);
+}
+
+
+.CX3 .event .startTime::after {
+  display: var(--displayEndTime);
+  content: ' -';
+}
+
+.CX3 .event .startTime.notInDay + .endTime.inDay::before {
+  display: var(--displayEndTime);
+  content: '- ';
+}
+.CX3 .event.continueFromPreviousWeek .headline .time {
+  display: none;
+}
+
+.CX3 .event .description,
+.CX3 .event .location {
+  display: none;
+}
+
 
 .CX3 .event.passed {
   filter: brightness(0.6) grayscale(0.33);
@@ -267,21 +311,22 @@
 }
 
 .CX3 .cellHeader .cellWeather .minTemp {
-  color: lightgray;
+  color: darkgray;
   font-weight: normal;
-  font-size: 90%;
 }
 
 .CX3 .cellHeader .cellWeather .temperature {
-  display: none;
+  display: var(--displayWeatherTemp);
+  padding-left: 5px;
+  font-size: 90%;
 }
 
 .CX3 .cellHeader .cellWeather .maxTemp::before {
-  content: ' ↑';
+  content: ' ⏶';
 }
 
 .CX3 .cellHeader .cellWeather .minTemp::before {
-  content: ' ↓';
+  content: ' ⏷';
 }
 
 .CX3 .cellHeader .cellWeather .temperature::after {
