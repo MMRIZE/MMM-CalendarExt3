@@ -127,8 +127,12 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`animationSpeed` | 1000 | (ms) Refreshing the view smoothly. |
 |`useSymbol` | true | Whether to show font-awesome symbold instead of simple dot icon. |
 |`displayLegend` | false | If you set as true, legend will be displayed. (Only the clanear which has name assigned)|
+|`eventNotification`| 'CALENDAR_EVENTS' | A carrier notification of event source.|
+|`eventPayload` | callback function | A converter for event payload before using it.|
 |`useWeather` | true | Whether to show forecasted weather information of default weather module. |
 |`weatherLocationName` | null | When you have multi forecasting instances of several locations, you can describe specific weather location to show. |
+|`weatherNotification`| 'WEATHER_UPDATED' | A carrier notification of weather forecasting source |
+|`weatherPayload` | callback function | A converter for weather foracasting payload before using it. |
 |`preProcessor` | callback function | See the `preProcessing` part. |
 |`manipulateDateCell` | callback function | See the `manipulating dateCell` part. |
 
@@ -251,6 +255,23 @@ eventTransformer: (ev) => {
 ```
 This example shows how you can transform the color of events when the event title has specific text.
 
+### eventPayload / weatherPayload
+You can convert or transform the payload of incoming notification instantly before used in this module. It would be convenient when conversion or manipulating payload from uncompatible module.
+```js
+weatherPayload: (payload) => {
+  if (Array.isArray(payload?.forecastArray)) {
+    payload.forecastArray = payload.forecastArray.map((f) => {
+      f.maxTemperature = Math.round(f.maxTemperature * 9 / 5 + 32)
+      f.minTemperature = Math.round(f.minTemperature * 9 / 5 + 32)
+      return f
+    })
+  }
+  return payload
+},
+```
+This example show how to transform Celcius temperature to Fahrenheit units. (Original default weather module has a bug to deliver Fahrenheit temperature of broadcasted forecasts.)
+> `preProcessor` could be replaced with this `eventPayload` but for backward-compatibility I'll keep it for a while.
+
 ### preProcessing
 ```js
 preProcessor: (ev) => {
@@ -367,15 +388,20 @@ customCommands: [
 
 ## History
 
+### 1.3.1 (2023-04-25)
+- **ADDED**: `weatherNotification`, `eventNotification` - To get data from 3rd party module which is not compatible with default modules.
+- **ADDED**: `weatherPayload`, `eventPayload` - To manipulate or to convert received payload itself on time. (e.g. Convert Celcius unit to Fahrenheit unit)
+
+
 ### 1.3.0 (2023-04-17)
 - **CHANGED**: Shared library to fix many issues.
 - **FIXED**: some typo.
 - **FIXED**: flickering for many reasons (logic error to treat notifications)
-- **ADDED**: `CX3_RESET_DATE` notification (to reset instantly from glancing)
+- **ADDED**: `CX3_RESET` notification (to reset instantly from glancing)
 - **ADDED**: `MMM-TelegramBot` user implementation example
 - **ADDED**: `preProcessor` for better handling of raw-data priorly
 - **ADDED**: `manipulateDateCell` to manipulate date cell DOM after drawing
-- **CHANGED**: Timing of `eventFilter` and `eventTransformer` for better-handling event data after regularized
+- **CHANGED**: Timing of `eventFilter` and `eventTransformer` is delayed for better-handling event data after regularized
 
 ### 1.2.6 (2022-12-05)
 - **Added** `useWeather` option. (true/false)

@@ -207,50 +207,12 @@ Module.register('MMM-CalendarExt3', {
 
   draw: function (dom, config) {
     if (!this.library?.loaded) return dom
+    const {
+      isToday, isThisMonth, isThisYear, getWeekNo, renderEventAgenda,
+      prepareEvents, getBeginOfWeek, getEndOfWeek, displayLegend,
+      // gapFromToday, renderEventAgenda, eventsByDate, makeWeatherDOM, getRelativeDate, 
+    } = this.library
     dom.innerHTML = ''
-
-    const isToday = (d) => {
-      let tm = new Date()
-      let start = (new Date(tm.valueOf())).setHours(0, 0, 0, 0)
-      let end = (new Date(tm.valueOf())).setHours(23, 59, 59, 999)
-      return (d.getTime() >= start && d.getTime() <= end)
-    }
-
-    const isThisMonth = (d) => {
-      let tm = new Date()
-      let start = new Date(tm.getFullYear(), tm.getMonth(), 1)
-      let end = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59, 999)
-      return (d.getTime() >= start && d.getTime() <= end)
-    }
-
-    const isThisYear = (d) => {
-      let tm = new Date()
-      let start = new Date(tm.getFullYear(), 1, 1)
-      let end = new Date(tm.getFullYear(), 11, 31, 23, 59, 59, 999)
-      return (d.getTime() >= start && d.getTime() <= end)
-    }
-
-    const getBeginOfWeek = (d) => {
-      return new Date(d.getFullYear(), d.getMonth(), d.getDate() - (d.getDay() - this.config.firstDayOfWeek + 7 ) % 7)
-    }
-
-    const getEndOfWeek = (d) => {
-      let b = getBeginOfWeek(d)
-      return new Date(b.getFullYear(), b.getMonth(), b.getDate() + 6, 23, 59, 59, 999)
-    }
-
-    const getWeekNo = (d) => {
-      let bow = getBeginOfWeek(d)
-      let fw = getBeginOfWeek(new Date(d.getFullYear(), 0, this.config.minimalDaysOfNewYear))
-      if (bow.getTime() < fw.getTime()) fw = getBeginOfWeek(new Date(d.getFullYear() - 1), 0, this.config.minimalDayosOfNewYear)
-      let count = 1;
-      let t = new Date(fw.valueOf())
-      while (bow.getTime() > t.getTime()) {
-        t.setDate(t.getDate() + 7)
-        count++;
-      }
-      return count
-    }
 
     const makeCellDom = (d, seq) => {
       let tm = new Date(d.valueOf())
@@ -272,7 +234,7 @@ Module.register('MMM-CalendarExt3', {
 
       let cwDom = document.createElement('div')
       if (seq === 0) {
-        cwDom.innerHTML = getWeekNo(tm)
+        cwDom.innerHTML = getWeekNo(tm, config)
         cwDom.classList.add('cw')
       }
       
@@ -322,18 +284,17 @@ Module.register('MMM-CalendarExt3', {
       return cell
     }
 
-    
     let moment = this.getMoment()
 
     let boc = (this.mode === 'month') ?
-      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1)) :
-      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.weekIndex)))
+      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1), config) :
+      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.weekIndex)), config)
     
     let eoc = (this.mode === 'month') ?
-      getEndOfWeek(new Date(moment.getFullYear(), moment.getMonth() + 1, 0)) :
-      getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (this.weeksInView - 1))))
+      getEndOfWeek(new Date(moment.getFullYear(), moment.getMonth() + 1, 0), config) :
+      getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (this.weeksInView - 1))), config)
 
-    let events = this.library.prepareEvents({
+    let events = prepareEvents({
       storedEvents: this.storedEvents,
       config: config,
       range: [boc, eoc]
@@ -357,7 +318,7 @@ Module.register('MMM-CalendarExt3', {
     do {
       let wDom = document.createElement('div')
       wDom.classList.add('week')
-      wDom.dataset.weekNo = getWeekNo(wm)
+      wDom.dataset.weekNo = getWeekNo(wm, config)
 
       let ccDom = document.createElement('div')
       ccDom.classList.add('cellContainer', 'weekGrid')
@@ -382,9 +343,15 @@ Module.register('MMM-CalendarExt3', {
       })
 
       for (let event of eventsOfWeek) {
-        let eDom = this.library.renderEvent(event, {
-          useSymbol: config.useSymbol
-        })
+        let eDom = renderEventAgenda(
+          event,
+          {
+            useSymbol: config.useSymbol,
+            eventTimeOptions: config.eventTimeOptions,
+            locale: this.locale
+          },
+          moment
+        )
 
         let startLine = 0
         if (event.startDate >= boundary.at(0)) {
@@ -407,6 +374,7 @@ Module.register('MMM-CalendarExt3', {
         eDom.style.gridColumnStart = startLine + 1
         eDom.style.gridColumnEnd = endLine + 1
 
+        /*
         let esDom = document.createElement('div')
         esDom.classList.add('eventTime', 'time')
         let dParts = new Intl.DateTimeFormat(this.locale, this.config.eventTimeOptions).formatToParts(new Date(event.startDate))
@@ -416,6 +384,7 @@ Module.register('MMM-CalendarExt3', {
         }, '')
         esDom.innerHTML = dateHTML
         eDom.appendChild(esDom)
+        */
         ecDom.appendChild(eDom)
       }
 
@@ -441,7 +410,7 @@ Module.register('MMM-CalendarExt3', {
       wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
     } while(wm.valueOf() <= eoc.valueOf())
 
-    if (config.displayLegend) this.library.displayLegend(dom, events, {useSymbol: config.useSymbol})
+    if (config.displayLegend) displayLegend(dom, events, {useSymbol: config.useSymbol})
 
     return dom
   },
