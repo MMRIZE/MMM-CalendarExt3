@@ -406,8 +406,10 @@ customCommands: [
 ## History
 
 ### 1.3.1 (2023-04-25)
-- **ADDED**: `weatherNotification`, `eventNotification` - To get data from 3rd party module which is not compatible with default modules.
-- **ADDED**: `weatherPayload`, `eventPayload` - To manipulate or to convert received payload itself on time. (e.g. Convert Celcius unit to Fahrenheit unit)
+- **CHANGED**: Refactoring some codes, the structure of the events, CSS.
+- **ADDED**: `displayEndTime: true` => Show end time of the event. (hidden by default) (Requested from @zelmo)
+- **ADDED**: `displayWeatherTemp: true` => Show max/min temperature of the forecasted days.
+<img width="1637" alt="CX3_1 3 1" src="https://user-images.githubusercontent.com/1720610/235691244-0eb98d9b-0337-4855-9057-15a82fc6ca2e.png">
 
 
 ### 1.3.0 (2023-04-17)
