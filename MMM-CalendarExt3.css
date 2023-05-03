@@ -219,7 +219,7 @@
   align-self: center;
 }
 
-.CX3 .event .headline.singleday.useSymbol .symbol {
+.CX3 .event.singleday .headline.useSymbol .symbol {
   color: var(--calendarColor);
 }
 
@@ -322,11 +322,11 @@
 }
 
 .CX3 .cellHeader .cellWeather .maxTemp::before {
-  content: ' ⏶';
+  content: ' \25b2';
 }
 
 .CX3 .cellHeader .cellWeather .minTemp::before {
-  content: ' ⏷';
+  content: ' \25bc';
 }
 
 .CX3 .cellHeader .cellWeather .temperature::after {
