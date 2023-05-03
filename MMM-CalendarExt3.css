@@ -219,7 +219,7 @@
   align-self: center;
 }
 
-.CX3 .event .headline.singleday.useSymbol .symbol {
+.CX3 .event.singleday .headline.useSymbol .symbol {
   color: var(--calendarColor);
 }
 
