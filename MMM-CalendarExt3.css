@@ -322,11 +322,11 @@
 }
 
 .CX3 .cellHeader .cellWeather .maxTemp::before {
-  content: ' ⏶';
+  content: ' \25b2';
 }
 
 .CX3 .cellHeader .cellWeather .minTemp::before {
-  content: ' ⏷';
+  content: ' \25bc';
 }
 
 .CX3 .cellHeader .cellWeather .temperature::after {
