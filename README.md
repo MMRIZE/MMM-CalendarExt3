@@ -120,7 +120,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`eventTimeOptions` | {timeStyle: 'short'} | The format of event time. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `3:45 pm`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) | 
 |`headerWeekDayOptions`|{weekday: 'long'} | The format of weekday header. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `Tuesday`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`headerTitleOptions`|{month: 'long'} | The format of module header of the month view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `December`. In `mode:'week'`, this will be ignored.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
-|`eventFitler`| callback function | See the `Filtering` part.|
+|`eventFilter`| callback function | See the `Filtering` part.|
 |`eventSorter`| callback function | See the `Sorting` part.|
 |`eventTransformer`| callback function | See the `Transforming` part.|
 |`waitFetch`| 5000 | (ms) waiting the fetching of last calendar to prevent flickering view by too frequent fetching. |
@@ -352,7 +352,7 @@ preProcessor: (e) => {
   e.startDate = new Date(e.start?.date || e.start?.dateTime).valueOf()
   e.endDate = new Date(e.end?.date || e.end?.dateTime).valueOf()
   e.title = e.summary
-  e.fulldayEvent = (e.start?.date) ? true : false
+  e.fullDayEvent = (e.start?.date) ? true : false
   return e
 }
 ```
