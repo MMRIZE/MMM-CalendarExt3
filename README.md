@@ -404,7 +404,8 @@ customCommands: [
 - I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
-
+### 1.3.2 (2023-05-30)
+- **CHANGED** : Not to be too strict to other module's DOM creation failure.
 ### 1.3.1 (2023-04-25)
 - **CHANGED**: Refactoring some codes, the structure of the events, CSS.
 - **ADDED**: `displayEndTime: true` => Show end time of the event. (hidden by default) (Requested from @zelmo)
