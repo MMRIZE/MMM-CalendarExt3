@@ -1,3 +1,6 @@
+const popoverSupported = HTMLElement.prototype.hasOwnProperty('popover')
+if (!popoverSupported) Log.info(`This browser doesn't support popover yet. Update your system.`)
+
 Module.register('MMM-CalendarExt3', {
   defaults: {
     mode: 'week', // or 'month'
@@ -27,7 +30,7 @@ Module.register('MMM-CalendarExt3', {
     eventFilter: (ev) => { return true },
     eventSorter: null,
     eventTransformer: (ev) => { return ev },
-    refreshInterval: 1000 * 60,
+    refreshInterval: 1000 * 60 * 10, // too frequent refresh. 10 minutes is enough.
     waitFetch: 1000 *  5,
     glanceTime: 1000 * 60, // deprecated, use refreshInterval instead.
     animationSpeed: 1000,
@@ -45,7 +48,14 @@ Module.register('MMM-CalendarExt3', {
     eventPayload: (payload) => { return payload },
 
     displayEndTime: false,
-    displayWeatherTemp: false, 
+    displayWeatherTemp: false,
+
+    popoverTemplate: './popover.html',
+    popoverTimeout: 5000,
+    popoverPeriodOptions: {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    },
   },
 
   defaulNotifications: {
@@ -56,7 +66,8 @@ Module.register('MMM-CalendarExt3', {
   },
 
   getStyles: function () {
-    return ['MMM-CalendarExt3.css']
+    let css = ['MMM-CalendarExt3.css']
+    return css
   },
 
   getMoment: function() {
@@ -95,7 +106,7 @@ Module.register('MMM-CalendarExt3', {
         this.library.initModule(this, config.language)
         resolve()
       }).catch((err) => {
-        console.error(err)
+        Log.error(err)
         reject(err)
       })
     })
@@ -126,6 +137,99 @@ Module.register('MMM-CalendarExt3', {
       }, this.config.waitFetch)
       
     })
+    /* append popover */
+    if (popoverSupported) {
+      document.body.addEventListener('click', (ev) => {
+        let eDom = ev.target.closest('.event[data-popoverble=true]')
+        if (eDom) return this.activatePopover(eDom)
+        return
+      })
+      this.preparePopover()
+    }
+  },
+
+  preparePopover: function() {
+    if (!popoverSupported) return
+    if (document.getElementById('CX3_POPOVER')) return
+
+    fetch(this.file(this.config.popoverTemplate)).then((response) => {
+      return response.text()
+    }).then((html) => {
+      let template = document.createElement('template')
+      template.innerHTML = html
+      template.id = 'CX3_POPOVER_TEMPLATE'
+      document.body.appendChild(template)
+    }).catch((err) => {
+      Log.error('[CX3]', err)
+    })
+    
+    let popover = document.createElement('div')
+    popover.id = 'CX3_POPOVER'
+    popover.className = 'popover'
+    popover.popover = "auto"
+    
+    document.body.appendChild(popover)
+  },
+
+  activatePopover: function (eDom) {
+    let template = document.getElementById('CX3_POPOVER_TEMPLATE')
+    if (!template) {
+      Log.warn('[CX3] No popover template found.')
+      return
+    }
+
+    let instance = template.content.cloneNode(true)
+
+    let popover = document.getElementById('CX3_POPOVER')
+    popover.innerHTML = ''
+    popover.appendChild(instance)
+
+    let headline = popover.querySelector('#POPOVER_HEADER')
+    
+    let eSymbol = eDom.querySelector('.symbol').cloneNode(true)
+    headline.appendChild(eSymbol)
+    let eTitle = eDom.querySelector('.title').cloneNode(true)
+    headline.appendChild(eTitle)
+
+    let calendarColor = eDom.style.getPropertyValue('--calendarColor')
+    let oppositeColor = eDom.style.getPropertyValue('--oppositeColor')
+
+    headline.style.setProperty('--calendarColor', eDom.style.getPropertyValue('--calendarColor'))
+    headline.style.setProperty('--oppositeColor', eDom.style.getPropertyValue('--oppositeColor'))
+    headline.dataset.isFullday = eDom.dataset.fullDayEvent
+
+    let location = popover.querySelector('#POPOVER_CONTENT .location')
+    if (location) location.innerHTML = eDom.dataset.location
+
+    let description = popover.querySelector('#POPOVER_CONTENT .description')
+    if (description) description.innerHTML = eDom.dataset.description
+
+    let calendar = popover.querySelector('#POPOVER_CONTENT .calendar')
+    if (calendar) calendar.innerHTML = eDom.dataset.calendarName
+
+    let period = popover.querySelector('#POPOVER_CONTENT .period')
+    if (period) {
+      let start = new Date(+(eDom.dataset.startDate))
+      let end = new Date(+(eDom.dataset.endDate))
+
+      period.innerHTML = new Intl.DateTimeFormat(this.locale, this.config.popoverPeriodOptions).formatRangeToParts(start, end).reduce((prev, cur, curIndex, arr) => {
+        prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
+        return prev
+      }, '')
+    }
+    
+    let opened = document.querySelectorAll('[popover-opened]')
+    for (const o of Array.from(opened)) {
+      o.hidePopover()
+    }
+    popover.showPopover()
+    setTimeout(() => {
+      try {
+        popover.hidePopover()
+      } catch (e) {
+        // do nothing
+      }
+    }, this.config.popoverTimeout)
   },
 
   fetch: function(payload, sender) {
@@ -139,7 +243,6 @@ Module.register('MMM-CalendarExt3', {
   },
   
   notificationReceived: function(notification, payload, sender) {
-    console.info('NOTI:', notification)
     if (notification === this.notifications.eventNotification) {
       let conveertedPayload = this.notifications.eventPayload(payload)
       if (this?.storedEvents?.length == 0 && payload.length > 0) {
@@ -238,6 +341,7 @@ Module.register('MMM-CalendarExt3', {
       prepareEvents, getBeginOfWeek, getEndOfWeek, displayLegend,
       // gapFromToday, renderEventAgenda, eventsByDate, makeWeatherDOM, getRelativeDate, 
     } = this.library
+
     dom.innerHTML = ''
 
     const makeCellDom = (d, seq) => {
@@ -399,6 +503,12 @@ Module.register('MMM-CalendarExt3', {
 
         eDom.style.gridColumnStart = startLine + 1
         eDom.style.gridColumnEnd = endLine + 1
+        
+        if (popoverSupported) {
+          if (!eDom.id) eDom.id = eDom.dataset.calendarSeq + '_' + eDom.dataset.startDate + '_' + eDom.dataset.endDate + '_' + new Date().getTime()
+          eDom.dataset.popoverble = true
+          
+        }
 
         /*
         let esDom = document.createElement('div')
@@ -439,6 +549,20 @@ Module.register('MMM-CalendarExt3', {
     if (config.displayLegend) displayLegend(dom, events, {useSymbol: config.useSymbol})
 
     return dom
+  },
+
+  getPopover: function () {
+    let popover = document.createElement('div')
+    popover.id = "CX3_POPOVER"
+    popover.popover = "auto"
+    popover.classList.add('popover')
+    // popover.anchor = eDom reserved for future use
+
+    let header = document.createElement('div')
+    header.classList.add('header')
+
+
+    return popover
   },
 
   getHeader: function () {

@@ -1,7 +1,7 @@
 # MMM-CalendarExt3
 MagicMirror module for calendar view.
 
-> `1.3.0` has many changes from `1.2.x` and still beta staged. If you want to use the old version, checkout `snap-1.2.6` branch
+> `~1.3` has many changes from `1.2.x` and still beta staged. If you want to use the old version, checkout `snap-1.2.6` branch
 
 
 ## Screenshot
@@ -35,7 +35,7 @@ git clone https://github.com/MMRIZE/MMM-CalendarExt3
 npm install
 ```
 
-## Update (to `1.3.0`)
+## Update
 ```sh
 cd ~/MagicMirror/modules/MMM-CalendarExt3
 git pull
@@ -138,6 +138,9 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`preProcessor` | callback function | See the `preProcessing` part. |
 |`manipulateDateCell` | callback function | See the `manipulating dateCell` part. |
 |`displayEndTime`| false | If you want to show the end time of the event, set this to `true`|
+|`popoverTemplate`| './popover.html' | If you want to change the template of popover, use this. (Usually not needed) |
+|`popoverPeriodOptions`| {timeStyle: 'short', dateStyle: 'short'} | The format of period of event time on popover displayed,<br> It varies by the `locale` and the period itself how consisted. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
+|`popoverTimeout`| 5000 | (ms) The popover has `light dismiss` but for the convenience, I added timeout dismission. <br>`0` will not dismiss popover forever unless other popover activated or you dismiss popover by click outside manually |
 
 
 ## Notification
@@ -349,8 +352,18 @@ symbol: ['brands google-drive', 'solid calendar'],
 ### Compatible with `randomBrainstormer/MMM-GoogleCalendar`
 ```js
 preProcessor: (e) => {
-  e.startDate = new Date(e.start?.date || e.start?.dateTime).valueOf()
-  e.endDate = new Date(e.end?.date || e.end?.dateTime).valueOf()
+  if (e.start?.dateTime) {
+          e.startDate = new Date(e.start.dateTime).valueOf()
+  } else if (e.start?.date) {
+          e.startDate = new Date(`${e.start.date}T00:00:00`).valueOf()
+  }
+  
+  if (e.end?.dateTime) {
+          e.endDate = new Date(e.end.dateTime).valueOf()
+  } else if (e.end?.date) {
+          e.endDate = new Date(`${e.end.date}T00:00:00`).valueOf()
+  }
+  
   e.title = e.summary
   e.fullDayEvent = (e.start?.date) ? true : false
   return e
@@ -404,6 +417,14 @@ customCommands: [
 - I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
+
+### 1.4.0 (2023-06-04)
+![popover](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/CX3_1.4.0.png)
+- **ADDED** **(Experimental)** Show popover of event details on click/touch (Chrome 114 or Electron 25 needed)
+> See https://github.com/MMRIZE/MMM-CalendarExt3/discussions/80
+- **FIXED** Clarify code for using MMM-GoogleCalendar module #78 (Thanks to @jcherniak)
+- **UPDATED** Updated CX3_Shared submodule #76 (Thanks to @btastic)
+
 ### 1.3.2 (2023-05-30)
 - **CHANGED** : Not to be too strict to other module's DOM creation failure.
 ### 1.3.1 (2023-04-25)
