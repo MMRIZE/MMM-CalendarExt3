@@ -419,6 +419,7 @@ customCommands: [
 ## History
 
 ### 1.4.0 (2023-06-04)
+![popover](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/CX3_1.4.0.png)
 - **ADDED** **(Experimental)** Show popover of event details on click/touch (Chrome 114 or Electron 25 needed)
 > See https://github.com/MMRIZE/MMM-CalendarExt3/discussions/80
 - **FIXED** Clarify code for using MMM-GoogleCalendar module #78 (Thanks to @jcherniak)
