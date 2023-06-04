@@ -352,8 +352,18 @@ symbol: ['brands google-drive', 'solid calendar'],
 ### Compatible with `randomBrainstormer/MMM-GoogleCalendar`
 ```js
 preProcessor: (e) => {
-  e.startDate = new Date(e.start?.date || e.start?.dateTime).valueOf()
-  e.endDate = new Date(e.end?.date || e.end?.dateTime).valueOf()
+  if (e.start?.dateTime) {
+          e.startDate = new Date(e.start.dateTime).valueOf()
+  } else if (e.start?.date) {
+          e.startDate = new Date(`${e.start.date}T00:00:00`).valueOf()
+  }
+  
+  if (e.end?.dateTime) {
+          e.endDate = new Date(e.end.dateTime).valueOf()
+  } else if (e.end?.date) {
+          e.endDate = new Date(`${e.end.date}T00:00:00`).valueOf()
+  }
+  
   e.title = e.summary
   e.fullDayEvent = (e.start?.date) ? true : false
   return e
