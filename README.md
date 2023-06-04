@@ -423,7 +423,7 @@ customCommands: [
 - **ADDED** **(Experimental)** Show popover of event details on click/touch (Chrome 114 or Electron 25 needed)
 > See https://github.com/MMRIZE/MMM-CalendarExt3/discussions/80
 - **FIXED** Clarify code for using MMM-GoogleCalendar module #78 (Thanks to @jcherniak)
-- **UPDATED** Updated CX3_Shared submodule #76 (Thanks to @btastic)
+- **UPDATED** Updated CX3_Shared submodule #76 / More robust `oppositeColor` calculation. (Thanks to @btastic)
 
 ### 1.3.2 (2023-05-30)
 - **CHANGED** : Not to be too strict to other module's DOM creation failure.
