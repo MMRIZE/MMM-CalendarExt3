@@ -160,6 +160,7 @@
   overflow: hidden;
   white-space: nowrap;
   min-width: 0;
+  position: relative;
 }
 
 .CX3 .event .headline {
@@ -358,3 +359,81 @@
   align-self: center;
 }
 
+/* popover */
+
+#CX3_POPOVER {
+  max-width: 50%;
+  height: fit-content;
+  background-color: lightgray;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid white;
+  position: absolute;
+  box-shadow: 0 0 10px 0px #339;
+}
+
+#CX3_POPOVER:popover-open {
+  animation: slideIn 200ms ease-in-out;
+}
+
+#CX3_POPOVER::backdrop {
+  background-color: rgba(127, 127, 127, 0.25);
+  backdrop-filter: blur(5px);
+}
+
+@keyframes slideIn {
+  0% { opacity: 0; transform: translateY(-100px); }
+  100% { opacity: 1; }
+}
+
+#CX3_POPOVER .popover_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 1px solid darkgray;
+  font-size: 150%;
+  font-weight: bold;
+}
+
+#CX3_POPOVER .popover_header[data-is-fullday=true] {
+  background-color: var(--calendarColor);
+  color: var(--oppositeColor);
+}
+
+#CX3_POPOVER .popover_header[data-is-fullday=false] {
+  background-color: var(--oppositeColor);
+  color: var(--calendarColor);
+}
+
+
+#CX3_POPOVER .popover_content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px;
+}
+
+#CX3_POPOVER .popover_content dl {
+  margin: 0;
+  padding: 0;
+}
+
+#CX3_POPOVER .popover_content dt {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 75%;
+  color: darkmagenta;
+}
+
+#CX3_POPOVER .popover_content dd {
+  margin-left: 10px;
+  margin-bottom: 10px;
+  font-size: 90%;
+  color: black;
+  white-space: unset;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  /* text-wrap: balance; */ /* Expreimental for CSS Text Module Level 4 */
+}
