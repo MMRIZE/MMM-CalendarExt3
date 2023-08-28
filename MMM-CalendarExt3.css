@@ -1,30 +1,27 @@
 .CX3 {
   /* you CAN modify these values; but SHOULD NOT to remove */
   --celllinecolor: #333;
-  --cellbgcolor: rgba(0, 0, 0, 0.2);
+  --cellbgcolor: rgb(0 0 0 / 20%);
   --cellheaderheight: 25px;
   --cellfooterheight: 2px;
-  --defaultcolor: #FFF;
+  --defaultcolor: #fff;
   --eventheight: calc(var(--fontsize) + 4px);
   --totalheight: calc(var(--eventheight) * var(--maxeventlines));
   --displayEndTime: none;
   --displayWeatherTemp: none;
+
   font-size: var(--fontsize);
   color: var(--defaultcolor);
-  line-height: calc(var(--eventheight))
+  line-height: calc(var(--eventheight));
 }
-
-
 
 .CX3 * {
   box-sizing: border-box;
 }
 
-
 .CX3_MAGIC {
   display: none;
 }
-
 
 .CX3.bodice {
   width: 100%;
@@ -33,23 +30,25 @@
 .CX3 .week {
   width: 100%;
   padding: 0 5px;
-  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
+  height: calc(
+    var(--cellheaderheight) + var(--cellfooterheight) +
+      calc(var(--eventheight) * var(--maxeventlines))
+  );
   position: relative;
 }
 
 .CX3 .weekGrid {
   display: grid;
   width: 100%;
-  grid-template-columns:
-    repeat(7, [cell-start] 1fr [cell-end])
-  ;
+  grid-template-columns: repeat(7, [cell-start] 1fr [cell-end]);
   grid-auto-columns: 0fr;
 }
 
 .CX3 .weekGridRow {
-  grid-template-rows:
-    repeat(var(--maxeventlines), [event-start] minmax(0, 1fr) [event-end])
-  ;
+  grid-template-rows: repeat(
+    var(--maxeventlines),
+    [event-start] minmax(0, 1fr) [event-end]
+  );
   grid-auto-rows: 0;
   overflow-y: hidden;
   grid-auto-flow: column dense;
@@ -58,7 +57,10 @@
 .CX3 .cellContainer {
   width: 100%;
   z-index: 1;
-  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
+  height: calc(
+    var(--cellheaderheight) + var(--cellfooterheight) +
+      calc(var(--eventheight) * var(--maxeventlines))
+  );
   position: absolute;
   top: 0;
   left: 0;
@@ -71,13 +73,15 @@
   left: 0;
   width: 100%;
   height: calc(var(--eventheight) * var(--maxeventlines));
-
 }
 
 .CX3 .cell {
   border: 1px solid var(--celllinecolor);
   background-color: var(--cellbgcolor);
-  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
+  height: calc(
+    var(--cellheaderheight) + var(--cellfooterheight) +
+      calc(var(--eventheight) * var(--maxeventlines))
+  );
 }
 
 .CX3 .cellHeader {
@@ -105,12 +109,16 @@
   color: goldenrod;
 }
 
+.CX3 .cw:not(.cwFirst) {
+  display: none;
+}
+
 .CX3 .cw::before {
-  content: 'CW '
+  content: "CW ";
 }
 
 .CX3 .cell.today {
-  border: 1px solid #FFF;
+  border: 1px solid #fff;
 }
 
 .CX3 .today .cellDate {
@@ -123,7 +131,7 @@
 }
 
 .CX3 .thisMonth {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgb(255 255 255 / 10%);
 }
 
 .CX3 .cellDate .literal {
@@ -146,9 +154,8 @@
   display: inline-block;
 }
 
-
 .CX3 .event {
-  margin: 1px 2px 1px 2px;
+  margin: 1px 2px;
   padding: 0 2px;
   text-align: left;
   grid-row: span 1;
@@ -156,7 +163,7 @@
   display: flex;
   justify-content: flex-start;
   gap: 2px;
-  text-overflow:ellipsis;
+  text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   min-width: 0;
@@ -176,7 +183,7 @@
 .CX3 .event .headline .title {
   font-size: 75%;
   font-weight: bold;
-  text-overflow:ellipsis;
+  text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   padding-left: 2px;
@@ -184,11 +191,11 @@
 }
 
 .CX3 .event .headline .symbol {
-  order:1;
+  order: 1;
 }
 
 .CX3 .event .headline .time {
-  order:2;
+  order: 2;
   display: inline-block;
 }
 
@@ -202,7 +209,7 @@
 
 .CX3 .event.singleday .headline:not(.useSymbol)::before,
 .CX3 .event.singleday .headline.useSymbol .symbol.noSymbol::before {
-  content: '⬤';
+  content: "⬤";
   color: var(--calendarColor);
   display: inline-block;
   padding-right: 2px;
@@ -232,7 +239,7 @@
   display: inline-block;
   padding-right: 2px;
   font-size: 75%;
-  color: #EEE;
+  color: #eee;
 }
 
 .CX3 .event .time {
@@ -252,16 +259,16 @@
   display: var(--displayEndTime);
 }
 
-
 .CX3 .event .startTime::after {
   display: var(--displayEndTime);
-  content: ' -';
+  content: " -";
 }
 
 .CX3 .event .startTime.notInDay + .endTime.inDay::before {
   display: var(--displayEndTime);
-  content: '- ';
+  content: "- ";
 }
+
 .CX3 .event.continueFromPreviousWeek .headline .time {
   display: none;
 }
@@ -271,7 +278,6 @@
   display: none;
 }
 
-
 .CX3 .event.passed {
   filter: brightness(0.6) grayscale(0.33);
 }
@@ -279,7 +285,6 @@
 .CX3 .event.current {
   filter: saturate(2);
 }
-
 
 .CX3 .weekday_0 {
   color: #933;
@@ -300,7 +305,7 @@
   align-self: center;
 }
 
-.CX3 .cellHeader .cellWeather .icon{
+.CX3 .cellHeader .cellWeather .icon {
   font-size: 100%;
   font-weight: bold;
 }
@@ -323,15 +328,15 @@
 }
 
 .CX3 .cellHeader .cellWeather .maxTemp::before {
-  content: ' \25b2';
+  content: " \25b2";
 }
 
 .CX3 .cellHeader .cellWeather .minTemp::before {
-  content: ' \25bc';
+  content: " \25bc";
 }
 
 .CX3 .cellHeader .cellWeather .temperature::after {
-  content: '° '
+  content: "° ";
 }
 
 .CX3 .legends {
@@ -340,7 +345,6 @@
   gap: 5px;
   justify-content: center;
   padding: 10px;
-
 }
 
 .CX3 .legends .legend {
@@ -369,7 +373,7 @@
   border-radius: 10px;
   border: 2px solid white;
   position: absolute;
-  box-shadow: 0 0 10px 0px #339;
+  box-shadow: 0 0 10px 0 #339;
 }
 
 #CX3_POPOVER:popover-open {
@@ -377,13 +381,19 @@
 }
 
 #CX3_POPOVER::backdrop {
-  background-color: rgba(127, 127, 127, 0.25);
+  background-color: rgb(127 127 127 / 25%);
   backdrop-filter: blur(5px);
 }
 
 @keyframes slideIn {
-  0% { opacity: 0; transform: translateY(-100px); }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 #CX3_POPOVER .popover_header {
@@ -397,16 +407,15 @@
   font-weight: bold;
 }
 
-#CX3_POPOVER .popover_header[data-is-fullday=true] {
+#CX3_POPOVER .popover_header[data-is-fullday="true"] {
   background-color: var(--calendarColor);
   color: var(--oppositeColor);
 }
 
-#CX3_POPOVER .popover_header[data-is-fullday=false] {
+#CX3_POPOVER .popover_header[data-is-fullday="false"] {
   background-color: var(--oppositeColor);
   color: var(--calendarColor);
 }
-
 
 #CX3_POPOVER .popover_content {
   display: flex;
@@ -435,5 +444,8 @@
   white-space: unset;
   overflow-wrap: break-word;
   hyphens: auto;
-  /* text-wrap: balance; */ /* Expreimental for CSS Text Module Level 4 */
+
+  /* text-wrap: balance; */
+
+ /* Expreimental for CSS Text Module Level 4 */
 }

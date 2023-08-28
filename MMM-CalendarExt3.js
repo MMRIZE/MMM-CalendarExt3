@@ -3,8 +3,9 @@ if (!popoverSupported) Log.info(`This browser doesn't support popover yet. Updat
 
 Module.register('MMM-CalendarExt3', {
   defaults: {
-    mode: 'week', // or 'month'
-    weekIndex: -1, // Which week from this week starts in a view. Ignored on mode 'month' 
+    mode: 'week', // or 'month', 'day'
+    weekIndex: -1, // Which week from this week starts in a view. Ignored on mode 'month'
+    dayIndex: -1,
     weeksInView: 3, //  How many weeks will be displayed. Ignored on mode 'month'
     instanceId: null,
     firstDayOfWeek: 1, // 0: Sunday, 1: Monday
@@ -56,6 +57,8 @@ Module.register('MMM-CalendarExt3', {
       dateStyle: 'short',
       timeStyle: 'short'
     },
+
+    displayCW: true,
   },
 
   defaulNotifications: {
@@ -72,18 +75,28 @@ Module.register('MMM-CalendarExt3', {
 
   getMoment: function() {
     let moment = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
-    moment = (this.mode === 'month') ?
-      new Date(moment.getFullYear(), moment.getMonth() + (this.stepIndex), 1) :
-      new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.stepIndex))
+
+    switch (this.mode) {
+      case 'day':
+        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + this.stepIndex)
+        break
+      case 'month':
+        moment = new Date(moment.getFullYear(), moment.getMonth() + this.stepIndex, 1)
+        break
+      case 'week':
+      default:
+        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.stepIndex))
+    }
     return moment
   },
 
   start: function() {
-    this.mode = (this.config.mode === 'month') ? 'month' : 'week'
+    this.mode = (['day', 'month', 'week'].includes(this.config.mode)) ? this.config.mode : 'week'
     this.locale = Intl.getCanonicalLocales(this.config.locale ?? config.language )?.[0] ?? ''
     this.instanceId = this.config.instanceId ?? this.identifier
     this.weekIndex = (this.mode === 'month') ? 0 : this.config.weekIndex
     this.weeksInView = (this.mode === 'month') ? 6 : this.config.weeksInView
+    this.dayIndex = (this.mode === 'day') ? this.config.dayIndex : 0
     this.stepIndex = 0
     this.fetchTimer = null
     this.refreshTimer = null
@@ -135,7 +148,7 @@ Module.register('MMM-CalendarExt3', {
       setTimeout(() => {
         this.updateDom(this.config.animationSpeed)
       }, this.config.waitFetch)
-      
+
     })
     /* append popover */
     if (popoverSupported) {
@@ -162,12 +175,12 @@ Module.register('MMM-CalendarExt3', {
     }).catch((err) => {
       Log.error('[CX3]', err)
     })
-    
+
     let popover = document.createElement('div')
     popover.id = 'CX3_POPOVER'
     popover.className = 'popover'
     popover.popover = "auto"
-    
+
     document.body.appendChild(popover)
   },
 
@@ -185,14 +198,11 @@ Module.register('MMM-CalendarExt3', {
     popover.appendChild(instance)
 
     let headline = popover.querySelector('#POPOVER_HEADER')
-    
+
     let eSymbol = eDom.querySelector('.symbol').cloneNode(true)
     headline.appendChild(eSymbol)
     let eTitle = eDom.querySelector('.title').cloneNode(true)
     headline.appendChild(eTitle)
-
-    let calendarColor = eDom.style.getPropertyValue('--calendarColor')
-    let oppositeColor = eDom.style.getPropertyValue('--oppositeColor')
 
     headline.style.setProperty('--calendarColor', eDom.style.getPropertyValue('--calendarColor'))
     headline.style.setProperty('--oppositeColor', eDom.style.getPropertyValue('--oppositeColor'))
@@ -217,7 +227,7 @@ Module.register('MMM-CalendarExt3', {
         return prev
       }, '')
     }
-    
+
     let opened = document.querySelectorAll('[popover-opened]')
     for (const o of Array.from(opened)) {
       o.hidePopover()
@@ -241,7 +251,7 @@ Module.register('MMM-CalendarExt3', {
       config: this.config
     })
   },
-  
+
   notificationReceived: function(notification, payload, sender) {
     if (notification === this.notifications.eventNotification) {
       let conveertedPayload = this.notifications.eventPayload(payload)
@@ -249,7 +259,7 @@ Module.register('MMM-CalendarExt3', {
         this._receiveFirstData({payload: conveertedPayload, sender})
       }
       if (this?.library?.loaded) {
-        this.fetch(conveertedPayload, sender)  
+        this.fetch(conveertedPayload, sender)
       } else {
         Log.warn('[CX3] Module is not prepared yet, wait a while.')
       }
@@ -258,7 +268,7 @@ Module.register('MMM-CalendarExt3', {
     if (notification === 'MODULE_DOM_CREATED') {
       this._domReady()
     }
-    
+
     if (notification === 'CX3_MOVE_CALENDAR' || notification === 'CX3_GLANCE_CALENDAR') {
       if (notification === 'CX3_MOVE_CALENDAR') {
         Log.warn (`[DEPRECATED]'CX3_MOVE_CALENDAR' notification will be deprecated. Use 'CX3_GLANCE_CALENDAR' instead.`)
@@ -274,7 +284,7 @@ Module.register('MMM-CalendarExt3', {
         this.tempMoment = new Date(payload?.date ?? null)
         this.stepIndex = 0
         this.updateDom(this.config.animationSpeed)
-      } 
+      }
     }
 
     if (notification === 'CX3_RESET') {
@@ -342,6 +352,8 @@ Module.register('MMM-CalendarExt3', {
       // gapFromToday, renderEventAgenda, eventsByDate, makeWeatherDOM, getRelativeDate, 
     } = this.library
 
+    const startDayOfWeek = getBeginOfWeek(new Date(), config).getDay()
+
     dom.innerHTML = ''
 
     const makeCellDom = (d, seq) => {
@@ -358,16 +370,17 @@ Module.register('MMM-CalendarExt3', {
         'weekday_' + tm.getDay()
       )
       cell.dataset.date = new Date(tm.getFullYear(), tm.getMonth(), tm.getDate()).valueOf()
-      
+
       let h = document.createElement('div')
       h.classList.add('cellHeader')
 
       let cwDom = document.createElement('div')
-      if (seq === 0) {
-        cwDom.innerHTML = getWeekNo(tm, config)
-        cwDom.classList.add('cw')
+      cwDom.innerHTML = getWeekNo(tm, config)
+      cwDom.classList.add('cw')
+      if (tm.getDay() === startDayOfWeek) {
+        cwDom.classList.add('cwFirst')
       }
-      
+
       h.appendChild(cwDom)
 
       let forecasted = this.forecast.find((e) => {
@@ -401,7 +414,7 @@ Module.register('MMM-CalendarExt3', {
       dateDom.innerHTML = dateHTML
 
       h.appendChild(dateDom)
-      
+
       let b = document.createElement('div')
       b.classList.add('cellBody')
 
@@ -414,15 +427,28 @@ Module.register('MMM-CalendarExt3', {
       return cell
     }
 
-    let moment = this.getMoment()
+    const rangeCalendar = (mode, moment, config) => {
+      let boc, eoc
+      switch (mode) {
+        case 'day': 
+          boc = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + this.dayIndex)
+          eoc = new Date(boc.valueOf()).setDate(boc.getDate() + 7 * (this.weeksInView) - 1)
+          break
+        case 'month':
+          boc = getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1), config)
+          eoc = getEndOfWeek(new Date(moment.getFullYear(), moment.getMonth() + 1, 0), config)
+          break
+        case 'week':
+        default:
+          boc = getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.weekIndex)), config)
+          eoc = getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (this.weeksInView - 1))), config)
+          break
+      }
+      return { boc, eoc }
+    }
 
-    let boc = (this.mode === 'month') ?
-      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1), config) :
-      getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * this.weekIndex)), config)
-    
-    let eoc = (this.mode === 'month') ?
-      getEndOfWeek(new Date(moment.getFullYear(), moment.getMonth() + 1, 0), config) :
-      getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (this.weeksInView - 1))), config)
+    let moment = this.getMoment()
+    let { boc, eoc } = rangeCalendar(this.mode, moment, config)
 
     let events = prepareEvents({
       storedEvents: this.storedEvents,

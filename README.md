@@ -28,21 +28,16 @@ My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty 
 - multi-instance available. You don't need to copy and rename the module. Just add one more configuration in your `config.js`.
 
 
-## Install
+## Install OR Update
 ```sh
 cd ~/MagicMirror/modules
 git clone https://github.com/MMRIZE/MMM-CalendarExt3
 npm install
+git submodule update --init --recursive
 ```
+> Usually, the last line is needless because it would be executed automatically in `npm install` , but many people forgot to execute `npm install`, so I'm exaggarating.
 
-## Update
-```sh
-cd ~/MagicMirror/modules/MMM-CalendarExt3
-git pull
-npm install
-```
-
-When some `submodule` is not updated, try this.
+When some `submodule` seems not installed and updated properly, try this.
 ```sh
 cd ~/MagicMirror/modules/MMM-CalendarExt3
 git submodule update --init --recursive
@@ -105,8 +100,9 @@ All the properties are omittable, and if omitted, a default value will be applie
 
 |**property**|**default**|**description**|
 |---|---|---|
-|`mode`| 'week' | Calendar view type. You can choose between 'week' and 'month'|
-|`weekIndex`| -1 | Which week starts in a view. `-1` is the previous week of the current focusing moment. `0` is the focusing week of the moment. `1` will be the next week, and so on.<br>Ignored on `mode:'month'`|
+|`mode`| 'week' | Calendar view type. You can choose between 'week', 'month', 'day'|
+|`weekIndex`| -1 | Which week starts in a `week` view. `-1` is the previous week of the current focusing moment. `0` is the focusing week of the moment. `1` will be the next week, and so on.<br>Ignored on `mode:'month'` and `mode:'week'`.|
+|`dayIndex` | -1 | Which day starts in a `day` view. `-1` is the previous day of the current focusing moment, `0` is the focusing day of the moment. `1` will be the next day, and so on.<br> Ignored on `mode:'month'` and `mode:'week'`.|
 |`weeksInView` | 3 | How many weeks from the index. <br> `weekIndex:-1`, `weeksInView:3` means 3 weeks view from the last week. <br> Ignored on `mode:'month'`|
 |`instanceId` | (auto-generated) | When you want more than 1 instance of this module, each instance would need this value to distinguish each other. If you don't assign this property, the `identifier` of the module instance will be assigned automatically but not recommended to use it. (Hard to guess the auto-assigned value.)|
 |`firstDayOfWeek`| 1 | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 |
@@ -141,6 +137,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`popoverTemplate`| './popover.html' | If you want to change the template of popover, use this. (Usually not needed) |
 |`popoverPeriodOptions`| {timeStyle: 'short', dateStyle: 'short'} | The format of period of event time on popover displayed,<br> It varies by the `locale` and the period itself how consisted. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`popoverTimeout`| 5000 | (ms) The popover has `light dismiss` but for the convenience, I added timeout dismission. <br>`0` will not dismiss popover forever unless other popover activated or you dismiss popover by click outside manually |
+
 
 
 ## Notification
@@ -417,6 +414,9 @@ customCommands: [
 - I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
+
+### 1.5.0 (2023-08-29)
+- **ADDED** `day` view implemented. (calendar starts from today)
 
 ### 1.4.0 (2023-06-04)
 ![popover](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/CX3_1.4.0.png)
