@@ -138,7 +138,8 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`popoverTemplate`| './popover.html' | If you want to change the template of popover, use this. (Usually not needed) |
 |`popoverPeriodOptions`| {timeStyle: 'short', dateStyle: 'short'} | The format of period of event time on popover displayed,<br> It varies by the `locale` and the period itself how consisted. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`popoverTimeout`| 5000 | (ms) The popover has `light dismiss` but for the convenience, I added timeout dismission. <br>`0` will not dismiss popover forever unless other popover activated or you dismiss popover by click outside manually |
-
+|`animateIn` | 'fadeIn' | Animation effect on refresh. (Since MM 2.25) |
+|`animateOut` | 'fadeOut' | Animation effect on refresh. (Since MM 2.25) |
 
 
 ## Notification
@@ -415,6 +416,10 @@ customCommands: [
 - I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
+
+### 1.6.0 (2023-10-04)
+- **ADDED** `animateIn` and `animateOut` for animation effect (Since MM 2.25)
+- **ADDED** A fallback of `HTMLElement` check. (For MMM-Remote-Control or Not-Browser environment)
 
 ### 1.5.0 (2023-08-29)
 - **ADDED** `day` view implemented. (calendar starts from today)

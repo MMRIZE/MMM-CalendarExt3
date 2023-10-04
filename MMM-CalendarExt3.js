@@ -1,6 +1,6 @@
-const popoverSupported = HTMLElement.prototype.hasOwnProperty('popover')
+const popoverSupported = (typeof HTMLElement !== 'undefined') ? HTMLElement.prototype.hasOwnProperty('popover') : false
 if (!popoverSupported) Log.info(`This browser doesn't support popover yet. Update your system.`)
-
+const animationSupported = (typeof window !== 'undefined' && window?.mmVersion) ? +(window.mmVersion.split('.').join('')) >= 2250 : false
 Module.register('MMM-CalendarExt3', {
   defaults: {
     mode: 'week', // or 'month', 'day'
@@ -34,12 +34,11 @@ Module.register('MMM-CalendarExt3', {
     refreshInterval: 1000 * 60 * 10, // too frequent refresh. 10 minutes is enough.
     waitFetch: 1000 *  5,
     glanceTime: 1000 * 60, // deprecated, use refreshInterval instead.
-    animationSpeed: 1000,
+    animationSpeed: 2000,
     useSymbol: true,
     displayLegend: false,
     useWeather: true,
     weatherLocationName: null,
-
     //notification: 'CALENDAR_EVENTS', /* reserved */
 
     manipulateDateCell: (cellDom, events) => {},
@@ -59,6 +58,8 @@ Module.register('MMM-CalendarExt3', {
     },
 
     displayCW: true,
+    animateIn: 'fadeIn',
+    animateOut: 'fadeOut',
   },
 
   defaulNotifications: {
@@ -146,7 +147,7 @@ Module.register('MMM-CalendarExt3', {
 
     Promise.allSettled([_firstFetched]).then (() => {
       setTimeout(() => {
-        this.updateDom(this.config.animationSpeed)
+        this.updateAnimate()
       }, this.config.waitFetch)
 
     })
@@ -275,7 +276,7 @@ Module.register('MMM-CalendarExt3', {
       }
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
         this.stepIndex += payload?.step ?? 0
-        this.updateDom(this.config.animationSpeed)
+        this.updateAnimate()
       }
     }
 
@@ -283,7 +284,7 @@ Module.register('MMM-CalendarExt3', {
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
         this.tempMoment = new Date(payload?.date ?? null)
         this.stepIndex = 0
-        this.updateDom(this.config.animationSpeed)
+        this.updateAnimate()
       }
     }
 
@@ -291,7 +292,7 @@ Module.register('MMM-CalendarExt3', {
       if (payload?.instanceId === this.config.instanceId || !payload?.instanceId) {
         this.tempMoment = null
         this.stepIndex = 0
-        this.updateDom(this.config.animationSpeed)
+        this.updateAnimate()
       }
     }
 
@@ -336,7 +337,7 @@ Module.register('MMM-CalendarExt3', {
         this.refreshTimer = null
         this.tempMoment = null
         this.stepIndex = 0
-        this.updateDom(this.config.animationSpeed)
+        this.updateAnimate()
       }, this.config.refreshInterval)
     } else {
       Log.warn('[CX3] Module is not prepared yet, wait a while.')
@@ -597,5 +598,21 @@ Module.register('MMM-CalendarExt3', {
       return new Intl.DateTimeFormat(this.locale, this.config.headerTitleOptions).format(new Date(moment.valueOf()))
     }
     return this.data.header
+  },
+
+  updateAnimate: function () {
+    this.updateDom(
+      (!animationSupported)
+        ? this.config.animationSpeed
+        : {
+          options: {
+            speed: this.config.animationSpeed,
+            animate: {
+              in: this.config.animateIn,
+              out: this.config.animateOut
+            }
+          }
+        }
+    )
   }
 })
