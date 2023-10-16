@@ -58,7 +58,7 @@ let config = {
 				]
 			}
 		},
-    {
+		{
 			module: "MMM-CalendarExt3",
 			position: "bottom_bar",
 			title: "my calendars",
