@@ -433,7 +433,9 @@ Module.register('MMM-CalendarExt3', {
       switch (mode) {
         case 'day': 
           boc = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + this.dayIndex)
-          eoc = new Date(boc.valueOf()).setDate(boc.getDate() + 7 * (this.weeksInView) - 1)
+          eoc = new Date(boc.valueOf())
+          eoc.setDate(boc.getDate() + 7 * this.weeksInView)
+          eoc.setMilliseconds(-1)
           break
         case 'month':
           boc = getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1), config)
