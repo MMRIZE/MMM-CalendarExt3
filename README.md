@@ -416,6 +416,8 @@ customCommands: [
 - I'll add `TimeLine` and `TimeTable` views/extended modules in future.
 
 ## History
+### 1.6.1 (2023-10-19)
+- **FIXED** A bug of missing events of last day in `day` view.
 
 ### 1.6.0 (2023-10-04)
 - **ADDED** `animateIn` and `animateOut` for animation effect (Since MM 2.25)
