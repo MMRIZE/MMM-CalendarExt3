@@ -56,7 +56,6 @@
 
 .CX3 .cellContainer {
   width: 100%;
-  z-index: 1;
   height: calc(
     var(--cellheaderheight) + var(--cellfooterheight) +
       calc(var(--eventheight) * var(--maxeventlines))
@@ -67,7 +66,7 @@
 }
 
 .CX3 .eventContainer {
-  z-index: 10;
+  z-index: 20;
   position: absolute;
   bottom: var(--cellfooterheight);
   left: 0;
@@ -82,6 +81,25 @@
     var(--cellheaderheight) + var(--cellfooterheight) +
       calc(var(--eventheight) * var(--maxeventlines))
   );
+  position: relative;
+}
+
+.CX3 .cell.hasMore::after {
+  counter-reset: more var(--more);
+  content: counter(more);
+  display: block;
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  color: black;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 9px;
+  background-color: white;
+  z-index: 30;
+  text-overflow: "+";
 }
 
 .CX3 .cellHeader {
@@ -235,16 +253,24 @@
   display: none;
 }
 
-.CX3 .event:not(.fullday) .headline .time {
+.CX3 .event.singleday .headline .time {
   display: inline-block;
   padding-right: 2px;
   font-size: 75%;
-  color: #eee;
+  color: var(--defaultColor);
+}
+
+.CX3 .event.multiday .headline .startTime {
+  display: inline-block;
+  padding-right: 2px;
+  font-size: 75%;
+  color: var(--oppositeColor);
 }
 
 .CX3 .event .time {
   font-size: 75%;
   vertical-align: text-bottom;
+  width: fit-content;
 }
 
 .CX3 .event .time.notInDay {
@@ -273,25 +299,35 @@
   display: none;
 }
 
+.CX3 .event.multiday:not(.continueToNextWeek) .headline .endTime {
+  display: inherit;
+  order: 4;
+  margin-left: auto;
+}
+
 .CX3 .event .description,
 .CX3 .event .location {
   display: none;
 }
 
 .CX3 .event.passed {
-  filter: brightness(0.6) grayscale(0.33);
+  filter: brightness(0.8) grayscale(0.5);
 }
 
 .CX3 .event.current {
   filter: saturate(2);
 }
 
-.CX3 .weekday_0 {
-  color: #933;
+.CX3 .weekend {
+  font-weight: bold;
 }
 
-.CX3 .weekday_6 {
-  color: #339;
+.CX3 .weekend_2 {
+  color: crimson;
+}
+
+.CX3 .weekend_1 {
+  color: dodgerblue;
 }
 
 .CX3 .cellHeader .cellDate {
@@ -367,17 +403,22 @@
 
 #CX3_POPOVER {
   max-width: 50%;
+  min-width: 25%;
   height: fit-content;
-  background-color: lightgray;
-  padding: 10px;
+  max-height: calc(max(fit-content, 80%) - 20px);
+  background-color: white;
   border-radius: 10px;
-  border: 2px solid white;
   position: absolute;
-  box-shadow: 0 0 10px 0 #339;
+  box-shadow: 5px 5px 20px 0 #000;
+  font-size: 90%;
+}
+
+#CX3_POPOVER[popover] {
+  padding: 0;
 }
 
 #CX3_POPOVER:popover-open {
-  animation: slideIn 200ms ease-in-out;
+  animation: slideIn 0.5s ease-in-out;
 }
 
 #CX3_POPOVER::backdrop {
@@ -388,7 +429,7 @@
 @keyframes slideIn {
   0% {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateY(200px);
   }
 
   100% {
@@ -396,47 +437,47 @@
   }
 }
 
-#CX3_POPOVER .popover_header {
+#CX3_POPOVER .header {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   gap: 5px;
-  border-bottom: 1px solid darkgray;
   font-size: 150%;
   font-weight: bold;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: white;
+  background-color: black;
 }
 
-#CX3_POPOVER .popover_header[data-is-fullday="true"] {
+#CX3_POPOVER .header[data-is-fullday="true"] {
   background-color: var(--calendarColor);
   color: var(--oppositeColor);
 }
 
-#CX3_POPOVER .popover_header[data-is-fullday="false"] {
+#CX3_POPOVER .header[data-is-fullday="false"] {
   background-color: var(--oppositeColor);
   color: var(--calendarColor);
 }
 
-#CX3_POPOVER .popover_content {
+#CX3_POPOVER .content {
   display: flex;
   flex-direction: column;
   gap: 5px;
   padding: 20px;
+  background-color: white;
+  overflow-y: auto;
 }
 
-#CX3_POPOVER .popover_content dl {
-  margin: 0;
-  padding: 0;
-}
-
-#CX3_POPOVER .popover_content dt {
+#CX3_POPOVER .content .name {
   font-weight: bold;
   text-transform: uppercase;
   font-size: 75%;
   color: darkmagenta;
 }
 
-#CX3_POPOVER .popover_content dd {
+#CX3_POPOVER .content .value {
   margin-left: 10px;
   margin-bottom: 10px;
   font-size: 90%;
@@ -444,8 +485,47 @@
   white-space: unset;
   overflow-wrap: break-word;
   hyphens: auto;
+  text-wrap: balance;
+  overflow-y: hidden;
 
   /* text-wrap: balance; */
 
- /* Expreimental for CSS Text Module Level 4 */
+  /* Expreimental for CSS Text Module Level 4 */
+}
+
+#CX3_POPOVER .content .list {
+  margin: 0;
+  padding: 0;
+}
+
+#CX3_POPOVER .content .eventItem {
+  margin-bottom: 5px;
+}
+
+#CX3_POPOVER .eventItem {
+  display: flex;
+  flex-flow: row wrap;
+  list-style: none;
+}
+
+#CX3_POPOVER .eventItem .symbol {
+  color: var(--calendarColor);
+  font-weight: bold;
+}
+
+#CX3_POPOVER .eventItem .title {
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+#CX3_POPOVER .eventItem .time {
+  flex-basis: 100%;
+}
+
+#CX3_POPOVER .eventItem .full {
+  margin-left: 30px;
+}
+
+::-webkit-scrollbar {
+  all: unset;
 }
