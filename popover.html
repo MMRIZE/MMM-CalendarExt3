@@ -1,17 +1,38 @@
-<div class="popover">
-  <div class="popover_header" id="POPOVER_HEADER">
+<template id="CX3_T_POPOVER">
+<div class="popover" id="CX3_POPOVER" popover="auto">
+  <div class="container"></div>
+  <template id="CX3_T_EVENTDETAIL">
+  <div class="header">
+    <div class="symbol"></div>
+    <div class="title"></div>
   </div>
-  <div class="popover_content" id="POPOVER_CONTENT">
-    <dl class="criteria">
-      <dt group="period">PERIOD</dt>
-      <dd group="period" class="period" id="POPOVER_PERIOD"></dd>
-      <dt group="description">DESCRIPTION</dt>
-      <dd group="description" class="description" id="POPOVER_DESCRIPTION"></dd>
-      <dt group="location">LOCATION</dt>
-      <dd group="location" class="location" id="POPOVER_LOCATION"></dd>
-      <dt group="calendar">CALENDAR</dt>
-      <dd group="calendar" class="calendar" id="POPOVER_CALENDAR"></dd>
-    </dl>
-    <!-- currently only period, description, location, calendar are templated -->
+  <div class="content">
+    <dl class="criteria"></dl>
+    <template id="CX3_T_CRITERIA">
+      <div class="criteriaItem">
+        <dt class="name"></dt>
+        <dd class="value"></dd>
+      </div>
+    </template>
   </div>
+  </template>
+  <template id="CX3_T_EVENTLIST">
+  <div class="header">
+    <div class="date"></div>
+  </div>
+  <div class="content">
+    <ul class="list"></ul>
+    <template id="CX3_T_EVENTITEM">
+      <li class="eventItem">
+        <div class="symbol part"></div>
+        <div class="title part"></div>
+        <div class="time full"></div>
+        <div class="description full"></div>
+        <div class="location full"></div>
+      </li>
+    </template>
+  </div>
+  </template>
 </div>
+</template>
+

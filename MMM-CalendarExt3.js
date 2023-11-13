@@ -1,5 +1,7 @@
+/* Global Log, Module, config */
+
 const popoverSupported = (typeof HTMLElement !== 'undefined') ? HTMLElement.prototype.hasOwnProperty('popover') : false
-if (!popoverSupported) Log.info(`This browser doesn't support popover yet. Update your system.`)
+if (!popoverSupported) console.info(`This browser doesn't support popover yet. Update your system.`)
 const animationSupported = (typeof window !== 'undefined' && window?.mmVersion) ? +(window.mmVersion.split('.').join('')) >= 2250 : false
 Module.register('MMM-CalendarExt3', {
   defaults: {
@@ -8,8 +10,9 @@ Module.register('MMM-CalendarExt3', {
     dayIndex: -1,
     weeksInView: 3, //  How many weeks will be displayed. Ignored on mode 'month'
     instanceId: null,
-    firstDayOfWeek: 1, // 0: Sunday, 1: Monday
-    minimalDaysOfNewYear: 4, // When the first week of new year starts in your country.
+    firstDayOfWeek: null, // 0: Sunday, 1: Monday
+    minimalDaysOfNewYear: null, // When the first week of new year starts in your country.
+    weekends: [], // or [0, 6]. 0: Sunday, 6: Saturday
     locale: null, // 'de' or 'en-US' or prefer array like ['en-CA', 'en-US', 'en']
     cellDateOptions: {
       month: 'short',
@@ -32,7 +35,7 @@ Module.register('MMM-CalendarExt3', {
     eventSorter: null,
     eventTransformer: (ev) => { return ev },
     refreshInterval: 1000 * 60 * 10, // too frequent refresh. 10 minutes is enough.
-    waitFetch: 1000 *  5,
+    waitFetch: 1000 * 5,
     glanceTime: 1000 * 60, // deprecated, use refreshInterval instead.
     animationSpeed: 2000,
     useSymbol: true,
@@ -41,7 +44,7 @@ Module.register('MMM-CalendarExt3', {
     weatherLocationName: null,
     //notification: 'CALENDAR_EVENTS', /* reserved */
 
-    manipulateDateCell: (cellDom, events) => {},
+    manipulateDateCell: (cellDom, events) => { },
     weatherNotification: 'WEATHER_UPDATED',
     weatherPayload: (payload) => { return payload },
     eventNotification: 'CALENDAR_EVENTS',
@@ -51,15 +54,22 @@ Module.register('MMM-CalendarExt3', {
     displayWeatherTemp: false,
 
     popoverTemplate: './popover.html',
-    popoverTimeout: 5000,
+    popoverTimeout: 1000 * 30,
     popoverPeriodOptions: {
       dateStyle: 'short',
       timeStyle: 'short'
+    },
+    popoverDateOptions: {
+      dateStyle: 'full',
     },
 
     displayCW: true,
     animateIn: 'fadeIn',
     animateOut: 'fadeOut',
+
+    skipPassedEventToday: false,
+    showMore: true,
+    useIconify: true,
   },
 
   defaulNotifications: {
@@ -76,7 +86,6 @@ Module.register('MMM-CalendarExt3', {
 
   getMoment: function() {
     let moment = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
-
     switch (this.mode) {
       case 'day':
         moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + this.stepIndex)
@@ -104,6 +113,14 @@ Module.register('MMM-CalendarExt3', {
     this.tempMoment = null
     this.forecast = []
     this.eventPool = new Map()
+    this.popoverTimer = null
+
+    const calInfo = new Intl.Locale(this.locale)
+    if (calInfo?.weekInfo) {
+      this.config.firstDayOfWeek = (this.config.firstDayOfWeek !== null) ? this.config.firstDayOfWeek : (calInfo.weekInfo?.firstDay ?? 1)
+      this.config.minimalDaysOfNewYear = (this.config.minimalDaysOfNewYear !== null) ? this.config.minimalDaysOfNewYear : (calInfo.weekInfo?.minimalDays ?? 4)
+      this.config.weekends = ((Array.isArray(this.config.weekends) && this.config.weekends?.length) ? this.config.weekends : (calInfo.weekInfo?.weekend ?? [])).map(d => d % 7)
+    }
 
     this.notifications = {
       weatherNotification: this.config.weatherNotification ?? this.defaulNotifications.weatherNotification,
@@ -118,6 +135,7 @@ Module.register('MMM-CalendarExt3', {
       import('/' + this.file('CX3_Shared/CX3_shared.mjs')).then((m) => {
         this.library = m
         this.library.initModule(this, config.language)
+        if (this.config.useIconify) this.library.prepareIconify()
         resolve()
       }).catch((err) => {
         Log.error(err)
@@ -153,94 +171,133 @@ Module.register('MMM-CalendarExt3', {
     })
     /* append popover */
     if (popoverSupported) {
-      document.body.addEventListener('click', (ev) => {
-        let eDom = ev.target.closest('.event[data-popoverble=true]')
-        if (eDom) return this.activatePopover(eDom)
-        return
-      })
       this.preparePopover()
     }
   },
 
-  preparePopover: function() {
+  preparePopover: function () {
     if (!popoverSupported) return
     if (document.getElementById('CX3_POPOVER')) return
 
     fetch(this.file(this.config.popoverTemplate)).then((response) => {
       return response.text()
-    }).then((html) => {
-      let template = document.createElement('template')
-      template.innerHTML = html
-      template.id = 'CX3_POPOVER_TEMPLATE'
-      document.body.appendChild(template)
+    }).then((text) => {
+      const template = new DOMParser().parseFromString(text, 'text/html').querySelector('#CX3_T_POPOVER').content.querySelector('.popover')
+      const popover = document.importNode(template, true)
+      popover.id = 'CX3_POPOVER'
+      document.body.appendChild(popover)
+      popover.ontoggle = (ev) => {
+        if (this.popoverTimer) {
+          clearTimeout(this.popoverTimer)
+          this.popoverTimer = null
+        }
+        if (ev.newState === 'open') {
+          this.popoverTimer = setTimeout(() => {
+            try {
+              popover.hidePopover()
+              popover.querySelector('.container').innerHTML = ''
+            } catch (e) {
+              // do nothing
+            }
+          }, this.config.popoverTimeout)
+        } else { // closed
+          popover.querySelector('.container').innerHTML = ''
+        }
+      }
     }).catch((err) => {
       Log.error('[CX3]', err)
     })
-
-    let popover = document.createElement('div')
-    popover.id = 'CX3_POPOVER'
-    popover.className = 'popover'
-    popover.popover = "auto"
-
-    document.body.appendChild(popover)
   },
 
-  activatePopover: function (eDom) {
-    let template = document.getElementById('CX3_POPOVER_TEMPLATE')
-    if (!template) {
-      Log.warn('[CX3] No popover template found.')
-      return
-    }
+  dayPopover(cDom, events, config) {
+    const popover = document.getElementById('CX3_POPOVER')
+    if (!popover) return
+    const container = popover.querySelector('.container')
+    container.innerHTML = ''
+    const ht = popover.querySelector('template#CX3_T_EVENTLIST').content.cloneNode(true)
+    container.appendChild(document.importNode(ht, true))
+    let header = container.querySelector('.header')
+    header.innerHTML = new Intl.DateTimeFormat(this.locale, { dateStyle: 'full' }).formatToParts(new Date(+cDom.dataset.date))
+    .reduce((prev, cur, curIndex, arr) => {
+      prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
+      return prev
+    }, '')
 
-    let instance = template.content.cloneNode(true)
+    let list = container.querySelector('.list')
+    list.innerHTML = ''
+    const { renderEventAgenda, renderSymbol } = this.library
+    const moment = new Date()
+    events.forEach((e) => {
+      pOption = (e.fullDayEvent) ? { dateStyle: 'short' } : { dateStyle: 'short', timeStyle: 'short' }
 
-    let popover = document.getElementById('CX3_POPOVER')
-    popover.innerHTML = ''
-    popover.appendChild(instance)
-
-    let headline = popover.querySelector('#POPOVER_HEADER')
-
-    let eSymbol = eDom.querySelector('.symbol').cloneNode(true)
-    headline.appendChild(eSymbol)
-    let eTitle = eDom.querySelector('.title').cloneNode(true)
-    headline.appendChild(eTitle)
-
-    headline.style.setProperty('--calendarColor', eDom.style.getPropertyValue('--calendarColor'))
-    headline.style.setProperty('--oppositeColor', eDom.style.getPropertyValue('--oppositeColor'))
-    headline.dataset.isFullday = eDom.dataset.fullDayEvent
-
-    let location = popover.querySelector('#POPOVER_CONTENT .location')
-    if (location) location.innerHTML = eDom.dataset.location
-
-    let description = popover.querySelector('#POPOVER_CONTENT .description')
-    if (description) description.innerHTML = eDom.dataset.description
-
-    let calendar = popover.querySelector('#POPOVER_CONTENT .calendar')
-    if (calendar) calendar.innerHTML = eDom.dataset.calendarName
-
-    let period = popover.querySelector('#POPOVER_CONTENT .period')
-    if (period) {
-      let start = new Date(+(eDom.dataset.startDate))
-      let end = new Date(+(eDom.dataset.endDate))
-
-      period.innerHTML = new Intl.DateTimeFormat(this.locale, this.config.popoverPeriodOptions).formatRangeToParts(start, end).reduce((prev, cur, curIndex, arr) => {
+      const item = popover.querySelector('template#CX3_T_EVENTITEM').content.firstElementChild.cloneNode(true)
+      item.style.setProperty('--calendarColor', e.color)
+      item.classList.add('event')
+      const symbol = item.querySelector('.symbol')
+      renderSymbol(symbol, e, config)
+      const time = item.querySelector('.time')
+      time.innerHTML = new Intl.DateTimeFormat(this.locale, pOption).formatRangeToParts(new Date(+e.startDate), new Date(+e.endDate))
+      .reduce((prev, cur, curIndex, arr) => {  
         prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
         return prev
       }, '')
-    }
+      const title = item.querySelector('.title')
+      title.innerHTML = e.title
+      list.appendChild(item)
+    })
 
+    this.activatePopover(popover)
+  },
+
+  eventPopover: function (eDom) {
+    const popover = document.getElementById('CX3_POPOVER')
+    if (!popover) return
+    const container = popover.querySelector('.container')
+    container.innerHTML = ''
+    const ht = popover.querySelector('template#CX3_T_EVENTDETAIL').content.cloneNode(true)
+    container.appendChild(document.importNode(ht, true))
+    let eSymbol = eDom.querySelector('.symbol').cloneNode(true)
+    container.querySelector('.symbol').appendChild(eSymbol)
+    let eTitle = eDom.querySelector('.title').cloneNode(true)
+    container.querySelector('.title').appendChild(eTitle)
+    let header = container.querySelector('.header')
+    header.style.setProperty('--calendarColor', eDom.style.getPropertyValue('--calendarColor'))
+    header.style.setProperty('--oppositeColor', eDom.style.getPropertyValue('--oppositeColor'))
+    header.dataset.isFullday = eDom.dataset.fullDayEvent
+
+    let criteria = container.querySelector('.criteria')
+    criteria.innerHTML = ''
+    const ps = ['location', 'description', 'calendar']
+    ps.forEach((c) => {
+      if (eDom.dataset[ c ]) {
+        const ct = popover.querySelector('template#CX3_T_CRITERIA').content.firstElementChild.cloneNode(true)
+        ct.querySelector('.name').innerHTML = c
+        ct.querySelector('.value').innerHTML = eDom.dataset[ c ]
+        criteria.appendChild(document.importNode(ct, true))
+      }
+    })
+
+    let start = new Date(+(eDom.dataset.startDate))
+    let end = new Date(+(eDom.dataset.endDate))
+    const ct = popover.querySelector('template#CX3_T_CRITERIA').content.firstElementChild.cloneNode(true)
+    const n = criteria.appendChild(document.importNode(ct, true))
+    n.classList.add('period')
+    n.querySelector('.name').innerHTML = 'period'
+    pOption = (eDom.dataset.fullDayEvent === 'true') ? { dateStyle: 'short' } : { dateStyle: 'short', timeStyle: 'short' }
+    n.querySelector('.value').innerHTML = new Intl.DateTimeFormat(this.locale, pOption).formatRangeToParts(start, end)
+    .reduce((prev, cur, curIndex, arr) => {
+      prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
+      return prev
+    }, '')
+    this.activatePopover(popover)
+  },
+
+  activatePopover: function (popover) {
     let opened = document.querySelectorAll('[popover-opened]')
     for (const o of Array.from(opened)) {
       o.hidePopover()
     }
     popover.showPopover()
-    setTimeout(() => {
-      try {
-        popover.hidePopover()
-      } catch (e) {
-        // do nothing
-      }
-    }, this.config.popoverTimeout)
   },
 
   fetch: function(payload, sender) {
@@ -371,7 +428,9 @@ Module.register('MMM-CalendarExt3', {
         'weekday_' + tm.getDay()
       )
       cell.dataset.date = new Date(tm.getFullYear(), tm.getMonth(), tm.getDate()).valueOf()
-
+      this.config.weekends.forEach((w, i) => {
+        if (tm.getDay() === w) cell.classList.add('weekend', 'weekend_' + (i + 1))
+      })
       let h = document.createElement('div')
       h.classList.add('cellHeader')
 
@@ -468,6 +527,9 @@ Module.register('MMM-CalendarExt3', {
       let day = (dm.getDay() + 7) % 7
       let dDom = document.createElement('div')
       dDom.classList.add('weekday', 'weekday_' + day)
+      this.config.weekends.forEach((w, i) => {
+        if (day === w) dDom.classList.add('weekend', 'weekend_' + (i + 1))
+      })
       dDom.innerHTML = new Intl.DateTimeFormat(this.locale, this.config.headerWeekDayOptions).format(dm)
       dayDom.appendChild(dDom)
     }
@@ -502,12 +564,17 @@ Module.register('MMM-CalendarExt3', {
       })
 
       for (let event of eventsOfWeek) {
+        if (event?.skip) continue
+        if (config.skipPassedEventToday) {
+          if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) continue
+        }
         let eDom = renderEventAgenda(
           event,
           {
             useSymbol: config.useSymbol,
             eventTimeOptions: config.eventTimeOptions,
-            locale: this.locale
+            locale: this.locale,
+            useIconify: config.useIconify,
           },
           moment
         )
@@ -532,24 +599,15 @@ Module.register('MMM-CalendarExt3', {
 
         eDom.style.gridColumnStart = startLine + 1
         eDom.style.gridColumnEnd = endLine + 1
-        
+
         if (popoverSupported) {
           if (!eDom.id) eDom.id = eDom.dataset.calendarSeq + '_' + eDom.dataset.startDate + '_' + eDom.dataset.endDate + '_' + new Date().getTime()
           eDom.dataset.popoverble = true
-          
+          eDom.onclick = (ev) => {
+            this.eventPopover(eDom)
+          }
         }
 
-        /*
-        let esDom = document.createElement('div')
-        esDom.classList.add('eventTime', 'time')
-        let dParts = new Intl.DateTimeFormat(this.locale, this.config.eventTimeOptions).formatToParts(new Date(event.startDate))
-        let dateHTML = dParts.reduce((prev, cur, curIndex, arr) => {
-          prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex}">${cur.value}</span>`
-          return prev
-        }, '')
-        esDom.innerHTML = dateHTML
-        eDom.appendChild(esDom)
-        */
         ecDom.appendChild(eDom)
       }
 
@@ -566,32 +624,29 @@ Module.register('MMM-CalendarExt3', {
         if (typeof config.manipulateDateCell === 'function') {
           config.manipulateDateCell(dateCell, thatDayEvents)
         }
+        if (config.showMore && thatDayEvents.length > config.maxEventLines) {
+          dateCell.classList.add('hasMore')
+          dateCell.style.setProperty('--more', thatDayEvents.length - config.maxEventLines)
+        }
+        if (popoverSupported) {
+          if (!dateCell.id) dateCell.id = dateCell.dataset.date + '_' + new Date().getTime()
+          dateCell.dataset.popoverble = true
+          dateCell.onclick = (ev) => {
+            this.dayPopover(dateCell, thatDayEvents, config)
+          }
+        }
       }
 
       wDom.appendChild(ccDom)
       wDom.appendChild(ecDom)
-      
+
       dom.appendChild(wDom)
       wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
     } while(wm.valueOf() <= eoc.valueOf())
 
-    if (config.displayLegend) displayLegend(dom, events, {useSymbol: config.useSymbol})
+    if (config.displayLegend) displayLegend(dom, events, config)
 
     return dom
-  },
-
-  getPopover: function () {
-    let popover = document.createElement('div')
-    popover.id = "CX3_POPOVER"
-    popover.popover = "auto"
-    popover.classList.add('popover')
-    // popover.anchor = eDom reserved for future use
-
-    let header = document.createElement('div')
-    header.classList.add('header')
-
-
-    return popover
   },
 
   getHeader: function () {

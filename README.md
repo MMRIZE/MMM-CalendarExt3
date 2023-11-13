@@ -1,8 +1,6 @@
 # MMM-CalendarExt3
 MagicMirror module for calendar view.
 
-> `~1.3` has many changes from `1.2.x` and still beta staged. If you want to use the old version, checkout `snap-1.2.6` branch
-
 
 ## Screenshot
 ![screenshot](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/calendarext3.png)
@@ -11,7 +9,7 @@ MagicMirror module for calendar view.
 
 ## Concept
 
-My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty to use. I need a more easy and light one. So I rewrite this from scratch newly. 
+My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty to use. I need a more easy and light one. So I re-write this from scratch newly.
 
 
 ## Features
@@ -106,8 +104,6 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`dayIndex` | -1 | Which day starts in a `day` view. `-1` is the previous day of the current focusing moment, `0` is the focusing day of the moment. `1` will be the next day, and so on.<br> Ignored on `mode:'month'` and `mode:'week'`.|
 |`weeksInView` | 3 | How many weeks from the index. <br> `weekIndex:-1`, `weeksInView:3` means 3 weeks view from the last week. <br> Ignored on `mode:'month'`|
 |`instanceId` | (auto-generated) | When you want more than 1 instance of this module, each instance would need this value to distinguish each other. If you don't assign this property, the `identifier` of the module instance will be assigned automatically but not recommended to use it. (Hard to guess the auto-assigned value.)|
-|`firstDayOfWeek`| 1 | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 |
-|`minimalDaysOfNewYear` | 4 | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. |
 |`locale` | (`language` of MM config) | `de` or `ko-KR` or `ja-Jpan-JP-u-ca-japanese-hc-h12`. It defines how to handle and display your date-time values by the locale. When omitted, the default `language` config value of MM. |
 |`calendarSet` | [] | When you want to display only selected calendars, fulfil this array with the targeted calendar name(of the default `calendar` module). <br>e.g) `calendarSet: ['us_holiday', 'office'],`<br> `[]` or `null` will allow all the calendars. |
 |`maxEventLines` | 5 | How many events will be displayed in 1-day cell. The overflowed events will be hidden. |
@@ -137,9 +133,15 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`displayEndTime`| false | If you want to show the end time of the event, set this to `true`|
 |`popoverTemplate`| './popover.html' | If you want to change the template of popover, use this. (Usually not needed) |
 |`popoverPeriodOptions`| {timeStyle: 'short', dateStyle: 'short'} | The format of period of event time on popover displayed,<br> It varies by the `locale` and the period itself how consisted. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
-|`popoverTimeout`| 5000 | (ms) The popover has `light dismiss` but for the convenience, I added timeout dismission. <br>`0` will not dismiss popover forever unless other popover activated or you dismiss popover by click outside manually |
+|`popoverTimeout`| 30000 | (ms) The popover has `light dismiss` but for the convenience, I added timeout dismission. <br>`0` will not dismiss popover forever unless other popover activated or you dismiss popover by click outside manually |
 |`animateIn` | 'fadeIn' | Animation effect on refresh. (Since MM 2.25) |
 |`animateOut` | 'fadeOut' | Animation effect on refresh. (Since MM 2.25) |
+|`skipPassedEventToday`| false | If set `true`, the passed singleday events (not fullday, not multiday events) of today will be disappeard to save screen asset. It will be useful when you have too many events to show in `maxEventLines`. It will be applied only for `today`.|
+|`showMore` | true | When the number of events is more than `maxEventLines`, the number of overflowed events would be displayed in the right-bottom cornor of the cell. And also it will popover whole day event list by click/touch it.|
+|`useIconify` | false | If set `true`, You can use `iconify-icon` instead of `fontawesome`. |
+|`weekends` | auto-filled by locale. |(Array of day order). e.g. `weekends: [1, 3]` means Monday and Wedneseday would be regarded as weekends. Usually you don't have to set this value. <br> **Auto-filled by locale unless you set manually.** |
+|`firstDayOfWeek`| auto-filled by locale | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 <br> **Auto-filled by locale unless you set manually.** |
+|`minimalDaysOfNewYear` | auto-filled by locale | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. <br> **Auto-filled by locale unless you set manually.** |
 
 
 ## Notification
@@ -191,7 +193,7 @@ Most commonly used values would be defined in `.CX3` selector as variables.
 
 - `.cell` : Every day cell has this selector. Each cell could have these class name together by its condition.
   - `.today`, `.thisMonth`, `.thisYear`
-  - `.year_2022`, `.month_12`, `.date_25`, `.weekday_0`
+  - `.year_2022`, `.month_12`, `.date_25`, `.weekday_0`, `weekend`, `weekend_1`
 - `.cellHeader`, `.cellFooter` : Parts of day cell. `.cellHeader` would have `.cw`(count of week) and `.cellDate` as children.
   - `.cellHeader .cellDate` : Displaying date of the cell. The date would have many parts of date/hour information from `cellDateOptions` of config.
 
@@ -214,10 +216,10 @@ And `event` also has `dataSet` (`data-*`) as its attributes. (e.g. data-title=".
     - `.description`
     - `.location`
 
-Each event component would be shown/hidden by the virtues of events. Of course, you can redeclare its behaviours with CSS.
+Each event component would be shown/hidden by the virtues of events. Of course, you can redeclare its behaviors with CSS.
 
 
-- `.weekGrid`, `.weekGridRow` : Definition of calendar grid. You can adjust the grid itself. (e.g. Shrink the width of weekends cells)
+- `.weekGrid`, `.weekGridRow` : Definition of calendar grid. You can adjust the grid itself. (e.g. Shrink the width of weekend cells)
 
 ## Handling Events
 Each event object has this structure.
@@ -240,7 +242,8 @@ Each event object has this structure.
   "isCurrent": false,
   "isFuture": false,
   "isFullday": false,
-  "isMultiday": false
+  "isMultiday": false,
+  "skip": false, // If this is set, event will not be rendered.
 }
 ```
 You can use these values to handle events.
@@ -301,13 +304,13 @@ preProcessor: (ev) => {
 ```
 This example shows 
 
-1) if the title of event has test, drop the event off
+1) if the title of an event has "test", drop the event off
 
-2) then add 2 hours to the start time of events on specific calendar.
+2) then add 2 hours to the start time of events on the specific calendar.
 
 Unlike eventTransformer, the preProcessor would be applied to raw data format of events from the default calendar module or equivalent after receiving notification. 
 
-This is the better place to adjust event itself to make it compatible with this module before main logic of the module handle and regularize events.
+This is the better place to adjust the event itself to make it compatible with this module before the main logic of the module handle and regularize events.
 
 ### manipulating dateCell
 ```js
@@ -324,6 +327,38 @@ manipulateDateCell: (cellDom, events) => {
 ```
 If you want to handle date cell with events of that day, you can use it.
 
+### skip to draw
+if an `evnet` has `.skip: true` attribute as a property, this event will not be rendered on the screen. However, it will remain in the data, so you can sort, filter or use that event. It will be especially useful in your custom `manipulateDateCell`.
+
+For example; [you can paint a date cell background instead of showing a holiday event itself.](https://github.com/MMRIZE/MMM-CalendarExt3/wiki/Set-cell-background-instead-of-holiday-event), Or you can skip less-important events to save real-estate.
+
+Generally, this attribute will not derived from the original calendar provider(e.g. default calendar module). You may need to assign the value by yourself with event-handling.
+
+### using `iconify`.
+Even though `fontawesome` is the default icon framework of MM, there are many needs of `iconify`. And I prefer it to font-awesome. Now you can use iconify icons by config value `useIconify: true`
+```js
+// In your calendar module config
+defaultSymbolClassName: '', // <-- Important to identify iconify properly.
+calendars: [
+  {
+    color: "red",
+    symbol: "flag:us-4x3",
+    url: "https://ics.calendarlabs.com/76/mm3137/US_Holidays.ics"
+  },
+  {
+    color: "red",
+    symbol: "fa fa-fw fa-flag",
+    url: "https://ics.calendarlabs.com/76/mm3137/US_Holidays.ics"
+  },
+],
+```
+
+![image](https://github.com/MMRIZE/MMM-CalendarExt3/assets/1720610/6b46cf68-a04b-4733-aab6-a14404543e73)
+
+**WARNING** 
+To use `iconify`, you should set `defaultSymbolClassName: '',` in your default calendar module. Ususally it is enough when you hide the original default calendar module to use with CX3. But if you want to use font-awesome icons together, you should add font-awesome classnames (e.g `fa`, `fas`, ...) by yourself.
+
+
 
 ## Fun things
 ### Weather forecast
@@ -335,150 +370,28 @@ weatherLocationName: 'New York',
 // When the location name would not match, warning messgage will be shown on dev console. Check it.
 ```
 
-### Font Awesome icons with brands
-You can set `brands` icons like this; (However, default calendar module cannot accept FA brands icons AFAIK.)
-```js
-/* In your default calendar config */
-symbol: ['fa-brands fa-canadian-maple-leaf'],
-/* or */
-symbol: ['brands canadian-maple-leaf'],
-/* of course below are also allowed */
-symbol: 'brands canadian-maple-leaf',
-/* But if you want multi-icons, use array */
-symbol: ['brands google-drive', 'solid calendar'],
-```
 
-### Compatible with `randomBrainstormer/MMM-GoogleCalendar`
-```js
-preProcessor: (e) => {
-  if (e.start?.dateTime) {
-          e.startDate = new Date(e.start.dateTime).valueOf()
-  } else if (e.start?.date) {
-          e.startDate = new Date(`${e.start.date}T00:00:00`).valueOf()
-  }
-  
-  if (e.end?.dateTime) {
-          e.endDate = new Date(e.end.dateTime).valueOf()
-  } else if (e.end?.date) {
-          e.endDate = new Date(`${e.end.date}T00:00:00`).valueOf()
-  }
-  
-  e.title = e.summary
-  e.fullDayEvent = (e.start?.date) ? true : false
-  return e
-}
-```
-> This tip doesn't consider different timezone. You might need to adjsut startDate and endDate additionally to convert event into your timezone if the timezone of the calendar might be different with your system.
-
-
-### simple `eouia/MMM-TelegramBot` implementation
-Add these codes into your `MMM-TelegramBot` configuration
-```js
-customCommands: [
-  {
-    command: 'cx3_prev',
-    description: '[CX3] Glance previous step',
-    callback: (commandj, handler, self) => {
-      self.sendNotification('CX3_GLANCE_CALENDAR', {step: -1})
-      handler.reply('TEXT', 'PREV 1 step ')
-    }
-  },
-  {
-    command: 'cx3_next',
-    description: '[CX3] Glance next step',
-    callback: (commandj, handler, self) => {
-      self.sendNotification('CX3_GLANCE_CALENDAR', {step: 1})
-      handler.reply('TEXT', 'NEXT 1 step')
-    }
-  },
-  {
-    command: 'cx3_set',
-    description: '[CX3] Glance specific date: e.g) /cx3_set 2023-12-25',
-    callback: (commandj, handler, self) => {
-      self.sendNotification('CX3_SET_DATE', {date: handler.args})
-      handler.reply('TEXT', 'SET to ' + handler.args)
-    }
-  },
-  {
-    command: 'cx3_reset',
-    description: '[CX3] Return to default instantly'
-    callback: (commandj, handler, self) => {
-      self.sendNotification('CX3_RESET_DATE')
-      handler.reply('TEXT', 'RESET')
-    }
-  }
-],
-```
 
 ## Not the bug, but...
 - The default `calendar` module cannot emit the exact starting time of `multidays-fullday-event which is passing current moment`. Always it starts from today despite of original event starting time. So this module displays these kinds of multidays-fullday-event weirdly.
-- I am not considering 5-weekdays-view at this moment. Only-Weekdays-view might be useful, but in some cultures/locales, Locale-aware `Weekdays` are not easy to normalize. Friday and Sunday are weekends in Brunei. Iran adopts Friday only. I cannot calculate any convenient way to normalize this kind of grid view.
-- I'll add `TimeLine` and `TimeTable` views/extended modules in future.
+- I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
-## History
-### 1.6.1 (2023-10-19)
-- **FIXED** A bug of missing events of last day in `day` view.
+## Latest Updates
+### 1.7.0 (2023-11-12) ([details](https://github.com/MMRIZE/MMM-CalendarExt3/wiki/About-1.7.0))
+- **ADDED** `skip` of event Object property
+- **ADDED** `skipPassedEventToday` of config
+- **FIXED** eventTime color in multiday event
+- **ADDED** end-eventTime of multiday event (if not fullday event)
+- **ADDED** `more`, `morePopover` feature.
+- **ADDED** Support `iconify`
+- **ADDED** auto-detect `firstDayOfWeek` and `minimalDaysOfNewYear`
 
-### 1.6.0 (2023-10-04)
-- **ADDED** `animateIn` and `animateOut` for animation effect (Since MM 2.25)
-- **ADDED** A fallback of `HTMLElement` check. (For MMM-Remote-Control or Not-Browser environment)
+> [Full History](https://github.com/MMRIZE/MMM-CalendarExt3/wiki#history)
 
-### 1.5.0 (2023-08-29)
-- **ADDED** `day` view implemented. (calendar starts from today)
-
-### 1.4.0 (2023-06-04)
-![popover](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/CX3_1.4.0.png)
-- **ADDED** **(Experimental)** Show popover of event details on click/touch (Chrome 114 or Electron 25 needed)
-> See https://github.com/MMRIZE/MMM-CalendarExt3/discussions/80
-- **FIXED** Clarify code for using MMM-GoogleCalendar module #78 (Thanks to @jcherniak)
-- **UPDATED** Updated CX3_Shared submodule #76 / More robust `oppositeColor` calculation. (Thanks to @btastic)
-
-### 1.3.2 (2023-05-30)
-- **CHANGED** : Not to be too strict to other module's DOM creation failure.
-### 1.3.1 (2023-04-25)
-- **CHANGED**: Refactoring some codes, the structure of the events, CSS.
-- **ADDED**: `displayEndTime: true` => Show end time of the event. (hidden by default) (Requested from @zelmo)
-- **ADDED**: `displayWeatherTemp: true` => Show max/min temperature of the forecasted days.
-<img width="1637" alt="CX3_1 3 1" src="https://user-images.githubusercontent.com/1720610/235691244-0eb98d9b-0337-4855-9057-15a82fc6ca2e.png">
-
-
-### 1.3.0 (2023-04-17)
-- **CHANGED**: Shared library to fix many issues.
-- **FIXED**: some typo.
-- **FIXED**: flickering for many reasons (logic error to treat notifications)
-- **ADDED**: `CX3_RESET` notification (to reset instantly from glancing)
-- **ADDED**: `MMM-TelegramBot` user implementation example
-- **ADDED**: `preProcessor` for better handling of raw-data priorly
-- **ADDED**: `manipulateDateCell` to manipulate date cell DOM after drawing
-- **CHANGED**: Timing of `eventFilter` and `eventTransformer` is delayed for better-handling event data after regularized
-
-### 1.2.6 (2022-12-05)
-- **Added** `useWeather` option. (true/false)
-- **Added** `weatherLocationName` option (some partial text to distinguish location)
-
-### 1.2.5 (2022-11-04)
-- **Added** Display legend of the calendar (`displayLegend: true` and when you set the calendar name on `calendar` module)
-- **Fixed** Some CSS fixture
-### 1.2.4 (2022-08-30)
-- **Fixed** Urgent fix for `useSymbol` issue since #1.2.2
-- **Fixed** `symbol:null` issue resolved
-### 1.2.3 (2022-08-29)
-- **Fixed** Move `eventFormatter` to prior to get compatibility with other calendar module (e.g GoogleCalendar module)
-
-### 1.2.2 (2022-08-27)
-- **Added** Multi icons
-- **Added** Font-awesome 'brands' icons
-### 1.2.1 (2022-08-25)
-- **Added** Magic opposite color for the full-day event (This feature could solve the issue of no-color assigned.)
-- **Fixed** CSS file renamed (module.css => MMM-CalendarExt3.css)
-### 1.2.0 (2022-06-15)
-- Support multi notifications from multi-calendar providers. (It will prevent events reset.)
-
-### 1.1.0 (2022-05-29)
-- https://github.com/MMRIZE/MMM-CalendarExt3/issues/4
-![1.1.0](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/cx3_110_2.png)
-### 1.0.0 (2022-04-24)
-- Released.
+## More Info.
+- Discussion board: https://github.com/MMRIZE/MMM-CalendarExt3/discussions
+- Bug Report: https://github.com/MMRIZE/MMM-CalendarExt3/issues
+- Examples, Tips, and other info WIKI: https://github.com/MMRIZE/MMM-CalendarExt3/wiki
 
 ## Author
 - Seongnoh Yi (eouia0819@gmail.com)
