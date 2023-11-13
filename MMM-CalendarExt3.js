@@ -54,7 +54,7 @@ Module.register('MMM-CalendarExt3', {
     displayWeatherTemp: false,
 
     popoverTemplate: './popover.html',
-    popoverTimeout: 1000 * 10,
+    popoverTimeout: 1000 * 30,
     popoverPeriodOptions: {
       dateStyle: 'short',
       timeStyle: 'short'
