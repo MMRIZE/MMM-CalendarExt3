@@ -148,7 +148,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`weekends` | auto-filled by locale. |(Array of day order). e.g. `weekends: [1, 3]` means Monday and Wedneseday would be regarded as weekends. Usually you don't have to set this value. <br> **Auto-filled by locale unless you set manually.** |
 |`firstDayOfWeek`| auto-filled by locale | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 <br> **Auto-filled by locale unless you set manually.** |
 |`minimalDaysOfNewYear` | auto-filled by locale | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. <br> **Auto-filled by locale unless you set manually.** |
-|`useMarquee`| true | On `true`, if the title of event is too long to display, it will have marquee animation. |
+|`useMarquee`| false | On `true`, if the title of event is too long to display, it will have marquee animation. |
 
 ## Notification
 ### Incoming Notifications
