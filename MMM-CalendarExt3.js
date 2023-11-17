@@ -71,7 +71,7 @@ Module.register('MMM-CalendarExt3', {
     showMore: true,
     useIconify: true,
 
-    useMarquee: true,
+    useMarquee: false,
   },
 
   defaulNotifications: {
