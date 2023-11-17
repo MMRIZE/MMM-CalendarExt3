@@ -27,26 +27,32 @@ My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty 
 
 
 ## Install OR Update
+### Install
 ```sh
 cd ~/MagicMirror/modules
 git clone https://github.com/MMRIZE/MMM-CalendarExt3
 cd MMM-CalendarExt3
 npm install
 git submodule update --init --recursive
+
 ```
+
 > Usually, the last line is needless because it would be executed automatically in `npm install` , but many people forgot to execute `npm install`, so I'm exaggarating.
 
+### Update
+```sh
+cd ~/MagicMirror/modules/MMM-CalendarExt3
+git pull
+npm update
+```
+
+### Not working?
 When some `submodule` seems not installed and updated properly, try this.
 ```sh
 cd ~/MagicMirror/modules/MMM-CalendarExt3
 git submodule update --init --recursive
 ```
 
-If you want to return to `1.2.6` version,
-```sh
-cd ~/MagicMirror/modules/MMM-CalendarExt3
-git checkout snap-1.2.6
-```
 
 ## Config
 Anyway, even this simplest will work.
@@ -142,7 +148,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`weekends` | auto-filled by locale. |(Array of day order). e.g. `weekends: [1, 3]` means Monday and Wedneseday would be regarded as weekends. Usually you don't have to set this value. <br> **Auto-filled by locale unless you set manually.** |
 |`firstDayOfWeek`| auto-filled by locale | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 <br> **Auto-filled by locale unless you set manually.** |
 |`minimalDaysOfNewYear` | auto-filled by locale | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. <br> **Auto-filled by locale unless you set manually.** |
-
+|`useMarquee`| true | On `true`, if the title of event is too long to display, it will have marquee animation. |
 
 ## Notification
 ### Incoming Notifications
@@ -243,7 +249,8 @@ Each event object has this structure.
   "isFuture": false,
   "isFullday": false,
   "isMultiday": false,
-  "skip": false, // If this is set, event will not be rendered.
+  "skip": false, // If this is set, event will not be rendered. (since 1.7.0)
+  "noMarquee" : false,  // If this is set as true, too long event tilte will be rolling.
 }
 ```
 You can use these values to handle events.
@@ -377,6 +384,9 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
+### 1.7.1 (2023-11-17)
+- **ADDED** `useMarquee` config filed and `noMarquee` event object property
+
 ### 1.7.0 (2023-11-12) ([details](https://github.com/MMRIZE/MMM-CalendarExt3/wiki/About-1.7.0))
 - **ADDED** `skip` of event Object property
 - **ADDED** `skipPassedEventToday` of config

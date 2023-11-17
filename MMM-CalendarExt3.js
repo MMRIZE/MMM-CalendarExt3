@@ -70,6 +70,8 @@ Module.register('MMM-CalendarExt3', {
     skipPassedEventToday: false,
     showMore: true,
     useIconify: true,
+
+    useMarquee: true,
   },
 
   defaulNotifications: {
@@ -325,6 +327,16 @@ Module.register('MMM-CalendarExt3', {
 
     if (notification === 'MODULE_DOM_CREATED') {
       this._domReady()
+      const moduleContainer = document.querySelector(`#${this.identifier} .module-content`)
+      const callback = (mutationsList, observer) => {
+        for (let mutation of mutationsList) {
+          const content = document.querySelector(`#${this.identifier} .module-content .CX3`)
+          if (mutation.addedNodes.length > 0) this.updated(content)
+        }
+      }
+      const MutationObserver = window.MutationObserver || window.WebKitMutationObserver
+      const observer = new MutationObserver(callback)
+      observer.observe(moduleContainer, { childList: true })
     }
 
     if (notification === 'CX3_MOVE_CALENDAR' || notification === 'CX3_GLANCE_CALENDAR') {
@@ -374,35 +386,58 @@ Module.register('MMM-CalendarExt3', {
     }
   },
 
-  getDom: function() {
-    let dom = document.createElement('div')
-    dom.innerHTML = ""
-    dom.classList.add('bodice', 'CX3_' + this.instanceId, 'CX3', 'mode_' + this.mode)
-    if (this.config.fontSize) dom.style.setProperty('--fontsize', this.config.fontSize)
-    dom.style.setProperty('--maxeventlines', this.config.maxEventLines)
-    dom.style.setProperty('--eventheight', this.config.eventHeight)
-    dom.style.setProperty('--displayEndTime', (this.config.displayEndTime) ? 'inherit' : 'none')
-    dom.style.setProperty('--displayWeatherTemp', (this.config.displayWeatherTemp) ? 'inline-block' : 'none')
-    dom = this.draw(dom, this.config)
-    if (this.library?.loaded) {
-      if (this.refreshTimer) {
-        clearTimeout(this.refreshTimer)
-        this.refreshTimer = null
+  getDom: function () {
+    return new Promise((resolve, reject) => {
+      let dom = document.createElement('div')
+      dom.innerHTML = ""
+      dom.classList.add('bodice', 'CX3_' + this.instanceId, 'CX3', 'mode_' + this.mode)
+      if (this.config.fontSize) dom.style.setProperty('--fontsize', this.config.fontSize)
+      dom.style.setProperty('--maxeventlines', this.config.maxEventLines)
+      dom.style.setProperty('--eventheight', this.config.eventHeight)
+      dom.style.setProperty('--displayEndTime', (this.config.displayEndTime) ? 'inherit' : 'none')
+      dom.style.setProperty('--displayWeatherTemp', (this.config.displayWeatherTemp) ? 'inline-block' : 'none')
+      dom = this.draw(dom, this.config)
+      if (this.library?.loaded) {
+        if (this.refreshTimer) {
+          clearTimeout(this.refreshTimer)
+          this.refreshTimer = null
+        }
+        this.refreshTimer = setTimeout(() => {
+          clearTimeout(this.refreshTimer)
+          this.refreshTimer = null
+          this.tempMoment = null
+          this.stepIndex = 0
+          this.updateAnimate()
+        }, this.config.refreshInterval)
+      } else {
+        Log.warn('[CX3] Module is not prepared yet, wait a while.')
       }
-      this.refreshTimer = setTimeout(() => {
-        clearTimeout(this.refreshTimer)
-        this.refreshTimer = null
-        this.tempMoment = null
-        this.stepIndex = 0
-        this.updateAnimate()
-      }, this.config.refreshInterval)
-    } else {
-      Log.warn('[CX3] Module is not prepared yet, wait a while.')
-    }
-    return dom
+      resolve(dom)
+    })
   },
 
-  draw: function (dom, config) {
+
+  updated: function (dom) {
+    if (!dom) return
+    dom.querySelectorAll('.title')?.forEach((e) => {
+      const parent = e.closest('.event')
+      const {offsetWidth, scrollWidth} = e
+      if (this.config.useMarquee && parent?.dataset?.noMarquee !== 'true' && offsetWidth < scrollWidth) {
+        const m = document.createElement('span')
+        m.innerHTML = e.innerHTML
+        e.innerHTML = ''
+        e.appendChild(m)
+        e.classList.add('marquee')
+        m.classList.add('marqueeText')
+        const length = m.offsetWidth
+        m.style.setProperty('--marqueeOffset', offsetWidth + 'px')
+        m.style.setProperty('--marqueeScroll', scrollWidth + 'px')
+        m.style.setProperty('--marqueeLength', length + 's')
+      }
+    })
+  },
+
+  draw: async function (dom, config) {
     if (!this.library?.loaded) return dom
     const {
       isToday, isThisMonth, isThisYear, getWeekNo, renderEventAgenda,
@@ -463,7 +498,6 @@ Module.register('MMM-CalendarExt3', {
         weatherDom.appendChild(minTemp)
         h.appendChild(weatherDom)
       }
-
       let dateDom = document.createElement('div')
       dateDom.classList.add('cellDate')
       let dParts = new Intl.DateTimeFormat(this.locale, this.config.cellDateOptions).formatToParts(tm)
@@ -553,7 +587,7 @@ Module.register('MMM-CalendarExt3', {
       for (i = 0; i < 7; i++) {
         if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
         ccDom.appendChild(makeCellDom(cm, i))
-        boundary.push(cm.getTime())       
+        boundary.push(cm.getTime())
       }
       boundary.push(cm.setHours(23, 59, 59, 999))
 
@@ -562,12 +596,12 @@ Module.register('MMM-CalendarExt3', {
       let eventsOfWeek = events.filter((ev) => {
         return !(ev.endDate <= sw.getTime() || ev.startDate >= ew.getTime())
       })
-
       for (let event of eventsOfWeek) {
-        if (event?.skip) continue
         if (config.skipPassedEventToday) {
-          if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) continue
+          if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) event.skip = true
         }
+        if (event?.skip) continue
+
         let eDom = renderEventAgenda(
           event,
           {
@@ -600,6 +634,14 @@ Module.register('MMM-CalendarExt3', {
         eDom.style.gridColumnStart = startLine + 1
         eDom.style.gridColumnEnd = endLine + 1
 
+        if (event?.noMarquee) {
+          eDom.dataset.noMarquee = true
+        }
+
+        if (event?.skip) {
+          eDom.dataset.skip = true
+        }
+
         if (popoverSupported) {
           if (!eDom.id) eDom.id = eDom.dataset.calendarSeq + '_' + eDom.dataset.startDate + '_' + eDom.dataset.endDate + '_' + new Date().getTime()
           eDom.dataset.popoverble = true
@@ -624,10 +666,18 @@ Module.register('MMM-CalendarExt3', {
         if (typeof config.manipulateDateCell === 'function') {
           config.manipulateDateCell(dateCell, thatDayEvents)
         }
-        if (config.showMore && thatDayEvents.length > config.maxEventLines) {
-          dateCell.classList.add('hasMore')
-          dateCell.style.setProperty('--more', thatDayEvents.length - config.maxEventLines)
+
+        if (config.showMore) {
+          const skipped = thatDayEvents.filter(ev => ev.skip).length
+          const noskip = thatDayEvents.length - skipped
+          const noskipButOverflowed = (noskip > config.maxEventLines) ? noskip - config.maxEventLines : 0
+          const hidden = skipped + noskipButOverflowed
+          if (hidden) {
+            dateCell.classList.add('hasMore')
+            dateCell.style.setProperty('--more', hidden)
+          }
         }
+
         if (popoverSupported) {
           if (!dateCell.id) dateCell.id = dateCell.dataset.date + '_' + new Date().getTime()
           dateCell.dataset.popoverble = true
@@ -645,7 +695,6 @@ Module.register('MMM-CalendarExt3', {
     } while(wm.valueOf() <= eoc.valueOf())
 
     if (config.displayLegend) displayLegend(dom, events, config)
-
     return dom
   },
 
