@@ -1,6 +1,6 @@
 {
   "name": "mmm-calendarext3",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "MagicMirror module for calendar view",
   "main": "MMM-CalendarExt3.js",
   "scripts": {

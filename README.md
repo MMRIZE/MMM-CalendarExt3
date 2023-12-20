@@ -106,6 +106,8 @@ All the properties are omittable, and if omitted, a default value will be applie
 |**property**|**default**|**description**|
 |---|---|---|
 |`mode`| 'week' | Calendar view type. You can choose between 'week', 'month', 'day'|
+|`referenceDate` | null | If `null`, the reference moment would be now(today, this week, this month). <br>Or you can assign any valid ISO-8601/RFC-2822(limited) date and time format. <br>(e.g.) `"2024-12-25"`, "2024-10-10T14:48:00.000+09:00" or "01 Jun 2016"(some browser wmay not support this RFC-2822 format)|
+|`monthIndex`| 0 | Which month starts in a `month` view. `-1` is the previous month of the current focusing moment. `0` is the focusing month of the moment. `1` will be the next month, and so on. <br> Ignored on `mode:'week'` and `mode:'day'`.|
 |`weekIndex`| -1 | Which week starts in a `week` view. `-1` is the previous week of the current focusing moment. `0` is the focusing week of the moment. `1` will be the next week, and so on.<br>Ignored on `mode:'month'` and `mode:'week'`.|
 |`dayIndex` | -1 | Which day starts in a `day` view. `-1` is the previous day of the current focusing moment, `0` is the focusing day of the moment. `1` will be the next day, and so on.<br> Ignored on `mode:'month'` and `mode:'week'`.|
 |`weeksInView` | 3 | How many weeks from the index. <br> `weekIndex:-1`, `weeksInView:3` means 3 weeks view from the last week. <br> Ignored on `mode:'month'`|
@@ -115,8 +117,8 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`maxEventLines` | 5 | How many events will be displayed in 1-day cell. The overflowed events will be hidden. |
 |`fontSize` | '18px' | Default font size of this module. |
 |`eventHeight` | '22px' | The height of each event. |
-|`cellDateOptions` | {month: 'short', <br>day: 'numeric'} | The format of day cell date. It varies by the `locale` and this option. <br>`locale:'en-US'`, the default displaying will be `Jun 1` or `1`. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) | 
-|`eventTimeOptions` | {timeStyle: 'short'} | The format of event time. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `3:45 pm`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) | 
+|`cellDateOptions` | {month: 'short', <br>day: 'numeric'} | The format of day cell date. It varies by the `locale` and this option. <br>`locale:'en-US'`, the default displaying will be `Jun 1` or `1`. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
+|`eventTimeOptions` | {timeStyle: 'short'} | The format of event time. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `3:45 pm`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`headerWeekDayOptions`|{weekday: 'long'} | The format of weekday header. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `Tuesday`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`headerTitleOptions`|{month: 'long'} | The format of module header of the month view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `December`. In `mode:'week'`, this will be ignored.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`eventFilter`| callback function | See the `Filtering` part.|
@@ -149,22 +151,57 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`firstDayOfWeek`| auto-filled by locale | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 <br> **Auto-filled by locale unless you set manually.** |
 |`minimalDaysOfNewYear` | auto-filled by locale | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. <br> **Auto-filled by locale unless you set manually.** |
 |`useMarquee`| false | On `true`, if the title of event is too long to display, it will have marquee animation. |
+|`skipDuplicated` | true | On `true`, duplicated events(same title, same start/end) from any calendars will be skipped except one. |
+
 
 ## Notification
 ### Incoming Notifications
-#### **(deprecated)** `CX3_MOVE_CALENDAR`, payload: {instanceId, step} 
-#### `CX3_GLANCE_CALENDAR`, payload: {instanceId, step} 
-Jump calendar view to another moment. It will return after `refreshInterval` from last notification command.
-- `instanceId` : If you have more than 1 instance of this module, you can specify the instance to manipulate. If omitted or `null`, all instances would obey this notification order. 
-- `step` : How many leaps of the current view. In `mode:'week'` 1 step will be a week. In `mode:'month'` 1 step will be a month. Negative value is allowed.
+#### **(deprecated)** `CX3_MOVE_CALENDAR`, payload: {instanceId, step}
+#### **(deprecated)** `CX3_GLANCE_CALENDAR`, payload: {instanceId, step}
+#### **(deprecated)** `CX3_SET_DATE`, payload: {instanceId, date}
 
-#### `CX3_SET_DATE`, payload: {instanceId, date}
-Set the date of specific view. 
-- `instanceId` : See the above
-- `date` : Specific date to move. e.g) In `mode:'month'`, `date: "2022-12-25"` would display calendar view of `2022 Decemeber`. Be aware of `weekIndex` of `mode:'week'`. The view range will be calculated with `weekIndex`, `weeksInView` and this value.
+> Since 1.8.0 the structure of module's notification is changed. Instead of CX3_GLANCE_CALENDAR, use belows;
 
-#### `CX3_RESET`
-Return to the default view instantly. (no payload)
+#### `CX3_GET_CONFIG`, payload: { callback, instanceId? }
+Get current config properties.
+```js
+this.sendNotification('CX3_GET_CONFIG', {
+  instanceId: 'OFFICE_CALENDAR', // If you have only one instance of this module, you don't need to describe it.
+  callback: (current) => {
+    console.log(current.mode, current.monthIndex)
+  }
+})
+```
+
+
+#### `CX3_SET_CONFIG`, payload: { ...configProperties, callback }
+Set/merge new config properties to the current view.
+```js
+this.sendNotification('CX3_SET_CONFIG', {
+  referenceDate: "2024-12-25",
+  mode: "week",
+  weekIndex: 0,
+  weeksInView: 1,
+  calendarSet: ["work", "family"],
+})
+```
+> This notification order to show the 1 week view of 2024 Christmas week regardless of whatever current view. Unmentioned properties would be inherited from the current view config.
+
+#### `CX3_RESET`, payload: { callback, instanceId? }
+Reset the view with the original config values.
+```js
+this.sendNotification('CX3_GET_CONFIG', {
+  callback: (before) => {
+    this.sendNotification('CX3_SET_CONFIG', {
+      monthIndex: before.monthIndex + 1,
+      callback: (after) => {
+        setTimeout(() => { this.sendNotification('CX3_RESET') }, 10_000)
+      }
+    })
+  }
+})
+```
+> this example shows how to make **dynamic glancing of next month view.**
 
 #### `CALENDAR_EVENTS`
 Any module which can emit this notification could become the source of this module. Generally, the default `calendar` module would be.
@@ -193,20 +230,20 @@ You can handle almost all of the visual things with CSS. See the `module.css` an
   line-height: calc(var(--eventheight))
 }
 ```
-Most commonly used values would be defined in `.CX3` selector as variables. 
+The most commonly used values would be defined in the `.CX3` selector as variables.
 
 `--fontsize`, `--maxeventlines`, `--eventheight` would be imported from configuration for your setup convenience.
 
-- `.cell` : Every day cell has this selector. Each cell could have these class name together by its condition.
+- `.cell` : Each day cell has this selector. Each cell could have these class names together by its condition.
   - `.today`, `.thisMonth`, `.thisYear`
   - `.year_2022`, `.month_12`, `.date_25`, `.weekday_0`, `weekend`, `weekend_1`
 - `.cellHeader`, `.cellFooter` : Parts of day cell. `.cellHeader` would have `.cw`(count of week) and `.cellDate` as children.
-  - `.cellHeader .cellDate` : Displaying date of the cell. The date would have many parts of date/hour information from `cellDateOptions` of config.
+  - `.cellHeader .cellDate` : Displaying the date of the cell. The date would have many parts of date/hour information from `cellDateOptions` of config.
 
-- `.event` : Every event has this selector. Each event could have these class name together by its condition.
+- `.event` : Every event has this selector. Each event could have these class names together by its condition.
   - `.continueFromPreviousWeek`, `.continueToNextWeek`
   - `.calendar_{calendarName}`, `{class}` : Orginal `calendar`
-  - `.passed`, `.future`, `.current`, 
+  - `.passed`, `.future`, `.current`,
   - `.multiday`, `.singleday`, `.fullday`
 
 And `event` also has `dataSet` (`data-*`) as its attributes. (e.g. data-title="...", data-start-date="...") You can use these attributes also.
@@ -309,13 +346,13 @@ preProcessor: (ev) => {
   return ev
 }
 ```
-This example shows 
+This example shows
 
 1) if the title of an event has "test", drop the event off
 
 2) then add 2 hours to the start time of events on the specific calendar.
 
-Unlike eventTransformer, the preProcessor would be applied to raw data format of events from the default calendar module or equivalent after receiving notification. 
+Unlike eventTransformer, the preProcessor would be applied to raw data format of events from the default calendar module or equivalent after receiving notification.
 
 This is the better place to adjust the event itself to make it compatible with this module before the main logic of the module handle and regularize events.
 
@@ -362,14 +399,27 @@ calendars: [
 
 ![image](https://github.com/MMRIZE/MMM-CalendarExt3/assets/1720610/6b46cf68-a04b-4733-aab6-a14404543e73)
 
-**WARNING** 
-To use `iconify`, you should set `defaultSymbolClassName: '',` in your default calendar module. Ususally it is enough when you hide the original default calendar module to use with CX3. But if you want to use font-awesome icons together, you should add font-awesome classnames (e.g `fa`, `fas`, ...) by yourself.
+**WARNING**
+To use `iconify`, you should set `defaultSymbolClassName: '',` in your default calendar module. Usually, it is enough when you hide the original default calendar module to use with CX3. But if you want to use font-awesome icons together, you should add font-awesome class names (e.g `fa`, `fas`, ...) by yourself.
+
+### `referenceDate` and `XXXindex` (since 1.8.0)
+To specify the range of the calendar to be displayed, two elements can be used:
+
+- `referenceDate`: The date that serves as the basis for the displayed calendar. If set to null or omitted, it defaults to the moment of now (today). If specified separately, it is used as the reference date.
+= `monthIndex`, `weekIndex`, `dayIndex`: Specifies how much period before and after the reference date should be displayed in each view mode, with the reference date as the center.
+
+For example;
+```js
+mode: "month",
+referenceDate: "2024-12-25",
+monthIndex: -1,
+```
+Will show the monthly calendar for `2024 November`.
+> Your events provider(e.g. default calendar module) may need to serve enough events to display long-gapped period.
 
 
-
-## Fun things
 ### Weather forecast
-When you are using MM's default `weather` forecasting, weather icon will be displayed on the day cell.
+When you are using MM's default `weather` forecasting, the weather icon will be displayed on the day cell.
 ```js
 useWeather: true,
 weatherLocationName: 'New York',
@@ -384,17 +434,17 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
-### 1.7.1 (2023-11-17)
-- **ADDED** `useMarquee` config filed and `noMarquee` event object property
+### 1.8.0 (2023-12-20)
+- **CHANGED** Some refactoring
+- **CHANGED** Some behaviour for the usage of notifications to control the module.
+- **REMOVED** `CX3_GLANCE_CALENDAR` notification was removed.
+- **REMOVED** `CX3_SET_DATE` notification also was removed.
+- **ADDED** `CX3_SET_CONFIG`, `CX3_GET_CONFIG`, `CX3_RESET` notifications are added, instead.
+- **ADDED** config property `skipDuplicated` is added.
+- **ADDED** config property `monthIndex` is added. Now you can assign relative month view from today or `referenceDate`
+- **ADDED** config property `referenceDate` is added.
 
-### 1.7.0 (2023-11-12) ([details](https://github.com/MMRIZE/MMM-CalendarExt3/wiki/About-1.7.0))
-- **ADDED** `skip` of event Object property
-- **ADDED** `skipPassedEventToday` of config
-- **FIXED** eventTime color in multiday event
-- **ADDED** end-eventTime of multiday event (if not fullday event)
-- **ADDED** `more`, `morePopover` feature.
-- **ADDED** Support `iconify`
-- **ADDED** auto-detect `firstDayOfWeek` and `minimalDaysOfNewYear`
+
 
 > [Full History](https://github.com/MMRIZE/MMM-CalendarExt3/wiki#history)
 

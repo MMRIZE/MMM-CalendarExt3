@@ -1,3 +1,9 @@
+/* stylelint-disable
+value-no-vendor-prefix, property-no-vendor-prefix, custom-property-pattern,
+selector-class-pattern, selector-id-pattern, no-descending-specificity,
+selector-pseudo-class-no-unknown, keyframes-name-pattern,
+*/
+
 .CX3 {
   /* you CAN modify these values; but SHOULD NOT to remove */
   --celllinecolor: #333;
@@ -125,6 +131,7 @@
 .CX3 .cw {
   font-size: 80%;
   color: goldenrod;
+  margin-right: 5px;
 }
 
 .CX3 .cw:not(.cwFirst) {
@@ -132,7 +139,12 @@
 }
 
 .CX3 .cw::before {
-  content: "CW ";
+  content: "CW";
+  margin-right: 5px;
+}
+
+.CX3 .cellContainer .cell:nth-child(1) .cw {
+  display: inherit;
 }
 
 .CX3 .cell.today {
@@ -146,6 +158,7 @@
   border-radius: 8px;
   padding: 1px 8px;
   margin: 1px;
+  line-height: 100%;
 }
 
 .CX3 .thisMonth {
@@ -246,6 +259,11 @@
   }
 }
 
+.CX3 .event .time {
+  font-size: 75%;
+  width: fit-content;
+}
+
 .CX3 .event .headline .title {
   font-size: 75%;
   font-weight: bold;
@@ -313,11 +331,6 @@
   padding-right: 2px;
   font-size: 75%;
   color: var(--oppositeColor);
-}
-
-.CX3 .event .time {
-  font-size: 75%;
-  width: fit-content;
 }
 
 .CX3 .event .time.notInDay {
@@ -573,4 +586,3 @@
 #CX3_POPOVER .eventItem .full {
   margin-left: 30px;
 }
-}}
