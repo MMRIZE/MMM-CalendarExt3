@@ -453,6 +453,13 @@ weatherLocationName: 'New York',
 - Bug Report: https://github.com/MMRIZE/MMM-CalendarExt3/issues
 - Examples, Tips, and other info WIKI: https://github.com/MMRIZE/MMM-CalendarExt3/wiki
 
+## Siblings
+- [MMM-CalendarExt3](https://github.com/MMRIZE/MMM-CalendarExt3)
+- [MMM-CalendarExt3Agenda](https://github.com/MMRIZE/MMM-CalendarExt3Agenda)
+- [MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline)
+- [MMM-CalendarExt3Journal](https://github.com/MMRIZE/MMM-CalendarExt3Journal)
+
+
 ## Author
 - Seongnoh Yi (eouia0819@gmail.com)
 
