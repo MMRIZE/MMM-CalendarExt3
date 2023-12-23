@@ -369,7 +369,7 @@ Module.register('MMM-CalendarExt3', {
     dom.classList.add('bodice', 'CX3_' + this.activeConfig.instanceId, 'CX3')
     if (this.activeConfig.fontSize) dom.style.setProperty('--fontsize', this.activeConfig.fontSize)
     if (!this.library?.loaded) {
-      Log.warn('[CX3A] Module is not prepared yet, wait a while.')
+      Log.warn('[CX3] Module is not prepared yet, wait a while.')
       return dom
     }
     dom = this.draw(dom, this.activeConfig)
@@ -665,7 +665,7 @@ Module.register('MMM-CalendarExt3', {
     })
     makeDayHeaderDom(dom, options, { boc, eoc })
     makeWeekGridDom(dom, options, targetEvents, { boc, eoc })
-    if (options.displayLegend) displayLegend(dom, events, options)
+    if (options.displayLegend) displayLegend(dom, targetEvents, options)
     return dom
   },
 
