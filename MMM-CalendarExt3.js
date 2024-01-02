@@ -510,7 +510,7 @@ Module.register('MMM-CalendarExt3', {
           break
         case 'week':
         default:
-          boc = getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * options.weekIndex)), options)
+          boc = getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate()), options)
           eoc = getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (options.weeksInView - 1))), options)
           break
       }
