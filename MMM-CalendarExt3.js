@@ -166,6 +166,7 @@ Module.register('MMM-CalendarExt3', {
         this.updateAnimate()
       }, this.activeConfig.waitFetch)
     })
+  /* append popover with notification to send event details*/
     if (popoverSupported) {
         document.body.addEventListener('click', (ev) => {
             let eDom = ev.target.closest('.event[data-popoverble=true]');
@@ -264,7 +265,7 @@ Module.register('MMM-CalendarExt3', {
       title.innerHTML = e.title
       list.appendChild(item)
     })
-
+	//leave this active to review day
     this.activatePopover(popover)
   },
 
@@ -308,7 +309,8 @@ Module.register('MMM-CalendarExt3', {
       prev = prev + `<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
       return prev
     }, '')
-    this.activatePopover(popover)
+    //disable event popover as we want to use event handler
+    //this.activatePopover(popover)
   },
 
   activatePopover: function (popover) {
