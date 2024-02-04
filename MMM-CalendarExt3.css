@@ -1,33 +1,30 @@
-/* stylelint-disable
-value-no-vendor-prefix, property-no-vendor-prefix, custom-property-pattern,
-selector-class-pattern, selector-id-pattern, no-descending-specificity,
-selector-pseudo-class-no-unknown, keyframes-name-pattern,
-*/
-
 .CX3 {
   /* you CAN modify these values; but SHOULD NOT to remove */
   --celllinecolor: #333;
-  --cellbgcolor: rgb(0 0 0 / 20%);
-  --cellheaderheight: 25px;
+  --cellbgcolor: rgba(0, 0, 0, 0.2);
+  --cellheaderheight: 33px;
   --cellfooterheight: 2px;
-  --defaultcolor: #fff;
+  --defaultcolor: #FFF;
   --eventheight: calc(var(--fontsize) + 4px);
   --totalheight: calc(var(--eventheight) * var(--maxeventlines));
   --displayEndTime: none;
   --displayWeatherTemp: none;
-
   font-size: var(--fontsize);
   color: var(--defaultcolor);
-  line-height: calc(var(--eventheight));
+  line-height: calc(var(--eventheight))
 }
+
+
 
 .CX3 * {
   box-sizing: border-box;
 }
 
+
 .CX3_MAGIC {
   display: none;
 }
+
 
 .CX3.bodice {
   width: 100%;
@@ -36,25 +33,23 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 .CX3 .week {
   width: 100%;
   padding: 0 5px;
-  height: calc(
-    var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--maxeventlines))
-  );
+  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
   position: relative;
 }
 
 .CX3 .weekGrid {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(7, [cell-start] 1fr [cell-end]);
+  grid-template-columns:
+    repeat(7, [cell-start] 1fr [cell-end])
+  ;
   grid-auto-columns: 0fr;
 }
 
 .CX3 .weekGridRow {
-  grid-template-rows: repeat(
-    var(--maxeventlines),
-    [event-start] minmax(0, 1fr) [event-end]
-  );
+  grid-template-rows:
+    repeat(var(--maxeventlines), [event-start] minmax(0, 1fr) [event-end])
+  ;
   grid-auto-rows: 0;
   overflow-y: hidden;
   grid-auto-flow: column dense;
@@ -62,50 +57,27 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 
 .CX3 .cellContainer {
   width: 100%;
-  height: calc(
-    var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--maxeventlines))
-  );
+  z-index: 1;
+  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
   position: absolute;
   top: 0;
   left: 0;
 }
 
 .CX3 .eventContainer {
-  z-index: 20;
+  z-index: 10;
   position: absolute;
   bottom: var(--cellfooterheight);
   left: 0;
   width: 100%;
   height: calc(var(--eventheight) * var(--maxeventlines));
+
 }
 
 .CX3 .cell {
   border: 1px solid var(--celllinecolor);
   background-color: var(--cellbgcolor);
-  height: calc(
-    var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--maxeventlines))
-  );
-  position: relative;
-}
-
-.CX3 .cell.hasMore::after {
-  counter-reset: more var(--more);
-  content: counter(more);
-  display: block;
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 18px;
-  height: 18px;
-  color: black;
-  font-weight: bold;
-  font-size: 14px;
-  border-radius: 9px;
-  background-color: white;
-  z-index: 30;
-  text-overflow: "+";
+  height: calc(var(--cellheaderheight) + var(--cellfooterheight) + calc(var(--eventheight) * var(--maxeventlines)));
 }
 
 .CX3 .cellHeader {
@@ -131,24 +103,14 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 .CX3 .cw {
   font-size: 80%;
   color: goldenrod;
-  margin-right: 5px;
-}
-
-.CX3 .cw:not(.cwFirst) {
-  display: none;
 }
 
 .CX3 .cw::before {
-  content: "CW";
-  margin-right: 5px;
-}
-
-.CX3 .cellContainer .cell:nth-child(1) .cw {
-  display: inherit;
+  content: 'CW '
 }
 
 .CX3 .cell.today {
-  border: 1px solid #fff;
+  border: 1px solid #FFF;
 }
 
 .CX3 .today .cellDate {
@@ -158,11 +120,10 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   border-radius: 8px;
   padding: 1px 8px;
   margin: 1px;
-  line-height: 100%;
 }
 
 .CX3 .thisMonth {
-  background-color: rgb(255 255 255 / 10%);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .CX3 .cellDate .literal {
@@ -185,8 +146,9 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   display: inline-block;
 }
 
+
 .CX3 .event {
-  margin: 1px 2px;
+  margin: 1px 2px 1px 2px;
   padding: 0 2px;
   text-align: left;
   grid-row: span 1;
@@ -194,7 +156,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   display: flex;
   justify-content: flex-start;
   gap: 2px;
-  text-overflow: ellipsis;
+  text-overflow:ellipsis;
   overflow: hidden;
   white-space: nowrap;
   min-width: 0;
@@ -211,63 +173,10 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   flex: 1;
 }
 
-.CX3 .event .headline .title.marquee {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: unset;
-  position: relative;
-}
-
-.CX3 .event .headline .title.marquee .marqueeText {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: unset;
-  animation: marquee calc(var(--marqueeLength) / 10) linear 2s infinite;
-  min-width: 0;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-
-  49.999% {
-    transform: translateX(calc(var(--marqueeScroll) * -1));
-    opacity: 1;
-    visibility: hidden;
-  }
-
-  50% {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  50.001% {
-    transform: translateX(var(--marqueeOffset));
-    opacity: 1;
-    visibility: visible;
-  }
-
-  60% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  100% {
-    /* waiting */
-  }
-}
-
-.CX3 .event .time {
-  font-size: 75%;
-  width: fit-content;
-}
-
 .CX3 .event .headline .title {
   font-size: 75%;
   font-weight: bold;
-  text-overflow: ellipsis;
+  text-overflow:ellipsis;
   overflow: hidden;
   white-space: nowrap;
   padding-left: 2px;
@@ -275,11 +184,11 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 }
 
 .CX3 .event .headline .symbol {
-  order: 1;
+  order:1;
 }
 
 .CX3 .event .headline .time {
-  order: 2;
+  order:2;
   display: inline-block;
 }
 
@@ -293,7 +202,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 
 .CX3 .event.singleday .headline:not(.useSymbol)::before,
 .CX3 .event.singleday .headline.useSymbol .symbol.noSymbol::before {
-  content: "⬤";
+  content: '⬤';
   color: var(--calendarColor);
   display: inline-block;
   padding-right: 2px;
@@ -319,18 +228,16 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   display: none;
 }
 
-.CX3 .event.singleday .headline .time {
+.CX3 .event:not(.fullday) .headline .time {
   display: inline-block;
   padding-right: 2px;
   font-size: 75%;
-  color: var(--defaultColor);
+  color: #EEE;
 }
 
-.CX3 .event.multiday .headline .startTime {
-  display: inline-block;
-  padding-right: 2px;
+.CX3 .event .time {
   font-size: 75%;
-  color: var(--oppositeColor);
+  vertical-align: text-bottom;
 }
 
 .CX3 .event .time.notInDay {
@@ -345,24 +252,18 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   display: var(--displayEndTime);
 }
 
+
 .CX3 .event .startTime::after {
   display: var(--displayEndTime);
-  content: " -";
+  content: ' -';
 }
 
 .CX3 .event .startTime.notInDay + .endTime.inDay::before {
   display: var(--displayEndTime);
-  content: "- ";
+  content: '- ';
 }
-
 .CX3 .event.continueFromPreviousWeek .headline .time {
   display: none;
-}
-
-.CX3 .event.multiday:not(.continueToNextWeek) .headline .endTime {
-  display: inherit;
-  order: 4;
-  margin-left: auto;
 }
 
 .CX3 .event .description,
@@ -370,25 +271,22 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   display: none;
 }
 
+
 .CX3 .event.passed {
-  filter: brightness(0.8) grayscale(0.5);
+  filter: brightness(0.6) grayscale(0.33);
 }
 
 .CX3 .event.current {
   filter: saturate(2);
 }
 
-.CX3 .weekend {
-  color: crimson;
-  font-weight: bold;
+
+.CX3 .weekday_0 {
+  color: #933;
 }
 
-.CX3 .weekend_2 {
-  color: crimson;
-}
-
-.CX3 .weekend_1 {
-  color: dodgerblue;
+.CX3 .weekday_6 {
+  color: #339;
 }
 
 .CX3 .cellHeader .cellDate {
@@ -402,7 +300,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   align-self: center;
 }
 
-.CX3 .cellHeader .cellWeather .icon {
+.CX3 .cellHeader .cellWeather .icon{
   font-size: 100%;
   font-weight: bold;
 }
@@ -425,15 +323,15 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 }
 
 .CX3 .cellHeader .cellWeather .maxTemp::before {
-  content: " \25b2";
+  content: ' \25b2';
 }
 
 .CX3 .cellHeader .cellWeather .minTemp::before {
-  content: " \25bc";
+  content: ' \25bc';
 }
 
 .CX3 .cellHeader .cellWeather .temperature::after {
-  content: "° ";
+  content: '° '
 }
 
 .CX3 .legends {
@@ -442,6 +340,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   gap: 5px;
   justify-content: center;
   padding: 10px;
+
 }
 
 .CX3 .legends .legend {
@@ -464,81 +363,71 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 
 #CX3_POPOVER {
   max-width: 50%;
-  min-width: 25%;
   height: fit-content;
-  max-height: calc(max(fit-content, 80%) - 20px);
-  background-color: white;
+  background-color: lightgray;
+  padding: 10px;
   border-radius: 10px;
+  border: 2px solid white;
   position: absolute;
-  box-shadow: 5px 5px 20px 0 #000;
-  font-size: 90%;
-}
-
-#CX3_POPOVER[popover] {
-  padding: 0;
+  box-shadow: 0 0 10px 0px #339;
 }
 
 #CX3_POPOVER:popover-open {
-  animation: slideIn 0.5s ease-in-out;
+  animation: slideIn 200ms ease-in-out;
 }
 
 #CX3_POPOVER::backdrop {
-  background-color: rgb(127 127 127 / 25%);
+  background-color: rgba(127, 127, 127, 0.25);
   backdrop-filter: blur(5px);
 }
 
 @keyframes slideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(200px);
-  }
-
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0; transform: translateY(-100px); }
+  100% { opacity: 1; }
 }
 
-#CX3_POPOVER .header {
+#CX3_POPOVER .popover_header {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   gap: 5px;
+  border-bottom: 1px solid darkgray;
   font-size: 150%;
   font-weight: bold;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: white;
-  background-color: black;
 }
 
-#CX3_POPOVER .header[data-is-fullday="true"] {
+#CX3_POPOVER .popover_header[data-is-fullday=true] {
   background-color: var(--calendarColor);
   color: var(--oppositeColor);
 }
 
-#CX3_POPOVER .header[data-is-fullday="false"] {
+#CX3_POPOVER .popover_header[data-is-fullday=false] {
   background-color: var(--oppositeColor);
   color: var(--calendarColor);
 }
 
-#CX3_POPOVER .content {
+
+#CX3_POPOVER .popover_content {
   display: flex;
   flex-direction: column;
   gap: 5px;
   padding: 20px;
-  background-color: white;
-  overflow-y: auto;
 }
 
-#CX3_POPOVER .content .name {
+#CX3_POPOVER .popover_content dl {
+  margin: 0;
+  padding: 0;
+}
+
+#CX3_POPOVER .popover_content dt {
   font-weight: bold;
   text-transform: uppercase;
   font-size: 75%;
   color: darkmagenta;
 }
 
-#CX3_POPOVER .content .value {
+#CX3_POPOVER .popover_content dd {
   margin-left: 10px;
   margin-bottom: 10px;
   font-size: 90%;
@@ -546,43 +435,27 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   white-space: unset;
   overflow-wrap: break-word;
   hyphens: auto;
-  text-wrap: balance;
-  overflow-y: hidden;
-
-  /* text-wrap: balance; */
-
-  /* Expreimental for CSS Text Module Level 4 */
+  /* text-wrap: balance; */ /* Expreimental for CSS Text Module Level 4 */
 }
 
-#CX3_POPOVER .content .list {
-  margin: 0;
-  padding: 0;
+.CX3 .workIcon {
+  width: 25px;
+  height: 25px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-right: 5px;
+  margin-top: 5px
 }
 
-#CX3_POPOVER .content .eventItem {
-  margin-bottom: 5px;
+.CX3 .jasonWorkIcon {
+  background-image: url('./icon/jason_icon.png');
 }
 
-#CX3_POPOVER .eventItem {
-  display: flex;
-  flex-flow: row wrap;
-  list-style: none;
+.CX3 .jennWorkIcon {
+  background-image: url('./icon/jenn_icon.png');
 }
 
-#CX3_POPOVER .eventItem .symbol {
-  color: var(--calendarColor);
-  font-weight: bold;
-}
-
-#CX3_POPOVER .eventItem .title {
-  margin-left: 10px;
-  font-weight: bold;
-}
-
-#CX3_POPOVER .eventItem .time {
-  flex-basis: 100%;
-}
-
-#CX3_POPOVER .eventItem .full {
-  margin-left: 30px;
+.CX3 .championsIcon {
+  background-image: url('./icon/C_logo.png');
 }
