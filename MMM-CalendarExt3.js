@@ -191,7 +191,7 @@ Module.register('MMM-CalendarExt3', {
             }
             return;
         });
-      this.preparePopover()
+      this.preparePopover();
     }
   },
 
@@ -329,6 +329,17 @@ Module.register('MMM-CalendarExt3', {
     if (notification === this.notifications.eventNotification) {
       let convertedPayload = this.notifications.eventPayload(payload)
       this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(convertedPayload)))
+ 
+             // Log the contents of the event notification
+
+        if (this?.storedEvents?.length == 0 && payload.length > 0) {
+            this._receiveFirstData({payload: convertedPayload, sender});
+        }
+        if (this?.library?.loaded) {
+            this.fetch(convertedPayload, sender);  
+        } else {
+            Log.warn('[CX3] Module is not prepared yet, wait a while.');
+        }
     }
 
     if (notification === 'MODULE_DOM_CREATED') {
@@ -453,7 +464,7 @@ Module.register('MMM-CalendarExt3', {
     dom.style.setProperty('--displayEndTime', (options.displayEndTime) ? 'inherit' : 'none')
     dom.style.setProperty('--displayWeatherTemp', (options.displayWeatherTemp) ? 'inline-block' : 'none')
 
-    const makeCellDom = (d, seq) => {
+  const makeCellDom = (d, seq, eventsOfTheDay) => {
       let tm = new Date(d.valueOf())
       let cell = document.createElement('div')
       cell.classList.add('cell')
@@ -484,6 +495,27 @@ Module.register('MMM-CalendarExt3', {
       dateDom.innerHTML = dateHTML
       
       h.appendChild(dateDom)
+	let workIconDom = document.createElement('div');
+	// Attach click event listener
+	workIconDom.addEventListener('click', (event) => {
+	    let clickedElement = event.target;
+	
+	    let eventDetails = {
+	        id: clickedElement.dataset.id,
+	        title: clickedElement.dataset.title,
+	        startDate: clickedElement.dataset.startDate,
+	        endDate: clickedElement.dataset.endDate,
+	        location: clickedElement.dataset.location,
+	        description: clickedElement.dataset.description,
+	        calendarName: clickedElement.dataset.calendarName,
+	        allDay: clickedElement.dataset.fullDayEvent 
+	    };
+	
+	    // Send the notification with event details
+	    this.sendNotification('EDIT_CALENDAR_EVENT', eventDetails);
+	    console.log("event details: " + clickedElement.dataset.id + eventDetails);
+	});
+	h.appendChild(workIconDom);			
       let cwDom = document.createElement('div')
       cwDom.innerHTML = getWeekNo(tm, options)
       cwDom.classList.add('cw')
