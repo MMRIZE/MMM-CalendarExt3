@@ -327,7 +327,9 @@ Module.register('MMM-CalendarExt3', {
         callback({ ...this.activeConfig })
       }
     }
-
+    if (notification === this.config.updateNotification) {
+      this.updateAnimate();
+    }
     if (notification === this.notifications.eventNotification) {
       Log.debug("eventNotification Payload:", payload);
       let convertedPayload = this.notifications.eventPayload(payload)
