@@ -321,7 +321,6 @@ Module.register('MMM-CalendarExt3', {
   },
 
   notificationReceived: function (notification, payload, sender) {
-    Log.debug("notificationReceived Payload:", payload);
     const replyCurrentConfig = ({ callback }) => {
       if (typeof callback === 'function') {
         callback({ ...this.activeConfig })
@@ -329,6 +328,7 @@ Module.register('MMM-CalendarExt3', {
     }
 
     if (notification === this.notifications.eventNotification) {
+      Log.debug("eventNotification Payload:", payload);
       let convertedPayload = this.notifications.eventPayload(payload)
       this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(convertedPayload)))
     }
@@ -390,7 +390,6 @@ Module.register('MMM-CalendarExt3', {
   },
 
   socketNotificationReceived: function(notification, payload) {
-    Log.debug("socketNotificationReceived Payload:", payload);    
     if (notification === "EVENT_ADD_SUCCESS") {
 //        this.forceRefresh();
     }
@@ -648,7 +647,7 @@ Module.register('MMM-CalendarExt3', {
           if (event?.skip) continue
 
           let eDom = renderEventAgenda(event, options, moment)
-
+          Log.info("renderEventAgenda edom:", eDom);
           let startLine = 0
           if (event.startDate >= boundary.at(0)) {
             startLine = boundary.findIndex((b, idx, bounds) => {
