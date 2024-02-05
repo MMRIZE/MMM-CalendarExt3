@@ -12,7 +12,7 @@ Module.register('MMM-CalendarExt3', {
     instanceId: null,
     firstDayOfWeek: null, // 0: Sunday, 1: Monday
     minimalDaysOfNewYear: null, // When the first week of new year starts in your country.
-    weekends: [], // or [0, 6]. 0: Sunday, 6: Saturday
+    weekends: [0, 6], // or [0, 6]. 0: Sunday, 6: Saturday
     locale: null, // 'de' or 'en-US' or prefer array like ['en-CA', 'en-US', 'en']
     cellDateOptions: {
       month: 'short',
@@ -497,27 +497,28 @@ Module.register('MMM-CalendarExt3', {
       dateDom.innerHTML = dateHTML
       
       h.appendChild(dateDom)
-	let workIconDom = document.createElement('div');
-	// Attach click event listener
-	workIconDom.addEventListener('click', (event) => {
-	    let clickedElement = event.target;
-	
-	    let eventDetails = {
-	        id: clickedElement.dataset.id,
-	        title: clickedElement.dataset.title,
-	        startDate: clickedElement.dataset.startDate,
-	        endDate: clickedElement.dataset.endDate,
-	        location: clickedElement.dataset.location,
-	        description: clickedElement.dataset.description,
-	        calendarName: clickedElement.dataset.calendarName,
-	        allDay: clickedElement.dataset.fullDayEvent 
-	    };
-	
-	    // Send the notification with event details
-	    this.sendNotification('EDIT_CALENDAR_EVENT', eventDetails);
-	    console.log("event details: " + clickedElement.dataset.id + eventDetails);
-	});
-	h.appendChild(workIconDom);			
+      let workIconDom = document.createElement('div');
+      // Attach click event listener
+      workIconDom.addEventListener('click', (event) => {
+          let clickedElement = event.target;
+      
+          let eventDetails = {
+              id: clickedElement.dataset.id,
+              title: clickedElement.dataset.title,
+              startDate: clickedElement.dataset.startDate,
+              endDate: clickedElement.dataset.endDate,
+              location: clickedElement.dataset.location,
+              description: clickedElement.dataset.description,
+              calendarName: clickedElement.dataset.calendarName,
+              allDay: clickedElement.dataset.fullDayEvent 
+          };
+      
+          // Send the notification with event details
+          this.sendNotification('EDIT_CALENDAR_EVENT', eventDetails);
+          console.log("event details: " + clickedElement.dataset.id + eventDetails);
+      });
+	    h.appendChild(workIconDom);			
+
       let cwDom = document.createElement('div')
       cwDom.innerHTML = getWeekNo(tm, options)
       cwDom.classList.add('cw')
@@ -638,6 +639,7 @@ Module.register('MMM-CalendarExt3', {
         let boundary = []
 
         let cm = new Date(wm.valueOf())
+  //  this was moved, not sure why at the moment...
    //     for (i = 0; i < 7; i++) {
    //       if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
    //       ccDom.appendChild(makeCellDom(cm, i))
@@ -650,18 +652,17 @@ Module.register('MMM-CalendarExt3', {
         let eventsOfWeek = events.filter((ev) => {
           return !(ev.endDate <= sw.getTime() || ev.startDate >= ew.getTime())
         })
-		for (i = 0; i < 7; i++) {
-		    if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1);
-		    
-		    // Filter events for the current day
-		    let eventsOfTheDay = eventsOfWeek.filter((ev) => {
-		        return !(ev.endDate <= cm.valueOf() || ev.startDate > new Date(cm.getFullYear(), cm.getMonth(), cm.getDate(), 23, 59, 59, 999).valueOf());
-		    });
-		
-		    // Pass the filtered events to the makeCellDom function
-		    ccDom.appendChild(makeCellDom(cm, i, eventsOfTheDay));
-		    boundary.push(cm.getTime());       
-		}
+        for (i = 0; i < 7; i++) {
+            if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1);
+            // Filter events for the current day
+            let eventsOfTheDay = eventsOfWeek.filter((ev) => {
+                return !(ev.endDate <= cm.valueOf() || ev.startDate > new Date(cm.getFullYear(), cm.getMonth(), cm.getDate(), 23, 59, 59, 999).valueOf());
+            });
+        
+            // Pass the filtered events to the makeCellDom function
+            ccDom.appendChild(makeCellDom(cm, i, eventsOfTheDay));
+            boundary.push(cm.getTime());       
+        }
         for (let event of eventsOfWeek) {
           if (options.skipPassedEventToday) {
             if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) event.skip = true
