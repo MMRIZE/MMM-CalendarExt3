@@ -266,7 +266,7 @@ Module.register('MMM-CalendarExt3', {
       list.appendChild(item)
     })
 	//leave this active to review day
-    this.activatePopover(popover)
+    //this.activatePopover(popover)
   },
 
   eventPopover: function (eDom) {
