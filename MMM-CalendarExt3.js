@@ -12,7 +12,7 @@ Module.register('MMM-CalendarExt3', {
     instanceId: null,
     firstDayOfWeek: null, // 0: Sunday, 1: Monday
     minimalDaysOfNewYear: null, // When the first week of new year starts in your country.
-    weekends: [0, 6], // or [0, 6]. 0: Sunday, 6: Saturday
+    weekends: [], // or [0, 6]. 0: Sunday, 6: Saturday
     locale: null, // 'de' or 'en-US' or prefer array like ['en-CA', 'en-US', 'en']
     cellDateOptions: {
       month: 'short',
