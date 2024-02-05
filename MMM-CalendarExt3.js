@@ -639,30 +639,20 @@ Module.register('MMM-CalendarExt3', {
         let boundary = []
 
         let cm = new Date(wm.valueOf())
-  //  this was moved, not sure why at the moment...
-   //     for (i = 0; i < 7; i++) {
-   //       if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
-   //       ccDom.appendChild(makeCellDom(cm, i))
-   //       boundary.push(cm.getTime())
-   //     }
-   //     boundary.push(cm.setHours(23, 59, 59, 999))
+  
+        for (i = 0; i < 7; i++) {
+                 if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
+                 ccDom.appendChild(makeCellDom(cm, i))
+                 boundary.push(cm.getTime())
+             }
+        boundary.push(cm.setHours(23, 59, 59, 999))
 
         let sw = new Date(wm.valueOf())
         let ew = new Date(sw.getFullYear(), sw.getMonth(), sw.getDate() + 6, 23, 59, 59, 999)
         let eventsOfWeek = events.filter((ev) => {
           return !(ev.endDate <= sw.getTime() || ev.startDate >= ew.getTime())
         })
-        for (i = 0; i < 7; i++) {
-            if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1);
-            // Filter events for the current day
-            let eventsOfTheDay = eventsOfWeek.filter((ev) => {
-                return !(ev.endDate <= cm.valueOf() || ev.startDate > new Date(cm.getFullYear(), cm.getMonth(), cm.getDate(), 23, 59, 59, 999).valueOf());
-            });
-        
-            // Pass the filtered events to the makeCellDom function
-            ccDom.appendChild(makeCellDom(cm, i, eventsOfTheDay));
-            boundary.push(cm.getTime());       
-        }
+
         for (let event of eventsOfWeek) {
           if (options.skipPassedEventToday) {
             if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) event.skip = true
