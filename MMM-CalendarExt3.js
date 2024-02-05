@@ -185,7 +185,7 @@ Module.register('MMM-CalendarExt3', {
                 
                 // Send the notification with event details
                 this.sendNotification('EDIT_CALENDAR_EVENT', eventDetails);
-              
+                Log.info("eventdetails:", eventDetails)
                 // Commenting out the next line to disable popover activation
                 // return this.activatePopover(eDom);
             }
@@ -321,6 +321,7 @@ Module.register('MMM-CalendarExt3', {
   },
 
   notificationReceived: function (notification, payload, sender) {
+    Log.debug("notificationReceived Payload:", payload);
     const replyCurrentConfig = ({ callback }) => {
       if (typeof callback === 'function') {
         callback({ ...this.activeConfig })
@@ -389,6 +390,7 @@ Module.register('MMM-CalendarExt3', {
   },
 
   socketNotificationReceived: function(notification, payload) {
+    Log.debug("socketNotificationReceived Payload:", payload);    
     if (notification === "EVENT_ADD_SUCCESS") {
 //        this.forceRefresh();
     }
