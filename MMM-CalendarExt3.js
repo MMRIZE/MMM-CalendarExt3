@@ -43,6 +43,7 @@ Module.register('MMM-CalendarExt3', {
     useWeather: true,
     weatherLocationName: null,
     //notification: 'CALENDAR_EVENTS', /* reserved */
+    updateNotification: 'GCAL_UPDATE',
     manipulateDateCell: (cellDom, events) => { },
     weatherNotification: 'WEATHER_UPDATED',
     weatherPayload: (payload) => { return payload },
@@ -391,9 +392,10 @@ Module.register('MMM-CalendarExt3', {
 
   socketNotificationReceived: function(notification, payload) {
     if (notification === "EVENT_ADD_SUCCESS") {
-//        this.forceRefresh();
+      //send notificaiton to GoogleCalendar
+      this.sendNotification(updateNotification, 1);
     }
-},
+  },
 
   getDom: function () {
     let dom = document.createElement('div')
@@ -647,7 +649,7 @@ Module.register('MMM-CalendarExt3', {
           if (event?.skip) continue
 
           let eDom = renderEventAgenda(event, options, moment)
-          Log.info("renderEventAgenda edom:", eDom);
+          Log.debug("renderEventAgenda edom:", eDom);
           let startLine = 0
           if (event.startDate >= boundary.at(0)) {
             startLine = boundary.findIndex((b, idx, bounds) => {
