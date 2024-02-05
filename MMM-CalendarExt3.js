@@ -34,7 +34,7 @@ Module.register('MMM-CalendarExt3', {
     eventFilter: (ev) => { return true },
     eventSorter: null,
     eventTransformer: (ev) => { return ev },
-    refreshInterval: 1000 * 60 * 10, // too frequent refresh. 10 minutes is enough.
+    refreshInterval: 1000 * 60 * 5, // too frequent refresh. 10 minutes is enough.
     waitFetch: 1000 * 5,
     glanceTime: 1000 * 60, // deprecated, use refreshInterval instead.
     animationSpeed: 2000,
@@ -186,7 +186,6 @@ Module.register('MMM-CalendarExt3', {
                 // Send the notification with event details
                 this.sendNotification('EDIT_CALENDAR_EVENT', eventDetails);
               
-
                 // Commenting out the next line to disable popover activation
                 // return this.activatePopover(eDom);
             }
@@ -331,17 +330,6 @@ Module.register('MMM-CalendarExt3', {
     if (notification === this.notifications.eventNotification) {
       let convertedPayload = this.notifications.eventPayload(payload)
       this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(convertedPayload)))
- 
-             // Log the contents of the event notification
-
-        if (this?.storedEvents?.length == 0 && payload.length > 0) {
-            this._receiveFirstData({payload: convertedPayload, sender});
-        }
-        if (this?.library?.loaded) {
-            this.fetch(convertedPayload, sender);  
-        } else {
-            Log.warn('[CX3] Module is not prepared yet, wait a while.');
-        }
     }
 
     if (notification === 'MODULE_DOM_CREATED') {
@@ -639,12 +627,11 @@ Module.register('MMM-CalendarExt3', {
         let boundary = []
 
         let cm = new Date(wm.valueOf())
-  
         for (i = 0; i < 7; i++) {
-                 if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
-                 ccDom.appendChild(makeCellDom(cm, i))
-                 boundary.push(cm.getTime())
-             }
+          if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
+          ccDom.appendChild(makeCellDom(cm, i))
+          boundary.push(cm.getTime())
+        }
         boundary.push(cm.setHours(23, 59, 59, 999))
 
         let sw = new Date(wm.valueOf())
@@ -652,7 +639,6 @@ Module.register('MMM-CalendarExt3', {
         let eventsOfWeek = events.filter((ev) => {
           return !(ev.endDate <= sw.getTime() || ev.startDate >= ew.getTime())
         })
-
         for (let event of eventsOfWeek) {
           if (options.skipPassedEventToday) {
             if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) event.skip = true
