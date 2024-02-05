@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MMRIZE/MMM-CalendarExt3.git"
+    "url": "git+https://github.com/mckinlk/MMM-CalendarExt3.git"
   },
   "keywords": [
     "MM",
@@ -18,10 +18,10 @@
     "calendar",
     "CALEXT3"
   ],
-  "author": "eouia0819@gmail.com",
+  "author": "xxx@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MMRIZE/MMM-CalendarExt3/issues"
+    "url": "https://github.com/mckinlk/MMM-CalendarExt3/issues"
   },
-  "homepage": "https://github.com/MMRIZE/MMM-CalendarExt3#readme"
+  "homepage": "https://github.com/mckinlk/MMM-CalendarExt3#readme"
 }
