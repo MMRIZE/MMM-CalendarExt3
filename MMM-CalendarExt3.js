@@ -392,8 +392,6 @@ Module.register('MMM-CalendarExt3', {
 
   socketNotificationReceived: function(notification, payload) {
     if (notification === "EVENT_ADD_SUCCESS") {
-      //send notificaiton to GoogleCalendar
-      this.sendNotification(updateNotification, 1);
     }
   },
 
