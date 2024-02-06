@@ -428,7 +428,7 @@ Module.register('MMM-CalendarExt3', {
     dom.querySelectorAll('.title')?.forEach((e) => {
       const parent = e.closest('.event')
       const {offsetWidth, scrollWidth} = e
-      if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && offsetWidth < scrollWidth) {
+      if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && !parent?.dataset?.isPassed && offsetWidth < scrollWidth) {
         const m = document.createElement('span')
         m.innerHTML = e.innerHTML
         e.innerHTML = ''
@@ -510,15 +510,16 @@ Module.register('MMM-CalendarExt3', {
           console.log("event details: " + clickedElement.dataset.id + eventDetails);
       });
 	    h.appendChild(workIconDom);			
-
-      let cwDom = document.createElement('div')
-      cwDom.innerHTML = getWeekNo(tm, options)
-      cwDom.classList.add('cw')
-      if (tm.getDay() === startDayOfWeek) {
-        cwDom.classList.add('cwFirst')
+      
+      if (this.config.displayCW) {
+        let cwDom = document.createElement('div')
+        cwDom.innerHTML = getWeekNo(tm, options)
+        cwDom.classList.add('cw')
+        if (tm.getDay() === startDayOfWeek) {
+          cwDom.classList.add('cwFirst')
+        }
+        h.appendChild(cwDom)
       }
-
-      h.appendChild(cwDom)
 
       let forecasted = this.forecast.find((e) => {
         return (tm.toLocaleDateString('en-CA') === e.dateId)
