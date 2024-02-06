@@ -466,16 +466,17 @@ Module.register('MMM-CalendarExt3', {
                 //parent is the event overall container
                 parent.style.backgroundColor = this.config.customEvents[ev].color;
                 let magic = this.library.prepareMagic()
-                magic.style.color = parent.style.color
+                //event title should be colored by the --oppositeColor variable in CCS
+                magic.style.color = parent.style.getPropertyValue('--oppositeColor')
                 let oppositeColor = this.library.getContrastYIQ(window.getComputedStyle(magic).getPropertyValue('color'))                
-                parent.style.color = oppositeColor
+                parent.style.setProperty('--oppositeColor', oppositeColor)
               }
             }
             //color symbol
-            if (typeof this.config.customEvents[ev].symbol-color !== "undefined" && this.config.customEvents[ev].symbol-color !== "") {
+            if (typeof this.config.customEvents[ev].symbolcolor !== "undefined" && this.config.customEvents[ev].symbolcolor !== "") {
               //assign color to symbol (may be blocked by useSymbol)
               if (this.config.useSymbol && this.config.coloredSymbol) {
-                symbol.style.color = this.config.customEvents[ev].symbol-color;
+                symbol.style.color = this.config.customEvents[ev].symbolcolor;
               }
             }
             //assign class
