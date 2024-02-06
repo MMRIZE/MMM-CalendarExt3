@@ -61,8 +61,11 @@ Module.register('MMM-CalendarExt3', {
       dateStyle: 'full',
     },
     customEvents: [
-			// Array of {keyword: "", symbol: "", color: "", eventClass: ""} where Keyword is a regexp and symbol/color/eventClass are to be applied for matched
+			// Array of {keyword: "", symbol: "", color: "", eventClass: ""} where Keyword is a regexp and symbol/color/eventClass are to be applied for matches
 		],
+		coloredText: false,
+    coloredEvent: true,
+		coloredSymbol: true,    
     displayCW: true,
     animateIn: 'fadeIn',
     animateOut: 'fadeOut',
@@ -447,32 +450,32 @@ Module.register('MMM-CalendarExt3', {
 
       var transformedTitle = e.innerHTML;
 
-			// Color events if custom color or eventClass are specified, transform title if required
-			if (this.config.customEvents.length > 0) {
-				for (let ev in this.config.customEvents) {
-					let needle = new RegExp(this.config.customEvents[ev].keyword, "gi");
-					if (needle.test(e.innerHTML)) {
-						if (typeof this.config.customEvents[ev].transform === "object") {
-							transformedTitle = this.titleTransform(transformedTitle, [this.config.customEvents[ev].transform]);
-						}
-						if (typeof this.config.customEvents[ev].color !== "undefined" && this.config.customEvents[ev].color !== "") {
-							// Respect parameter ColoredSymbolOnly also for custom events
-							if (this.config.coloredText) {
+      // Color events if custom color or eventClass are specified, transform title if required
+      if (this.config.customEvents.length > 0) {
+        for (let ev in this.config.customEvents) {
+          let needle = new RegExp(this.config.customEvents[ev].keyword, "gi");
+          if (needle.test(e.innerHTML)) {
+            if (typeof this.config.customEvents[ev].transform === "object") {
+              transformedTitle = this.titleTransform(transformedTitle, [this.config.customEvents[ev].transform]);
+            }
+            if (typeof this.config.customEvents[ev].color !== "undefined" && this.config.customEvents[ev].color !== "") {
+              // Respect parameter ColoredSymbolOnly also for custom events
+              if (this.config.coloredEvent) {
                 //parent is the event overall container
-								parent.style.backgroundColor = `color:${this.config.customEvents[ev].color}`;
-							}
+                parent.style.backgroundColor = `color:${this.config.customEvents[ev].color}`;
+              }
               //assign color to symbol (may be blocked by useSymbol)
-							if (this.config.displaySymbol && this.config.coloredSymbol) {
-								symbol.style.color = `color:${this.config.customEvents[ev].color}`;
-							}
-						}
-						if (typeof this.config.customEvents[ev].eventClass !== "undefined" && this.config.customEvents[ev].eventClass !== "") {
+              if (this.config.useSymbol && this.config.coloredSymbol) {
+                symbol.style.color = `color:${this.config.customEvents[ev].color}`;
+              }
+            }
+            if (typeof this.config.customEvents[ev].eventClass !== "undefined" && this.config.customEvents[ev].eventClass !== "") {
               //attach class to parent
-							parent.className += ` ${this.config.customEvents[ev].eventClass}`;
-						}
-					}
-				}
-			}   
+              parent.className += ` ${this.config.customEvents[ev].eventClass}`;
+            }
+          }
+        }
+      }   
       //update event text/html
       e.innerHTML = transformedTitle;   
     })
