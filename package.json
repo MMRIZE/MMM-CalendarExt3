@@ -3,9 +3,6 @@
   "version": "1.8.1",
   "description": "MagicMirror module for calendar view",
   "main": "MMM-CalendarExt3.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mckinlk/MMM-CalendarExt3.git"
