@@ -63,7 +63,6 @@ Module.register('MMM-CalendarExt3', {
     customEvents: [
 			// Array of {keyword: "", symbol: "", color: "", eventClass: ""} where Keyword is a regexp and symbol/color/eventClass are to be applied for matches
 		],
-		coloredText: false,
     coloredEvent: true,
 		coloredSymbol: true,    
     displayCW: true,
@@ -454,21 +453,32 @@ Module.register('MMM-CalendarExt3', {
       if (this.config.customEvents.length > 0) {
         for (let ev in this.config.customEvents) {
           let needle = new RegExp(this.config.customEvents[ev].keyword, "gi");
+          //matched keyword
           if (needle.test(e.innerHTML)) {
+            //transform title
             if (typeof this.config.customEvents[ev].transform === "object") {
               transformedTitle = this.titleTransform(transformedTitle, [this.config.customEvents[ev].transform]);
             }
+            //color event
             if (typeof this.config.customEvents[ev].color !== "undefined" && this.config.customEvents[ev].color !== "") {
               // Respect parameter ColoredSymbolOnly also for custom events
               if (this.config.coloredEvent) {
                 //parent is the event overall container
-                parent.style.backgroundColor = `color:${this.config.customEvents[ev].color}`;
-              }
-              //assign color to symbol (may be blocked by useSymbol)
-              if (this.config.useSymbol && this.config.coloredSymbol) {
-                symbol.style.color = `color:${this.config.customEvents[ev].color}`;
+                parent.style.backgroundColor = this.config.customEvents[ev].color;
+                let magic = this.library.prepareMagic()
+                magic.style.color = parent.style.color
+                let oppositeColor = this.library.getContrastYIQ(window.getComputedStyle(magic).getPropertyValue('color'))                
+                parent.style.color = oppositeColor
               }
             }
+            //color symbol
+            if (typeof this.config.customEvents[ev].symbol-color !== "undefined" && this.config.customEvents[ev].symbol-color !== "") {
+              //assign color to symbol (may be blocked by useSymbol)
+              if (this.config.useSymbol && this.config.coloredSymbol) {
+                symbol.style.color = this.config.customEvents[ev].symbol-color;
+              }
+            }
+            //assign class
             if (typeof this.config.customEvents[ev].eventClass !== "undefined" && this.config.customEvents[ev].eventClass !== "") {
               //attach class to parent
               parent.className += ` ${this.config.customEvents[ev].eventClass}`;
