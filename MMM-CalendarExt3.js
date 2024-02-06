@@ -60,6 +60,9 @@ Module.register('MMM-CalendarExt3', {
     popoverDateOptions: {
       dateStyle: 'full',
     },
+    customEvents: [
+			// Array of {keyword: "", symbol: "", color: "", eventClass: ""} where Keyword is a regexp and symbol/color/eventClass are to be applied for matched
+		],
     displayCW: true,
     animateIn: 'fadeIn',
     animateOut: 'fadeOut',
@@ -427,6 +430,7 @@ Module.register('MMM-CalendarExt3', {
     if (!dom) return
     dom.querySelectorAll('.title')?.forEach((e) => {
       const parent = e.closest('.event')
+      const symbol = e.closest('.symbol')
       const {offsetWidth, scrollWidth} = e
       if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && offsetWidth < scrollWidth) {
         const m = document.createElement('span')
@@ -440,8 +444,68 @@ Module.register('MMM-CalendarExt3', {
         m.style.setProperty('--marqueeScroll', scrollWidth + 'px')
         m.style.setProperty('--marqueeLength', length + 's')
       }
+
+      var transformedTitle = e.innerHTML;
+
+			// Color events if custom color or eventClass are specified, transform title if required
+			if (this.config.customEvents.length > 0) {
+				for (let ev in this.config.customEvents) {
+					let needle = new RegExp(this.config.customEvents[ev].keyword, "gi");
+					if (needle.test(e.innerHTML)) {
+						if (typeof this.config.customEvents[ev].transform === "object") {
+							transformedTitle = this.titleTransform(transformedTitle, [this.config.customEvents[ev].transform]);
+						}
+						if (typeof this.config.customEvents[ev].color !== "undefined" && this.config.customEvents[ev].color !== "") {
+							// Respect parameter ColoredSymbolOnly also for custom events
+							if (this.config.coloredText) {
+                //parent is the event overall container
+								parent.style.backgroundColor = `color:${this.config.customEvents[ev].color}`;
+							}
+              //assign color to symbol (may be blocked by useSymbol)
+							if (this.config.displaySymbol && this.config.coloredSymbol) {
+								symbol.style.color = `color:${this.config.customEvents[ev].color}`;
+							}
+						}
+						if (typeof this.config.customEvents[ev].eventClass !== "undefined" && this.config.customEvents[ev].eventClass !== "") {
+              //attach class to parent
+							parent.className += ` ${this.config.customEvents[ev].eventClass}`;
+						}
+					}
+				}
+			}   
+      //update event text/html
+      e.innerHTML = transformedTitle;   
     })
   },
+
+	titleTransform (title, titleReplace) {
+		let transformedTitle = title;
+		for (let tr in titleReplace) {
+			let transform = titleReplace[tr];
+			if (typeof transform === "object") {
+				if (typeof transform.search !== "undefined" && transform.search !== "" && typeof transform.replace !== "undefined") {
+					let regParts = transform.search.match(/^\/(.+)\/([gim]*)$/);
+					let needle = new RegExp(transform.search, "g");
+					if (regParts) {
+						// the parsed pattern is a regexp with flags.
+						needle = new RegExp(regParts[1], regParts[2]);
+					}
+
+					let replacement = transform.replace;
+					if (typeof transform.yearmatchgroup !== "undefined" && transform.yearmatchgroup !== "") {
+						const yearmatch = [...title.matchAll(needle)];
+						if (yearmatch[0].length >= transform.yearmatchgroup + 1 && yearmatch[0][transform.yearmatchgroup] * 1 >= 1900) {
+							let calcage = new Date().getFullYear() - yearmatch[0][transform.yearmatchgroup] * 1;
+							let searchstr = `$${transform.yearmatchgroup}`;
+							replacement = replacement.replace(searchstr, calcage);
+						}
+					}
+					transformedTitle = transformedTitle.replace(needle, replacement);
+				}
+			}
+		}
+		return transformedTitle;
+	},
 
   draw: async function (dom, options) {
     if (!this.library?.loaded) return dom
