@@ -311,9 +311,9 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   align-self: center;
 }
 
-.CX3 .event.singleday .headline.useSymbol .symbol {
-  color: var(--calendarColor);
-}
+/*.CX3 .event.singleday .headline.useSymbol .symbol {
+  color: var(--oppositeColor);
+}*/
 
 .CX3 .event.fullday .headline .time {
   display: none;

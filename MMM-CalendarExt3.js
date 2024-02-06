@@ -432,7 +432,7 @@ Module.register('MMM-CalendarExt3', {
     if (!dom) return
     dom.querySelectorAll('.title')?.forEach((e) => {
       const parent = e.closest('.event')
-      const symbol = e.closest('.symbol')
+      const symbol = parent.querySelector('.symbol')
       const {offsetWidth, scrollWidth} = e
       if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && offsetWidth < scrollWidth) {
         const m = document.createElement('span')
@@ -479,7 +479,11 @@ Module.register('MMM-CalendarExt3', {
                 symbol.style.color = this.config.customEvents[ev].symbolcolor;
               }
             }
-            //assign class
+            //overwrite symbol class
+            if (typeof this.config.customEvents[ev].symbol !== "undefined" && this.config.customEvents[ev].symbol !== "") {
+              symbol.innerHTML= "<span class='fas fa-fw fa-" + symbol.this.config.customEvents[ev].symbol + "></span>"
+            }
+            //assign class (to inherit css)
             if (typeof this.config.customEvents[ev].eventClass !== "undefined" && this.config.customEvents[ev].eventClass !== "") {
               //attach class to parent
               parent.className += ` ${this.config.customEvents[ev].eventClass}`;
