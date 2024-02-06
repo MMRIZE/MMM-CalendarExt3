@@ -428,7 +428,7 @@ Module.register('MMM-CalendarExt3', {
     dom.querySelectorAll('.title')?.forEach((e) => {
       const parent = e.closest('.event')
       const {offsetWidth, scrollWidth} = e
-      if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && !parent?.dataset?.isPassed && offsetWidth < scrollWidth) {
+      if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && offsetWidth < scrollWidth) {
         const m = document.createElement('span')
         m.innerHTML = e.innerHTML
         e.innerHTML = ''
@@ -673,8 +673,10 @@ Module.register('MMM-CalendarExt3', {
           eDom.style.gridColumnStart = startLine + 1
           eDom.style.gridColumnEnd = endLine + 1
 
-          if (event?.noMarquee) {
+          if (event?.noMarquee || event?.isPassed) {
             eDom.dataset.noMarquee = true
+          } else {
+            eDom.dataset.noMarquee = false
           }
 
           if (event?.skip) {
