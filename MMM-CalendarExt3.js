@@ -43,7 +43,7 @@ Module.register('MMM-CalendarExt3', {
     useWeather: true,
     weatherLocationName: null,
     //notification: 'CALENDAR_EVENTS', /* reserved */
-    updateNotification: 'GCAL_UPDATE',
+    updateNotification: 'UPDATE_CAL',
     manipulateDateCell: (cellDom, events) => { },
     weatherNotification: 'WEATHER_UPDATED',
     weatherPayload: (payload) => { return payload },
@@ -328,6 +328,7 @@ Module.register('MMM-CalendarExt3', {
       }
     }
     if (notification === this.config.updateNotification) {
+      Log.info("Received Update notificaiton");
       this.updateAnimate();
     }
     if (notification === this.notifications.eventNotification) {
