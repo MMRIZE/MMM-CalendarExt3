@@ -192,7 +192,7 @@ Module.register('MMM-CalendarExt3', {
                 // Send the notification with event details
                 this.sendNotification('EDIT_CALENDAR_EVENT', eventDetails);
                 Log.info("eventdetails:", eventDetails)
-                // Commenting out the next line to disable popover activation
+                // Commenting out the next line to disable event popover activation
                 // return this.activatePopover(eDom);
             }
             return;
@@ -270,8 +270,9 @@ Module.register('MMM-CalendarExt3', {
       title.innerHTML = e.title
       list.appendChild(item)
     })
-	//leave this active to review day
-    //this.activatePopover(popover)
+	  //leave this active to review day
+    //edit button is overlayed on the left (on the date number), day popover can be selected on the right side
+    this.activatePopover(popover)
   },
 
   eventPopover: function (eDom) {
@@ -332,10 +333,14 @@ Module.register('MMM-CalendarExt3', {
         callback({ ...this.activeConfig })
       }
     }
+    //force a reanimation
     if (notification === this.config.updateNotification) {
       Log.info("Received Update notificaiton");
+      //reset the animation timer as we are updating right now
+      resetAnimationTimer(false);
       this.updateAnimate();
     }
+    //handles eventPool reset, will display on next updateAnimate
     if (notification === this.notifications.eventNotification) {
       Log.debug("eventNotification Payload:", payload);
       let convertedPayload = this.notifications.eventPayload(payload)
@@ -403,6 +408,21 @@ Module.register('MMM-CalendarExt3', {
     }
   },
 
+  resetAnimationTimer: function (timerBlocked = false) {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer)
+      this.refreshTimer = null
+    }
+    this.refreshTimer = setTimeout(() => {
+      // Check if the timer is not blocked before executing the callback
+      if (!timerBLocked) {
+        clearTimeout(this.refreshTimer)
+        this.refreshTimer = null
+        this.updateAnimate()
+      }
+    }, this.activeConfig.refreshInterval)
+  },
+
   getDom: function () {
     let dom = document.createElement('div')
     dom.innerHTML = ""
@@ -414,16 +434,7 @@ Module.register('MMM-CalendarExt3', {
     }
     dom = this.draw(dom, this.activeConfig)
 
-    if (this.refreshTimer) {
-      clearTimeout(this.refreshTimer)
-      this.refreshTimer = null
-    }
-    this.refreshTimer = setTimeout(() => {
-      clearTimeout(this.refreshTimer)
-      this.refreshTimer = null
-      this.updateAnimate()
-    }, this.activeConfig.refreshInterval)
-    return dom
+    this.resetAnimationTimer(false)
 
   },
 
