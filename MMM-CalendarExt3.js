@@ -172,6 +172,18 @@ Module.register('MMM-CalendarExt3', {
         this.updateAnimate()
       }, this.activeConfig.waitFetch)
     })
+
+    var moduleElement = document.getElementsByClassName("module MMM-CalendarExt3 MMM-CalendarExt3");
+    // Create the "Home event" button
+    // probably not best practice adding home button for CX3 here as it intertwines dependencies
+    let homeButton = document.createElement("button");
+    homeButton.className = "home-button";
+    homeButton.innerHTML = '<i class="fas fa-calendar-day"></i>'; 
+    homeButton.addEventListener("click", () => {
+        this.sendNotification('CX3_RESET') 
+    });
+    moduleElement[0].appendChild(homeButton);
+
   /* append popover with notification to send event details*/
     if (popoverSupported) {
         document.body.addEventListener('click', (ev) => {
@@ -573,15 +585,14 @@ Module.register('MMM-CalendarExt3', {
 
       let dateDom = document.createElement('div')
       dateDom.classList.add('cellDate')
-
       let dParts = new Intl.DateTimeFormat(this.locale, this.config.cellDateOptions).formatToParts(tm)
       let dateHTML = dParts.reduce((prev, cur, curIndex) => {
         prev = prev + `<span class="dateParts ${cur.type} seq_${curIndex}">${cur.value}</span>`
         return prev
       }, '')
       dateDom.innerHTML = dateHTML
-      
       h.appendChild(dateDom)
+      
       let workIconDom = document.createElement('div');
       // Attach click event listener
       workIconDom.addEventListener('click', (event) => {
@@ -634,16 +645,6 @@ Module.register('MMM-CalendarExt3', {
         weatherDom.appendChild(minTemp)
         h.appendChild(weatherDom)
       }
-    //  let dateDom = document.createElement('div')
-    //  dateDom.classList.add('cellDate')
-    //  let dParts = new Intl.DateTimeFormat(options.locale, options.cellDateOptions).formatToParts(tm)
-    //  let dateHTML = dParts.reduce((prev, cur, curIndex) => {
-    //    prev = prev + `<span class="dateParts ${cur.type} seq_${curIndex}">${cur.value}</span>`
-    //    return prev
-    //  }, '')
-    //  dateDom.innerHTML = dateHTML
-
-//      h.appendChild(dateDom)
 
       // Create button to add event 
       let btn = document.createElement('button');
