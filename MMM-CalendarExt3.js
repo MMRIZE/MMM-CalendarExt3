@@ -90,19 +90,19 @@ Module.register('MMM-CalendarExt3', {
     return css
   },
 
-  getMoment: function (options) {
+  getMoment: function (options, indexOffset) {
     let moment = (options.referenceDate) ? new Date(options.referenceDate) : new Date()
     //let moment = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
     switch (options.mode) {
       case 'day':
-        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + options.dayIndex)
+        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() +  options.dayIndex)
         break
       case 'month':
-        moment = new Date(moment.getFullYear(), moment.getMonth() + options.monthIndex , 1)
+        moment = new Date(moment.getFullYear(), moment.getMonth() + (options.monthIndex-indexOffset), 1)
         break
       case 'week':
       default:
-        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * options.weekIndex))
+        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * (options.weekIndex-indexOffset)))
     }
     return moment
   },
@@ -817,7 +817,7 @@ Module.register('MMM-CalendarExt3', {
         wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
       } while(wm.valueOf() <= eoc.valueOf())
     }
-    let moment = this.getMoment(options)
+    let moment = this.getMoment(options, 0)
     let { boc, eoc } = rangeCalendar(moment, options)
     const targetEvents = prepareEvents({
       targetEvents: regularizeEvents({
@@ -835,11 +835,11 @@ Module.register('MMM-CalendarExt3', {
 
   getHeader: function () {
     if (this.activeConfig.mode === 'month') {
-      let moment = this.getMoment(this.activeConfig)
+      let moment = this.getMoment(this.activeConfig, this.originalConfig.monthIndex)
       return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))
     }
     if (this.activeConfig.mode === 'week') {
-      let moment = this.getMoment(this.activeConfig)
+      let moment = this.getMoment(this.activeConfig, this.originalConfig.weekIndex) 
       return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))
     }
     return this.data.header
