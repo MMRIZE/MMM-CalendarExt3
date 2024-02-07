@@ -838,6 +838,10 @@ Module.register('MMM-CalendarExt3', {
       let moment = this.getMoment(this.activeConfig)
       return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))
     }
+    if (this.activeConfig.mode === 'week') {
+      let moment = this.getMoment(this.activeConfig)
+      return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))
+    }
     return this.data.header
   },
 
