@@ -586,3 +586,19 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 #CX3_POPOVER .eventItem .full {
   margin-left: 30px;
 }
+
+#CX3_POPOVER .criteriaItem.period .name::before {
+  content: "PERIOD";
+}
+
+#CX3_POPOVER .criteriaItem.location .name::before {
+  content: "LOCATION";
+}
+
+#CX3_POPOVER .criteriaItem.description .name::before {
+  content: "DESCRIPTION";
+}
+
+#CX3_POPOVER .criteriaItem.calendar .name::before {
+  content: "CALENDAR";
+}
