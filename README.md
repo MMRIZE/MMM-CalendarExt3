@@ -434,6 +434,9 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
+### 1.8.1 (2024-02-13)
+- **CHANGED** Customizable literal text on popover template (through CSS)
+
 ### 1.8.0 (2023-12-20)
 - **CHANGED** Some refactoring
 - **CHANGED** Some behaviour for the usage of notifications to control the module.
@@ -464,4 +467,3 @@ weatherLocationName: 'New York',
 - Seongnoh Yi (eouia0819@gmail.com)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y56IFLK)
-

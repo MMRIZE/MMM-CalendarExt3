@@ -266,7 +266,9 @@ Module.register('MMM-CalendarExt3', {
     ps.forEach((c) => {
       if (eDom.dataset[ c ]) {
         const ct = popover.querySelector('template#CX3_T_CRITERIA').content.firstElementChild.cloneNode(true)
-        ct.querySelector('.name').innerHTML = c
+        //ct.querySelector('.name').innerHTML = c
+        //ct.querySelector('.name').classList.add(c)
+        ct.classList.add(c)
         ct.querySelector('.value').innerHTML = eDom.dataset[ c ]
         criteria.appendChild(document.importNode(ct, true))
       }
@@ -277,7 +279,7 @@ Module.register('MMM-CalendarExt3', {
     const ct = popover.querySelector('template#CX3_T_CRITERIA').content.firstElementChild.cloneNode(true)
     const n = criteria.appendChild(document.importNode(ct, true))
     n.classList.add('period')
-    n.querySelector('.name').innerHTML = 'period'
+    //n.querySelector('.name').innerHTML = 'period'
     pOption = (eDom.dataset.fullDayEvent === 'true') ? { dateStyle: 'short' } : { dateStyle: 'short', timeStyle: 'short' }
     n.querySelector('.value').innerHTML = new Intl.DateTimeFormat(this.locale, pOption).formatRangeToParts(start, end)
     .reduce((prev, cur, curIndex, arr) => {
