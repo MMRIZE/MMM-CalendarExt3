@@ -1,10 +1,12 @@
 /* Global Log, Module, config */
+logCE = (...args) => { /* do nothing */ }
 
 const popoverSupported = (typeof HTMLElement !== 'undefined') ? HTMLElement.prototype.hasOwnProperty('popover') : false
 if (!popoverSupported) console.info(`This browser doesn't support popover yet. Update your system.`)
 const animationSupported = (typeof window !== 'undefined' && window?.mmVersion) ? +(window.mmVersion.split('.').join('')) >= 2250 : false
 Module.register('MMM-CalendarExt3', {
   defaults: {
+    debug: false,    
     mode: 'week', // or 'month', 'day'
     weekIndex: -1, // Which week from this week starts in a view. Ignored on mode 'month'
     dayIndex: -1,
@@ -76,6 +78,9 @@ Module.register('MMM-CalendarExt3', {
     skipDuplicated: true,
     monthIndex: 0,
     referenceDate: null,
+    showLess: true,
+    shortenIndex: 2,
+    futureMaxEventLines: 2, 
   },
 
   defaulNotifications: {
@@ -139,6 +144,7 @@ Module.register('MMM-CalendarExt3', {
   },
 
   start: function() {
+    if (this.config.debug) logCE = (...args) => { console.log("[CALEXT]", ...args) }
     this.activeConfig = this.regularizeConfig({ ...this.config })
     this.originalConfig = { ...this.activeConfig }
 
@@ -147,7 +153,7 @@ Module.register('MMM-CalendarExt3', {
     this.forecast = []
     this.eventPool = new Map()
     this.popoverTimer = null
-
+    
     this._ready = false
 
     let _moduleLoaded = new Promise((resolve, reject) => {
@@ -173,17 +179,6 @@ Module.register('MMM-CalendarExt3', {
       }, this.activeConfig.waitFetch)
     })
 
-    var moduleElement = document.getElementsByClassName("module MMM-CalendarExt3 MMM-CalendarExt3");
-    // Create the "Home event" button
-    // probably not best practice adding home button for CX3 here as it intertwines dependencies
-    let homeButton = document.createElement("button");
-    homeButton.className = "home-button";
-    homeButton.innerHTML = '<i class="fas fa-calendar-day"></i>'; 
-    homeButton.addEventListener("click", () => {
-        this.sendNotification('CX3_RESET') 
-    });
-    moduleElement[0].appendChild(homeButton);
-
   /* append popover with notification to send event details*/
     if (popoverSupported) {
         document.body.addEventListener('click', (ev) => {
@@ -205,12 +200,25 @@ Module.register('MMM-CalendarExt3', {
                 this.sendNotification('EDIT_CALENDAR_EVENT', eventDetails);
                 Log.info("eventdetails:", eventDetails)
                 // Commenting out the next line to disable event popover activation
-                // return this.activatePopover(eDom);
+                //return this.activatePopover(eDom);
             }
             return;
         });
       this.preparePopover();
     }
+  },
+
+  prepareHomeButton: function() {
+    var moduleElement = document.getElementsByClassName("module MMM-CalendarExt3 MMM-CalendarExt3");
+    // Create the "Home event" button
+    let homeButton = document.createElement("button");
+    homeButton.className = "home-button";
+    homeButton.innerHTML = '<i class="fas fa-calendar-day"></i>'; 
+    homeButton.addEventListener("click", () => {
+      this.activeConfig = this.regularizeConfig({ ...this.originalConfig })
+      this.updateAnimate()
+    });
+    moduleElement[0].appendChild(homeButton);
   },
 
   preparePopover: function () {
@@ -340,6 +348,7 @@ Module.register('MMM-CalendarExt3', {
   },
 
   notificationReceived: function (notification, payload, sender) {
+    logCE("notificationReceived:", notification)
     const replyCurrentConfig = ({ callback }) => {
       if (typeof callback === 'function') {
         callback({ ...this.activeConfig })
@@ -347,14 +356,13 @@ Module.register('MMM-CalendarExt3', {
     }
     //force a reanimation
     if (notification === this.config.updateNotification) {
-      Log.info("Received Update notificaiton");
       //reset the animation timer as we are updating right now
-      resetAnimationTimer(false);
+      this.resetAnimationTimer(false);
       this.updateAnimate();
     }
     //handles eventPool reset, will display on next updateAnimate
     if (notification === this.notifications.eventNotification) {
-      Log.debug("eventNotification Payload:", payload);
+      Log.info("eventNotification Payload:", payload);
       let convertedPayload = this.notifications.eventPayload(payload)
       this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(convertedPayload)))
     }
@@ -421,13 +429,14 @@ Module.register('MMM-CalendarExt3', {
   },
 
   resetAnimationTimer: function (timerBlocked = false) {
+    logCE("resetAnimationTimer");
     if (this.refreshTimer) {
       clearTimeout(this.refreshTimer)
       this.refreshTimer = null
     }
     this.refreshTimer = setTimeout(() => {
       // Check if the timer is not blocked before executing the callback
-      if (!timerBLocked) {
+      if (!timerBlocked) {
         clearTimeout(this.refreshTimer)
         this.refreshTimer = null
         this.updateAnimate()
@@ -445,31 +454,19 @@ Module.register('MMM-CalendarExt3', {
       return dom
     }
     dom = this.draw(dom, this.activeConfig)
-
     this.resetAnimationTimer(false)
-
+    if (!this.homeButtonPrepared) {
+      this.prepareHomeButton();
+      this.homeButtonPrepared = true; // Set flag to true after calling prepareHomeButton()
+    }
+    return dom
   },
-
 
   updated: function (dom, options) {
     if (!dom) return
     dom.querySelectorAll('.title')?.forEach((e) => {
       const parent = e.closest('.event')
       const symbol = parent.querySelector('.symbol')
-      const {offsetWidth, scrollWidth} = e
-      if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && offsetWidth < scrollWidth) {
-        const m = document.createElement('span')
-        m.innerHTML = e.innerHTML
-        e.innerHTML = ''
-        e.appendChild(m)
-        e.classList.add('marquee')
-        m.classList.add('marqueeText')
-        const length = m.offsetWidth
-        m.style.setProperty('--marqueeOffset', offsetWidth + 'px')
-        m.style.setProperty('--marqueeScroll', scrollWidth + 'px')
-        m.style.setProperty('--marqueeLength', length + 's')
-      }
-
       var transformedTitle = e.innerHTML;
 
       // Color events if custom color or eventClass are specified, transform title if required
@@ -480,7 +477,7 @@ Module.register('MMM-CalendarExt3', {
           if (needle.test(e.innerHTML)) {
             //transform title
             if (typeof this.config.customEvents[ev].transform === "object") {
-              transformedTitle = this.titleTransform(transformedTitle, [this.config.customEvents[ev].transform]);
+              transformedTitle = this.titleTransform(transformedTitle, this.config.customEvents[ev].transform);
             }
             //color event
             if (typeof this.config.customEvents[ev].color !== "undefined" && this.config.customEvents[ev].color !== "") {
@@ -490,7 +487,7 @@ Module.register('MMM-CalendarExt3', {
                 parent.style.backgroundColor = this.config.customEvents[ev].color;
                 let magic = this.library.prepareMagic()
                 //event title should be colored by the --oppositeColor variable in CCS
-                magic.style.color = parent.style.getPropertyValue('--oppositeColor')
+                magic.style.color = parent.style.backgroundColor
                 let oppositeColor = this.library.getContrastYIQ(window.getComputedStyle(magic).getPropertyValue('color'))                
                 parent.style.setProperty('--oppositeColor', oppositeColor)
               }
@@ -504,8 +501,12 @@ Module.register('MMM-CalendarExt3', {
             }
             //overwrite symbol class
             if (typeof this.config.customEvents[ev].symbol !== "undefined" && this.config.customEvents[ev].symbol !== "") {
-              symbol.innerHTML= "<span class='fas fa-fw fa-" + symbol.this.config.customEvents[ev].symbol + "></span>"
+              symbol.innerHTML = "<span class='" + this.config.customEvents[ev].symbol + "'></span>";
             }
+            //overwrite symbol class
+            if (typeof this.config.customEvents[ev].emoji !== "undefined" && this.config.customEvents[ev].emoji !== "") {
+              symbol.innerHTML = "<span class=''>" + this.config.customEvents[ev].emoji + "</span>";
+            }            
             //assign class (to inherit css)
             if (typeof this.config.customEvents[ev].eventClass !== "undefined" && this.config.customEvents[ev].eventClass !== "") {
               //attach class to parent
@@ -516,13 +517,29 @@ Module.register('MMM-CalendarExt3', {
       }   
       //update event text/html
       e.innerHTML = transformedTitle;   
+
+      //apply marquee
+      const {offsetWidth, scrollWidth} = e
+      if (options.useMarquee && parent?.dataset?.noMarquee !== 'true' && offsetWidth < scrollWidth) {
+        const m = document.createElement('span')
+        m.innerHTML = e.innerHTML
+        e.innerHTML = ''
+        e.appendChild(m)
+        e.classList.add('marquee')
+        m.classList.add('marqueeText')
+        const length = m.offsetWidth
+        m.style.setProperty('--marqueeOffset', offsetWidth + 'px')
+        m.style.setProperty('--marqueeScroll', scrollWidth + 'px')
+        m.style.setProperty('--marqueeLength', length + 's')
+      }      
     })
   },
 
 	titleTransform (title, titleReplace) {
 		let transformedTitle = title;
-		for (let tr in titleReplace) {
+		 for (let tr in titleReplace) {
 			let transform = titleReplace[tr];
+		//for (let transform of titleReplace) {
 			if (typeof transform === "object") {
 				if (typeof transform.search !== "undefined" && transform.search !== "" && typeof transform.replace !== "undefined") {
 					let regParts = transform.search.match(/^\/(.+)\/([gim]*)$/);
@@ -649,7 +666,8 @@ Module.register('MMM-CalendarExt3', {
       // Create button to add event 
       let btn = document.createElement('button');
       btn.className = 'eventButton';
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
         let payload = { date: tm };
         this.sendNotification('BUTTON_CLICKED', payload);
       });
@@ -712,11 +730,42 @@ Module.register('MMM-CalendarExt3', {
 
     const makeWeekGridDom = (dom, options, events, range) => {
       let wm = new Date(range.boc.valueOf())
+      let newYearRollover = 0      
       do {
         let wDom = document.createElement('div')
         wDom.classList.add('week')
-        wDom.dataset.weekNo = getWeekNo(wm, options)
+        let currentWeek = getWeekNo(wm,options)
 
+        //first iteration
+        if (this.thisWeek === undefined) {
+          //original this week index is always the same offset
+          this.thisWeek = currentWeek - this.originalConfig.weekIndex;
+          //assign the rollover based on this week and the shortenIndex offeset
+          (this.thisWeek > (52 - options.shortenIndex)) ? newYearRollover = 52 : newYearRollover = 0
+        }
+
+        let weekMax = options.maxEventLines
+
+        //show less for weeks outside of this week + shorten index
+        //this week moves with calendar swipe
+        if (options.showLess) {
+          //use temp so weekNo is not affected
+          let tempWeekNumber = currentWeek
+          //handle the rollover dec-jan for week numbers
+          if ((tempWeekNumber - this.originalConfig.weekIndex) - (this.thisWeek) < 0) {
+            tempWeekNumber = currentWeek + newYearRollover;
+          }
+          if ((tempWeekNumber - this.thisWeek) > options.shortenIndex ){
+            weekMax = options.futureMaxEventLines
+            wDom.style.setProperty('--maxeventlines', weekMax)
+          }
+          if ((tempWeekNumber - this.thisWeek) < 0 ){
+            weekMax = options.futureMaxEventLines
+            wDom.style.setProperty('--maxeventlines', weekMax)
+          }        
+        }
+
+        wDom.dataset.weekNo = currentWeek        
         let ccDom = document.createElement('div')
         ccDom.classList.add('cellContainer', 'weekGrid')
 
@@ -805,7 +854,7 @@ Module.register('MMM-CalendarExt3', {
           if (options.showMore) {
             const skipped = thatDayEvents.filter(ev => ev.skip).length
             const noskip = thatDayEvents.length - skipped
-            const noskipButOverflowed = (noskip > options.maxEventLines) ? noskip - options.maxEventLines : 0
+            const noskipButOverflowed = (noskip > this.newMax) ? noskip - weekMax : 0
             const hidden = skipped + noskipButOverflowed
             if (hidden) {
               dateCell.classList.add('hasMore')
@@ -828,6 +877,8 @@ Module.register('MMM-CalendarExt3', {
         dom.appendChild(wDom)
         wm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 7)
       } while(wm.valueOf() <= eoc.valueOf())
+      //reset thisWeek value so that first iteration fires again when the calendar is swiped
+      this.thisWeek = undefined
     }
     let moment = this.getMoment(options, 0)
     let { boc, eoc } = rangeCalendar(moment, options)
@@ -848,16 +899,17 @@ Module.register('MMM-CalendarExt3', {
   getHeader: function () {
     if (this.activeConfig.mode === 'month') {
       let moment = this.getMoment(this.activeConfig, this.originalConfig.monthIndex)
-      return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))
+      return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))  + "&nbsp;&nbsp;&nbsp" + moment.getFullYear()
     }
     if (this.activeConfig.mode === 'week') {
       let moment = this.getMoment(this.activeConfig, this.originalConfig.weekIndex) 
-      return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))
+      return new Intl.DateTimeFormat(this.activeConfig.locale, this.activeConfig.headerTitleOptions).format(new Date(moment.valueOf()))  + "&nbsp;&nbsp;&nbsp;" + moment.getFullYear()
     }
     return this.data.header
   },
 
   updateAnimate: function () {
+    logCE("updateAnimate");    
     this.updateDom(
       (!animationSupported)
         ? this.config.animationSpeed
