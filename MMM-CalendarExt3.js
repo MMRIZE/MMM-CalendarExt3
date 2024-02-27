@@ -4,6 +4,93 @@ logCE = (...args) => { /* do nothing */ }
 const popoverSupported = (typeof HTMLElement !== 'undefined') ? HTMLElement.prototype.hasOwnProperty('popover') : false
 if (!popoverSupported) console.info(`This browser doesn't support popover yet. Update your system.`)
 const animationSupported = (typeof window !== 'undefined' && window?.mmVersion) ? +(window.mmVersion.split('.').join('')) >= 2250 : false
+
+
+// Check if a character is a simple emoji
+String.prototype.isSimpleEmoji = function() {
+  const codePoint = this.codePointAt(0);
+  return (
+    (codePoint >= 0x1F300 && codePoint <= 0x1F3FA) || // Miscellaneous Symbols and Pictographs
+    (codePoint >= 0x1F400 && codePoint <= 0x1F6F9) || // Emoticons
+    (codePoint >= 0x1F700 && codePoint <= 0x1F773) || // Alchemical Symbols
+    (codePoint >= 0x1F780 && codePoint <= 0x1F7D8) || // Geometric Shapes Extended
+    (codePoint >= 0x1F800 && codePoint <= 0x1F80B) || // Supplemental Arrows-C
+    (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols and Pictographs
+    (codePoint >= 0x2600 && codePoint <= 0x26FF) ||   // Miscellaneous Symbols
+    (codePoint >= 0x2700 && codePoint <= 0x27BF) ||   // Dingbats
+    (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport and Map Symbols
+    (codePoint >= 0x1F910 && codePoint <= 0x1F9C0) || // Supplemental Symbols and Pictographs
+    (codePoint >= 0x1F100 && codePoint <= 0x1F1FF) || // Enclosed Alphanumeric Supplement
+    (codePoint >= 0x1F200 && codePoint <= 0x1F2FF) || // Enclosed Ideographic Supplement
+    (codePoint >= 0x2B00 && codePoint <= 0x2BFF) ||   // Miscellaneous Symbols and Arrows
+    (codePoint >= 0x27F0 && codePoint <= 0x27FF) ||   // Supplemental Arrows-A
+    (codePoint >= 0x2900 && codePoint <= 0x297F) ||   // Supplemental Arrows-B
+    (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols and Pictographs Extended-A
+    (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Symbols and Pictographs Extended-B
+    (codePoint >= 0xFE00 && codePoint <= 0xFE0F) ||   // Emoticons (Emoji Variation Selector)
+    (codePoint >= 0xD800 && codePoint <= 0xDFFF)
+  );
+};
+
+// Check if a character is combined into an emoji
+String.prototype.isCombinedIntoEmoji = function() {
+  return this.length > 1 && this.split('').some(char => char.isSimpleEmoji());
+};
+
+// Check if a character is an emoji
+String.prototype.isEmoji = function() {
+  return this.isSimpleEmoji() || this.isCombinedIntoEmoji();
+};
+
+// Check if a string contains a single emoji
+String.prototype.isSingleEmoji = function() {
+  return this.length === 1 && this.isEmoji();
+};
+
+// Check if a string contains any emoji
+String.prototype.containsEmoji = function() {
+  return this.split('').some(char => char.isEmoji());
+};
+
+// Check if a string contains only emojis
+String.prototype.containsOnlyEmoji = function() {
+  return this.length > 0 && !this.split('').some(char => !char.isEmoji());
+};
+
+// Extract emojis from a string and return as a new string
+String.prototype.emojiString = function() {
+  return this.split('').filter(char => char.isEmoji()).join('');
+};
+
+// Function to extract all emojis from a string
+String.prototype.extractEmojis = function() {
+  let emojis = '';
+
+  for (let i = 0; i < this.length; i++) {
+      // Extract substrings starting from the current index
+      const substring = this[i];
+
+      // Check if the substring represents a valid emoji
+      if (substring.isEmoji()) {
+          // Add the emoji to the array
+          emojis += substring;
+      }
+      else { break }
+  }
+
+  return emojis;
+}
+
+// Extract emojis from a string and return as an array of characters
+String.prototype.emojis = function() {
+  return this.split('').filter(char => char.isEmoji());
+};
+
+// Extract emoji scalars from a string and return as an array of UnicodeScalars
+String.prototype.emojiScalars = function() {
+  return this.split('').filter(char => char.isEmoji()).flatMap(char => [...char]);
+};
+
 Module.register('MMM-CalendarExt3', {
   defaults: {
     debug: false,    
@@ -469,6 +556,39 @@ Module.register('MMM-CalendarExt3', {
       const symbol = parent.querySelector('.symbol')
       var transformedTitle = e.innerHTML;
 
+      // Check if the innerHTML content is not empty and the first character is an emoji
+      if (transformedTitle.length > 0) {
+        const hasEmoji = transformedTitle.containsEmoji(); // Assuming you have defined the isEmoji method as shown in the previous code
+        if (hasEmoji) {
+          // Remove the first character from transformedTitle
+          myEmoji=transformedTitle.extractEmojis()
+          transformedTitle = transformedTitle.substring(myEmoji.length);
+          keyword = '^' + myEmoji
+          const newEvent = {
+              keyword: '^' + myEmoji,
+              emoji: myEmoji,
+              transform: {
+                  search: myEmoji,
+                  replace: ''
+              }
+          };
+          found = false
+          // Loop through customEvents array to check if emoji already exists
+          for (let i = 0; i < this.config.customEvents.length; i++) {
+              if (this.config.customEvents[i].keyword === keyword) {
+                  this.config.customEvents[i] = newEvent;
+                  found = true;
+                  break;
+              }
+          }
+
+          // If emoji doesn't exist, add new event
+          if (!found) {
+              this.config.customEvents.push(newEvent);
+          }          
+        }
+      }
+
       // Color events if custom color or eventClass are specified, transform title if required
       if (this.config.customEvents.length > 0) {
         for (let ev in this.config.customEvents) {
@@ -479,6 +599,7 @@ Module.register('MMM-CalendarExt3', {
             if (typeof this.config.customEvents[ev].transform === "object") {
               transformedTitle = this.titleTransform(transformedTitle, this.config.customEvents[ev].transform);
             }
+
             //color event
             if (typeof this.config.customEvents[ev].color !== "undefined" && this.config.customEvents[ev].color !== "") {
               // Respect parameter ColoredSymbolOnly also for custom events
