@@ -1,27 +1,27 @@
 {
-  "author": "eouia0819@gmail.com",
-  "bugs": {
-    "url": "https://github.com/MMRIZE/MMM-CalendarExt3/issues"
-  },
+  "name": "mmm-calendarext3",
+  "version": "1.8.1",
   "description": "MagicMirror module for calendar view",
-  "homepage": "https://github.com/MMRIZE/MMM-CalendarExt3#readme",
+  "main": "MMM-CalendarExt3.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "git submodule update --init --recursive",
+    "postupdate": "git submodule update --init --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MMRIZE/MMM-CalendarExt3.git"
+  },
   "keywords": [
     "MM",
     "MagicMirror",
     "calendar",
     "CALEXT3"
   ],
+  "author": "eouia0819@gmail.com",
   "license": "MIT",
-  "main": "MMM-CalendarExt3.js",
-  "name": "mmm-calendarext3",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MMRIZE/MMM-CalendarExt3.git"
+  "bugs": {
+    "url": "https://github.com/MMRIZE/MMM-CalendarExt3/issues"
   },
-  "scripts": {
-    "postinstall": "git submodule update --init --recursive",
-    "postupdate": "git submodule update --init --recursive",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "version": "1.8.2"
+  "homepage": "https://github.com/MMRIZE/MMM-CalendarExt3#readme"
 }
