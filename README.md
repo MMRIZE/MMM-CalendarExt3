@@ -434,18 +434,13 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
-### 1.8.1 (2024-02-13)
-- **CHANGED** Customizable literal text on popover template (through CSS)
+### 1.8.3 (2024-04-27)
+- Rollback from 1.8.2(truncated)
+- **FIXED** MM's repeated singleday timezone issue
+- **FIXED** hide time on multiday-fullday event
+- **UPDATED** more stable CX3_Shared structure
 
-### 1.8.0 (2023-12-20)
-- **CHANGED** Some refactoring
-- **CHANGED** Some behaviour for the usage of notifications to control the module.
-- **REMOVED** `CX3_GLANCE_CALENDAR` notification was removed.
-- **REMOVED** `CX3_SET_DATE` notification also was removed.
-- **ADDED** `CX3_SET_CONFIG`, `CX3_GET_CONFIG`, `CX3_RESET` notifications are added, instead.
-- **ADDED** config property `skipDuplicated` is added.
-- **ADDED** config property `monthIndex` is added. Now you can assign relative month view from today or `referenceDate`
-- **ADDED** config property `referenceDate` is added.
+
 
 
 

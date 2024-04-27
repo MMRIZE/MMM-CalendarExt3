@@ -315,10 +315,6 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   color: var(--calendarColor);
 }
 
-.CX3 .event.fullday .headline .time {
-  display: none;
-}
-
 .CX3 .event.singleday .headline .time {
   display: inline-block;
   padding-right: 2px;
@@ -363,6 +359,14 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   display: inherit;
   order: 4;
   margin-left: auto;
+}
+
+.CX3 .event.multiday.fullday .headline .time {
+  display: none;
+}
+
+.CX3 .event.fullday .headline .time {
+  display: none;
 }
 
 .CX3 .event .description,
