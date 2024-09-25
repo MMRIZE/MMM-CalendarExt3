@@ -114,13 +114,11 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`instanceId` | (auto-generated) | When you want more than 1 instance of this module, each instance would need this value to distinguish each other. If you don't assign this property, the `identifier` of the module instance will be assigned automatically but not recommended to use it. (Hard to guess the auto-assigned value.)|
 |`locale` | (`language` of MM config) | `de` or `ko-KR` or `ja-Jpan-JP-u-ca-japanese-hc-h12`. It defines how to handle and display your date-time values by the locale. When omitted, the default `language` config value of MM. |
 |`calendarSet` | [] | When you want to display only selected calendars, fulfil this array with the targeted calendar name(of the default `calendar` module). <br>e.g) `calendarSet: ['us_holiday', 'office'],`<br> `[]` or `null` will allow all the calendars. |
-|`maxEventLines` | 5 | How many events will be displayed in 1-day cell. The overflowed events will be hidden. |
 |`fontSize` | '18px' | Default font size of this module. |
 |`eventHeight` | '22px' | The height of each event. |
 |`cellDateOptions` | {month: 'short', <br>day: 'numeric'} | The format of day cell date. It varies by the `locale` and this option. <br>`locale:'en-US'`, the default displaying will be `Jun 1` or `1`. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`eventTimeOptions` | {timeStyle: 'short'} | The format of event time. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `3:45 pm`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`headerWeekDayOptions`|{weekday: 'long'} | The format of weekday header. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `Tuesday`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
-|`headerTitleOptions`|{month: 'long'} | The format of module header of the month view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `December`. In `mode:'week'`, this will be ignored.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`eventFilter`| callback function | See the `Filtering` part.|
 |`eventSorter`| callback function | See the `Sorting` part.|
 |`eventTransformer`| callback function | See the `Transforming` part.|
@@ -152,6 +150,9 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`minimalDaysOfNewYear` | auto-filled by locale | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. <br> **Auto-filled by locale unless you set manually.** |
 |`useMarquee`| false | On `true`, if the title of event is too long to display, it will have marquee animation. |
 |`skipDuplicated` | true | On `true`, duplicated events(same title, same start/end) from any calendars will be skipped except one. |
+|`customHeader` | false | See `customHeader` section.
+|`headerTitleOptions`|{month: 'long'} | The format of header of the view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `December`. See `customHeader` section. (Since 1.9.0, behaviour changed.) |
+|`maxEventLines` | 5 | How many events will be displayed in 1-day cell. The overflowed events will be hidden. <br> (Since 1.9.0) This value could be an array or an object define multi value for week the rows of the calendar. See the `dynamic eventlines` part.|
 
 
 ## Notification
@@ -263,6 +264,28 @@ Each event component would be shown/hidden by the virtues of events. Of course, 
 
 
 - `.weekGrid`, `.weekGridRow` : Definition of calendar grid. You can adjust the grid itself. (e.g. Shrink the width of weekend cells)
+
+### customHeader (Since 1.9.0)
+- `customHeader: false` (The same behaviour to the previous.)
+  - When the module's header is undefined or an empty text, the module header will have the name of the month(or defined as `headerTitleOptions`) in `mode: month` view. In other mode, nothing will be shown.
+  - When the module's header has some text, that text will be shown as a header title of the module. 
+- `customHeader: true`
+  - Regardless of the module header, a new section to display title of the view above the week day header.
+  - `headerTitleOptions` would be used;
+    - **IMPORTANT** The default `headerTitleOptions` for `mode: "month"` view. If you are using `day` or `week` view, adjust the value for your purpose.
+      - Example for `month`: `headerTitleOptions: { month: "long" },` => **October**
+      - Example for `day` or `week` : `headerTitleOptions: { year: "numeric", month: "short", day: "numeric" },` => **2.-15. Oct. 2024**
+      - (The result will be different by the locale you use)
+  - See [options for the date format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters)
+- `customHeader: (config, beginOfCalendar, endOfCalendar) => { return TextOrHTML }`
+  - You can also use custom callback function to make your own header.
+  - Parameters 
+    - `config`: (**Object**) current active configuration object of the view. 
+    - `beginOfCalendar` : (**Date Object**) the date object of the begin of the current calendar view.
+    - `endOfCalendar` : (**Date Object**) the date object of the end of the current calendar view.
+  - Return
+    - Text or HTML to be shown should be returned.
+- This newly created header will be `<h1 class="headerTitle>...</h1>`, so you can style with that CSS Selector.
 
 ## Handling Events
 Each event object has this structure.
@@ -416,6 +439,29 @@ monthIndex: -1,
 ```
 Will show the monthly calendar for `2024 November`.
 > Your events provider(e.g. default calendar module) may need to serve enough events to display long-gapped period.
+
+
+### dynamic maxEventLines by rows-of-weeks of the calendar (since 1.9.0)
+Because each month may have a differnt rows(4, 5, 6) of the weeks, it is difficult to adjust the total height of the view with fixed `maxEventLines`. 
+
+Now `maxEventLines` could be an array or an object to define the different value by the weeks row.
+- `maxEventLines: line` : When the value is fixed integer number, all the view has the same `maxEventLines`. 
+- `maxEventLines: [line, line, line, ...]` : (**zero-based array**) The first item(`maxEventLines[0]`) would imply the default value. From the next, the order of the value would be number of rows.
+  - **Example** `maxEventLines: [2, 6, 5, 4, 3, 2]` : When the view has 1 weeks-rows, the `maxEventLines` would be **6**. When the view has 3 weeks-rows, the value would be **4**. When the view has 10 weeks-rows, the `maxEventLines` would be `2` because the default value is **2** 
+- `maxEventLines: { row: line, row: line, ... }` : You can define specific rows only. rowIndex `0` would become the default value.
+  - **Example** `maxEventLines: { 0: 4, 5:3 }`: When the view has 5 weeks-rows, the value would be **3**. In other cases, the value would be **4** in all other views.
+
+And the module content would have additional CSS selector to get the information of the current view.
+```html
+<div class="CX3 ..." data-mode="week" data-max-event-lines="3" ...>
+```
+So you can adjust the view more detailly.
+```css
+.CX3[data-max-event-lines="6"] {
+  font-size: calc(var(--font-size) * 0.9); /* This is just a sample. The real applying would be more complex. */
+  ... 
+}
+```
 
 
 ### Weather forecast
