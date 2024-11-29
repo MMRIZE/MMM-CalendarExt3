@@ -1,8 +1,8 @@
-/* Global Log, Module, config */
+/* global Log, Module, config */
 /* x-eslint-disable @stylistic/linebreak-style, @stylistic/semi, @stylistic/indent */
 /* eslint-disable no-undef, no-unused-vars */
 
-const popoverSupported = (typeof HTMLElement !== "undefined") ? Object.hasOwn(HTMLElement, "popover") : false
+const popoverSupported = HTMLElement.prototype.hasOwnProperty("popover")
 if (!popoverSupported) console.info("This browser doesn't support popover yet. Update your system.")
 const animationSupported = (typeof window !== "undefined" && window?.mmVersion) ? +(window.mmVersion.split(".").join("")) >= 2250 : false
 
@@ -285,6 +285,7 @@ Module.register("MMM-CalendarExt3", {
     let end = new Date(+(eDom.dataset.endDate))
     const ct = popover.querySelector("template#CX3_T_CRITERIA").content.firstElementChild.cloneNode(true)
     const n = criteria.append(document.importNode(ct, true))
+    if (!n) return
     n.classList.add("period")
     //n.querySelector('.name').innerHTML = 'period'
     const pOption = (eDom.dataset.fullDayEvent === "true") ? { dateStyle: "short" } : { dateStyle: "short", timeStyle: "short" }
