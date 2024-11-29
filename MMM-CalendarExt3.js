@@ -1,4 +1,4 @@
-/* Global Log, Module, config */
+/* global Log, Module, config */
 /* x-eslint-disable @stylistic/linebreak-style, @stylistic/semi, @stylistic/indent */
 /* eslint-disable no-undef, no-unused-vars */
 
@@ -285,6 +285,7 @@ Module.register("MMM-CalendarExt3", {
     let end = new Date(+(eDom.dataset.endDate))
     const ct = popover.querySelector("template#CX3_T_CRITERIA").content.firstElementChild.cloneNode(true)
     const n = criteria.append(document.importNode(ct, true))
+    if (!n) return
     n.classList.add("period")
     //n.querySelector('.name').innerHTML = 'period'
     const pOption = (eDom.dataset.fullDayEvent === "true") ? { dateStyle: "short" } : { dateStyle: "short", timeStyle: "short" }

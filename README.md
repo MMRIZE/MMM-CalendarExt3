@@ -268,7 +268,7 @@ Each event component would be shown/hidden by the virtues of events. Of course, 
 ### customHeader (Since 1.9.0)
 - `customHeader: false` (The same behaviour to the previous.)
   - When the module's header is undefined or an empty text, the module header will have the name of the month(or defined as `headerTitleOptions`) in `mode: month` view. In other mode, nothing will be shown.
-  - When the module's header has some text, that text will be shown as a header title of the module. 
+  - When the module's header has some text, that text will be shown as a header title of the module.
 - `customHeader: true`
   - Regardless of the module header, a new section to display title of the view above the week day header.
   - `headerTitleOptions` would be used;
@@ -279,8 +279,8 @@ Each event component would be shown/hidden by the virtues of events. Of course, 
   - See [options for the date format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters)
 - `customHeader: (config, beginOfCalendar, endOfCalendar) => { return TextOrHTML }`
   - You can also use custom callback function to make your own header.
-  - Parameters 
-    - `config`: (**Object**) current active configuration object of the view. 
+  - Parameters
+    - `config`: (**Object**) current active configuration object of the view.
     - `beginOfCalendar` : (**Date Object**) the date object of the begin of the current calendar view.
     - `endOfCalendar` : (**Date Object**) the date object of the end of the current calendar view.
   - Return
@@ -442,12 +442,12 @@ Will show the monthly calendar for `2024 November`.
 
 
 ### dynamic maxEventLines by rows-of-weeks of the calendar (since 1.9.0)
-Because each month may have a differnt rows(4, 5, 6) of the weeks, it is difficult to adjust the total height of the view with fixed `maxEventLines`. 
+Because each month may have a differnt rows(4, 5, 6) of the weeks, it is difficult to adjust the total height of the view with fixed `maxEventLines`.
 
 Now `maxEventLines` could be an array or an object to define the different value by the weeks row.
-- `maxEventLines: line` : When the value is fixed integer number, all the view has the same `maxEventLines`. 
+- `maxEventLines: line` : When the value is fixed integer number, all the view has the same `maxEventLines`.
 - `maxEventLines: [line, line, line, ...]` : (**zero-based array**) The first item(`maxEventLines[0]`) would imply the default value. From the next, the order of the value would be number of rows.
-  - **Example** `maxEventLines: [2, 6, 5, 4, 3, 2]` : When the view has 1 weeks-rows, the `maxEventLines` would be **6**. When the view has 3 weeks-rows, the value would be **4**. When the view has 10 weeks-rows, the `maxEventLines` would be `2` because the default value is **2** 
+  - **Example** `maxEventLines: [2, 6, 5, 4, 3, 2]` : When the view has 1 weeks-rows, the `maxEventLines` would be **6**. When the view has 3 weeks-rows, the value would be **4**. When the view has 10 weeks-rows, the `maxEventLines` would be `2` because the default value is **2**
 - `maxEventLines: { row: line, row: line, ... }` : You can define specific rows only. rowIndex `0` would become the default value.
   - **Example** `maxEventLines: { 0: 4, 5:3 }`: When the view has 5 weeks-rows, the value would be **3**. In other cases, the value would be **4** in all other views.
 
@@ -459,7 +459,7 @@ So you can adjust the view more detailly.
 ```css
 .CX3[data-max-event-lines="6"] {
   font-size: calc(var(--font-size) * 0.9); /* This is just a sample. The real applying would be more complex. */
-  ... 
+  ...
 }
 ```
 
@@ -480,15 +480,9 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
-### 1.8.3 (2024-04-27)
-- Rollback from 1.8.2(truncated)
-- **FIXED** MM's repeated singleday timezone issue
-- **FIXED** hide time on multiday-fullday event
-- **UPDATED** more stable CX3_Shared structure
-
-
-
-
+### 1.9.1 (2024-11-29)
+- **FIXED**: Checking `popover` feature properly. (#173)
+- **FIXED**: Error on touch/click event on the wrong position.
 
 > [Full History](https://github.com/MMRIZE/MMM-CalendarExt3/wiki#history)
 
