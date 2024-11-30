@@ -480,9 +480,9 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
-### 1.9.1 (2024-11-29)
-- **FIXED**: Checking `popover` feature properly. (#173)
-- **FIXED**: Error on touch/click event on the wrong position.
+### 1.9.2 (2024-11-30)
+- **FIXED**: Urgent fix for popover of the event.
+
 
 > [Full History](https://github.com/MMRIZE/MMM-CalendarExt3/wiki#history)
 

@@ -284,10 +284,9 @@ Module.register("MMM-CalendarExt3", {
     let start = new Date(+(eDom.dataset.startDate))
     let end = new Date(+(eDom.dataset.endDate))
     const ct = popover.querySelector("template#CX3_T_CRITERIA").content.firstElementChild.cloneNode(true)
-    const n = criteria.append(document.importNode(ct, true))
-    if (!n) return
+    criteria.append(document.importNode(ct, true))
+    const n = Array.from(criteria.childNodes).at(-1)
     n.classList.add("period")
-    //n.querySelector('.name').innerHTML = 'period'
     const pOption = (eDom.dataset.fullDayEvent === "true") ? { dateStyle: "short" } : { dateStyle: "short", timeStyle: "short" }
     n.querySelector(".value").innerHTML = new Intl.DateTimeFormat(this.locale, pOption).formatRangeToParts(start, end)
     .reduce((prev, cur, curIndex, arr) => {
