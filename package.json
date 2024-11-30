@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "git submodule update --init --recursive",
-    "postupdate": "git submodule update --init --recursive"
+    "postupdate": "git submodule update --init --recursive",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
