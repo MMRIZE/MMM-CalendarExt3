@@ -480,8 +480,9 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
-### 1.9.2 (2024-11-30)
-- **FIXED**: Urgent fix for popover of the event.
+### 1.9.3 (2024-12-10)
+- **FIXED**: Date/Time format of the `popover` will respect the module's locale
+- **CHANGED**: newer CX3_Shared
 
 
 > [Full History](https://github.com/MMRIZE/MMM-CalendarExt3/wiki#history)

@@ -1,7 +1,8 @@
 /* global Log, Module, config */
 /* x-eslint-disable @stylistic/linebreak-style, @stylistic/semi, @stylistic/indent */
-/* eslint-disable no-undef, no-unused-vars */
+/* eslint-disable no-unused-vars */
 
+//const popoverSupported = Object.prototype.hasOwnProperty.call(HTMLElement, "popover")
 const popoverSupported = HTMLElement.prototype.hasOwnProperty("popover")
 if (!popoverSupported) console.info("This browser doesn't support popover yet. Update your system.")
 const animationSupported = (typeof window !== "undefined" && window?.mmVersion) ? +(window.mmVersion.split(".").join("")) >= 2250 : false
@@ -212,7 +213,7 @@ Module.register("MMM-CalendarExt3", {
     })
   },
 
-  dayPopover (cDom, events, options) {
+  dayPopover(cDom, events, options) {
     const popover = document.getElementById("CX3_POPOVER")
     if (!popover) return
     const container = popover.querySelector(".container")
@@ -251,7 +252,7 @@ Module.register("MMM-CalendarExt3", {
     this.activatePopover(popover)
   },
 
-  eventPopover (eDom) {
+  eventPopover(eDom, options) {
     const popover = document.getElementById("CX3_POPOVER")
     if (!popover) return
     const container = popover.querySelector(".container")
@@ -288,7 +289,7 @@ Module.register("MMM-CalendarExt3", {
     const n = Array.from(criteria.childNodes).at(-1)
     n.classList.add("period")
     const pOption = (eDom.dataset.fullDayEvent === "true") ? { dateStyle: "short" } : { dateStyle: "short", timeStyle: "short" }
-    n.querySelector(".value").innerHTML = new Intl.DateTimeFormat(this.locale, pOption).formatRangeToParts(start, end)
+    n.querySelector(".value").innerHTML = new Intl.DateTimeFormat(options.locale, pOption).formatRangeToParts(start, end)
     .reduce((prev, cur, curIndex, arr) => {
       const result = `${prev}<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
       return result
@@ -642,7 +643,7 @@ Module.register("MMM-CalendarExt3", {
             if (!eDom.id) eDom.id = `${eDom.dataset.calendarSeq}_${eDom.dataset.startDate}_${eDom.dataset.endDate}_${new Date(Date.now()).getTime()}`
             eDom.dataset.popoverble = true
             eDom.onclick = (ev) => {
-              this.eventPopover(eDom)
+              this.eventPopover(eDom, options)
             }
           }
 
@@ -678,7 +679,7 @@ Module.register("MMM-CalendarExt3", {
             if (!dateCell.id) dateCell.id = `${dateCell.dataset.date}_${new Date(Date.now()).getTime()}`
             dateCell.dataset.popoverble = true
             dateCell.onclick = (ev) => {
-              this.dayPopover(dateCell, thatDayEvents, config)
+              this.dayPopover(dateCell, thatDayEvents, options)
             }
           }
         }
