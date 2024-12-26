@@ -211,7 +211,8 @@ Any module which can emit this notification could become the source of this modu
 Any module which can emit this notification could become the source of weather forecasting. Generally, the default `weather` module would be.
 
 ### Outgoing Notification
-Nothing yet.  (Does it need?)
+#### `CX3_DOM_UPDATED`, payload: { instanceId }
+This notification will be broadcasted when the DOM of this module is re-rendered.
 
 ## Styling with CSS
 You can handle almost all of the visual things with CSS. See the `module.css` and override your needs into your `custom.css`.
@@ -480,9 +481,9 @@ weatherLocationName: 'New York',
 - I'll add <del>`TimeLine`</del>([MMM-CalendarExt3Timeline](https://github.com/MMRIZE/MMM-CalendarExt3Timeline) and `TimeTable` views/extended modules in future.
 
 ## Latest Updates
-### 1.9.3 (2024-12-10)
-- **FIXED**: Date/Time format of the `popover` will respect the module's locale
-- **CHANGED**: newer CX3_Shared
+### 1.9.4 (2024-12-26)
+- **ADDED** : outgoing notification `CX3_DOM_UPDATED` with payload `{ instanceId }`
+- **FIXED** : logical bug on counting weeks in the December
 
 
 > [Full History](https://github.com/MMRIZE/MMM-CalendarExt3/wiki#history)
