@@ -2,8 +2,16 @@
 /* x-eslint-disable @stylistic/linebreak-style, @stylistic/semi, @stylistic/indent */
 /* eslint-disable no-unused-vars */
 
-//const popoverSupported = Object.prototype.hasOwnProperty.call(HTMLElement, "popover")
+
 const popoverSupported = HTMLElement.prototype.hasOwnProperty("popover")
+/*
+Even though `.prototype.hasOwnProperty` is not recommended, it's the only way to check the existence of `popover` feature at this moment.
+console.log(Object.prototype.hasOwnProperty.call(HTMLElement, "popover")) // false
+console.log(Object.hasOwn(HTMLElement, "popover")) // false
+console.log(HTMLElement.prototype.showPopover === 'function') // false
+consoe.log(HTMLElement.prototype.hasOwnProperty("popover")) // true
+*/
+
 if (!popoverSupported) console.info("This browser doesn't support popover yet. Update your system.")
 const animationSupported = (typeof window !== "undefined" && window?.mmVersion) ? +(window.mmVersion.split(".").join("")) >= 2250 : false
 
@@ -574,7 +582,7 @@ Module.register("MMM-CalendarExt3", {
       // how many weeks between boc(begin of calendar) and eoc(end of calendar)
       let count = 1;
       let eocWeek = getWeekNo(eoc, options)
-      w = new Date(boc.valueOf())
+      let w = new Date(boc.valueOf())
       do {
         w.setDate(w.getDate() + 7)
         count++
