@@ -393,8 +393,8 @@ Module.register("MMM-CalendarExt3", {
       this.refreshTimer = null
       this.updateAnimate()
     }, this.activeConfig.refreshInterval)
+    this.sendNotification("CX3_DOM_UPDATED", { instanceId: this.activeConfig.instanceId })
     return dom
-
   },
 
 
@@ -570,8 +570,18 @@ Module.register("MMM-CalendarExt3", {
         }
         return +(lines?.[weekCount] ?? lines?.[0] ?? this.defaults.maxEventLines)
       }
-      const weekCount = (options.mode === "month") ? getWeekNo(eoc, options) - getWeekNo(boc, options) + 1 : options.weeksInView
-      const maxEventLines = getMaxEventLines(options, weekCount)
+
+      // how many weeks between boc(begin of calendar) and eoc(end of calendar)
+      let count = 1;
+      let eocWeek = getWeekNo(eoc, options)
+      w = new Date(boc.valueOf())
+      do {
+        w.setDate(w.getDate() + 7)
+        count++
+      } while (getWeekNo(w, options) !== eocWeek)
+
+      count = (options.mode === "month") ? count : options.weeksInView
+      const maxEventLines = getMaxEventLines(options, count)
       dom.style.setProperty("--maxeventlines", maxEventLines)
       dom.dataset.maxEventLines = maxEventLines
       const newOptions = { ...options, maxEventLines }
