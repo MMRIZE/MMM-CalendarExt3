@@ -449,6 +449,8 @@ Module.register("MMM-CalendarExt3", {
       if (isPastDay(tm)) cell.classList.add("past")
       if (isToday(tm)) cell.classList.add("today")
       if (isFutureDay(tm)) cell.classList.add("future")
+      if (isThisMonth(tm)) cell.classList.add("thisMonth")
+      if (isThisYear(tm)) cell.classList.add("thisYear")
       cell.classList.add(
         `year_${tm.getFullYear()}`,
         `month_${tm.getMonth() + 1}`,
