@@ -429,7 +429,7 @@ Module.register("MMM-CalendarExt3", {
   async draw (dom, options) {
     if (!this.library?.loaded) return dom
     const {
-      isToday, isThisMonth, isThisYear, getWeekNo, renderEventAgenda,
+      isToday, isPastDay, isFutureDay, isThisMonth, isThisYear, getWeekNo, renderEventAgenda,
       prepareEvents, getBeginOfWeek, getEndOfWeek, displayLegend, regularizeEvents
     } = this.library
 
@@ -446,9 +446,9 @@ Module.register("MMM-CalendarExt3", {
       let tm = new Date(d.valueOf())
       let cell = document.createElement("div")
       cell.classList.add("cell")
+      if (isPastDay(tm)) cell.classList.add("past")
       if (isToday(tm)) cell.classList.add("today")
-      if (isThisMonth(tm)) cell.classList.add("thisMonth")
-      if (isThisYear(tm)) cell.classList.add("thisYear")
+      if (isFutureDay(tm)) cell.classList.add("future")
       cell.classList.add(
         `year_${tm.getFullYear()}`,
         `month_${tm.getMonth() + 1}`,
