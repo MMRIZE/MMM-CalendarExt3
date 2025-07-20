@@ -1,14 +1,14 @@
 {
   "name": "mmm-calendarext3",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "description": "MagicMirror module for calendar view",
   "main": "MMM-CalendarExt3.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --run lint",
     "postinstall": "git submodule update --init --recursive",
     "postupdate": "git submodule update --init --recursive",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
   },
   "repository": {
     "type": "git",
@@ -27,8 +27,10 @@
   },
   "homepage": "https://github.com/MMRIZE/MMM-CalendarExt3#readme",
   "devDependencies": {
-    "@eslint/js": "^9.15.0",
-    "eslint": "^9.15.0",
-    "globals": "^15.12.0"
+    "@eslint/css": "^0.10.0",
+    "@eslint/js": "^9.31.0",
+    "@eslint/markdown": "^7.0.0",
+    "eslint": "^9.31.0",
+    "globals": "^15.15.0"
   }
 }

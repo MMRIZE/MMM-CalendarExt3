@@ -1,9 +1,7 @@
 /* global Log, Module, config */
-/* x-eslint-disable @stylistic/linebreak-style, @stylistic/semi, @stylistic/indent */
 /* eslint-disable no-unused-vars */
 
-
-const popoverSupported = HTMLElement.prototype.hasOwnProperty("popover")
+const popoverSupported = Object.prototype.hasOwnProperty.call(HTMLElement.prototype, "popover")
 /*
 Even though `.prototype.hasOwnProperty` is not recommended, it's the only way to check the existence of `popover` feature at this moment.
 console.log(Object.prototype.hasOwnProperty.call(HTMLElement, "popover")) // false
@@ -171,11 +169,11 @@ Module.register("MMM-CalendarExt3", {
       })
     })
 
-    let _domCreated = new Promise((resolve, reject) => {
+    let _domCreated = new Promise((resolve) => {
       this._domReady = resolve
     })
 
-    Promise.allSettled([_moduleLoaded, _domCreated]).then((result) => {
+    Promise.allSettled([_moduleLoaded, _domCreated]).then(() => {
       this._ready = true
       this.library.prepareMagic()
       setTimeout(() => {
@@ -208,7 +206,7 @@ Module.register("MMM-CalendarExt3", {
             try {
               popover.hidePopover()
               popover.querySelector(".container").innerHTML = ""
-            } catch (e) {
+            } catch {
               // do nothing
             }
           }, this.activeConfig.popoverTimeout)
@@ -230,7 +228,7 @@ Module.register("MMM-CalendarExt3", {
     container.append(document.importNode(ht, true))
     let header = container.querySelector(".header")
     header.innerHTML = new Intl.DateTimeFormat(options.locale, { dateStyle: "full" }).formatToParts(new Date(+cDom.dataset.date))
-    .reduce((prev, cur, curIndex, arr) => {
+    .reduce((prev, cur, curIndex) => {
       const result = `${prev}<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
       return result
     }, "")
@@ -248,7 +246,7 @@ Module.register("MMM-CalendarExt3", {
       renderSymbol(symbol, e, config)
       const time = item.querySelector(".time")
       time.innerHTML = new Intl.DateTimeFormat(options.locale, pOption).formatRangeToParts(new Date(+e.startDate), new Date(+e.endDate))
-      .reduce((prev, cur, curIndex, arr) => {
+      .reduce((prev, cur, curIndex) => {
         const result = `${prev}<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
         return result
       }, "")
@@ -298,7 +296,7 @@ Module.register("MMM-CalendarExt3", {
     n.classList.add("period")
     const pOption = (eDom.dataset.fullDayEvent === "true") ? { dateStyle: "short" } : { dateStyle: "short", timeStyle: "short" }
     n.querySelector(".value").innerHTML = new Intl.DateTimeFormat(options.locale, pOption).formatRangeToParts(start, end)
-    .reduce((prev, cur, curIndex, arr) => {
+    .reduce((prev, cur, curIndex) => {
       const result = `${prev}<span class="eventTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
       return result
     }, "")
@@ -328,7 +326,7 @@ Module.register("MMM-CalendarExt3", {
     if (notification === "MODULE_DOM_CREATED") {
       this._domReady()
       const moduleContainer = document.querySelector(`#${this.identifier} .module-content`)
-      const callback = (mutationsList, observer) => {
+      const callback = (mutationsList) => {
         for (let mutation of mutationsList) {
           const content = document.querySelector(`#${this.identifier} .module-content .CX3`)
           if (mutation.addedNodes.length > 0) this.updated(content, this.activeConfig)
@@ -429,7 +427,7 @@ Module.register("MMM-CalendarExt3", {
   async draw (dom, options) {
     if (!this.library?.loaded) return dom
     const {
-      isToday, isThisMonth, isThisYear, getWeekNo, renderEventAgenda,
+      isToday, isPastDay, isFutureDay, isThisMonth, isThisYear, getWeekNo, renderEventAgenda,
       prepareEvents, getBeginOfWeek, getEndOfWeek, displayLegend, regularizeEvents
     } = this.library
 
@@ -442,11 +440,13 @@ Module.register("MMM-CalendarExt3", {
     dom.style.setProperty("--displayWeatherTemp", (options.displayWeatherTemp) ? "inline-block" : "none")
     dom.dataset.mode = options.mode
 
-    const makeCellDom = (d, seq) => {
+    const makeCellDom = (d) => {
       let tm = new Date(d.valueOf())
       let cell = document.createElement("div")
       cell.classList.add("cell")
+      if (isPastDay(tm)) cell.classList.add("past")
       if (isToday(tm)) cell.classList.add("today")
+      if (isFutureDay(tm)) cell.classList.add("future")
       if (isThisMonth(tm)) cell.classList.add("thisMonth")
       if (isThisYear(tm)) cell.classList.add("thisYear")
       cell.classList.add(
@@ -592,7 +592,6 @@ Module.register("MMM-CalendarExt3", {
       const maxEventLines = getMaxEventLines(options, count)
       dom.style.setProperty("--maxeventlines", maxEventLines)
       dom.dataset.maxEventLines = maxEventLines
-      const newOptions = { ...options, maxEventLines }
       let wm = new Date(boc.valueOf())
       do {
         let wDom = document.createElement("div")
@@ -660,7 +659,7 @@ Module.register("MMM-CalendarExt3", {
           if (popoverSupported) {
             if (!eDom.id) eDom.id = `${eDom.dataset.calendarSeq}_${eDom.dataset.startDate}_${eDom.dataset.endDate}_${new Date(Date.now()).getTime()}`
             eDom.dataset.popoverble = true
-            eDom.onclick = (ev) => {
+            eDom.onclick = () => {
               this.eventPopover(eDom, options)
             }
           }
@@ -696,7 +695,7 @@ Module.register("MMM-CalendarExt3", {
           if (popoverSupported) {
             if (!dateCell.id) dateCell.id = `${dateCell.dataset.date}_${new Date(Date.now()).getTime()}`
             dateCell.dataset.popoverble = true
-            dateCell.onclick = (ev) => {
+            dateCell.onclick = () => {
               this.dayPopover(dateCell, thatDayEvents, options)
             }
           }
@@ -719,7 +718,7 @@ Module.register("MMM-CalendarExt3", {
             const moment = this.getMoment(options)
             return new Intl.DateTimeFormat(locale, titleOptions)
               .formatToParts(new Date(moment.valueOf()))
-              .reduce((prev, cur, curIndex, arr) => {
+              .reduce((prev, cur, curIndex) => {
                 const result = `${prev}<span class="headerTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
                 return result
               }, "")
@@ -728,7 +727,7 @@ Module.register("MMM-CalendarExt3", {
             const end = new Date(eoc.valueOf())
             return new Intl.DateTimeFormat(locale, titleOptions)
               .formatRangeToParts(begin, end)
-              .reduce((prev, cur, curIndex, arr) => {
+              .reduce((prev, cur, curIndex) => {
                 const result = `${prev}<span class="headerTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
                 return result
               }, "")

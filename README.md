@@ -500,7 +500,12 @@ weatherLocationName: 'New York',
 - [MMM-CalendarExt3Journal](https://github.com/MMRIZE/MMM-CalendarExt3Journal)
 
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
 ## Author
+
 - Seongnoh Yi (eouia0819@gmail.com)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y56IFLK)
