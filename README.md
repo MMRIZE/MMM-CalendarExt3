@@ -226,7 +226,6 @@ You can handle almost all of the visual things with CSS. See the `module.css` an
   --cellfooterheight: 2px;
   --defaultcolor: #FFF;
   --eventheight: calc(var(--fontsize) + 4px);
-  --totalheight: calc(var(--eventheight) * var(--maxeventlines));
   font-size: var(--fontsize);
   color: var(--defaultcolor);
   line-height: calc(var(--eventheight))
