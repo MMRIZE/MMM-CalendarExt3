@@ -12,7 +12,6 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   --cellfooterheight: 2px;
   --defaultcolor: #fff;
   --eventheight: calc(var(--fontsize) + 4px);
-  --totalheight: calc(var(--eventheight) * var(--maxeventlines));
   --displayEndTime: none;
   --displayWeatherTemp: none;
 

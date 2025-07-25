@@ -226,7 +226,6 @@ You can handle almost all of the visual things with CSS. See the `module.css` an
   --cellfooterheight: 2px;
   --defaultcolor: #FFF;
   --eventheight: calc(var(--fontsize) + 4px);
-  --totalheight: calc(var(--eventheight) * var(--maxeventlines));
   font-size: var(--fontsize);
   color: var(--defaultcolor);
   line-height: calc(var(--eventheight))
@@ -503,6 +502,10 @@ weatherLocationName: 'New York',
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
+## Changelog
+
+All notable changes to this project will be documented in the [CHANGELOG.md](./CHANGELOG.md) file.
 
 ## Author
 

@@ -25,7 +25,7 @@ If you find a suspicious error message that you think is related to the cause, R
 
 When you are using a dumb terminal so you cannot open the front-dev console with a keyboard, you can manually execute the MM on dev mode. (You should STOP `PM2` before this.)
 ```sh
-npm run start:dev
+node --run start:dev
 ```
 
 4. Report exact information to represent.

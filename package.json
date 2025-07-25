@@ -1,6 +1,6 @@
 {
   "name": "mmm-calendarext3",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "MagicMirror module for calendar view",
   "main": "MMM-CalendarExt3.js",
   "scripts": {
@@ -29,8 +29,8 @@
   "devDependencies": {
     "@eslint/css": "^0.10.0",
     "@eslint/js": "^9.31.0",
-    "@eslint/markdown": "^7.0.0",
+    "@eslint/markdown": "^7.1.0",
     "eslint": "^9.31.0",
-    "globals": "^15.15.0"
+    "globals": "^16.3.0"
   }
 }
