@@ -5,11 +5,11 @@
   "main": "MMM-CalendarExt3.js",
   "type": "commonjs",
   "scripts": {
-    "test": "node --run lint",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "postinstall": "git submodule update --init --recursive",
     "postupdate": "git submodule update --init --recursive",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "test": "node --run lint"
   },
   "repository": {
     "type": "git",
