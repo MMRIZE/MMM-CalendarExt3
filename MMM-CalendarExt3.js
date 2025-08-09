@@ -82,7 +82,7 @@ Module.register("MMM-CalendarExt3", {
     skipDuplicated: true,
     monthIndex: 0,
     referenceDate: null,
-
+    showHeader: true, 
     customHeader: false // true or function
   },
 
@@ -755,7 +755,7 @@ Module.register("MMM-CalendarExt3", {
       config: options,
       range: [boc, eoc]
     })
-    makeDayHeaderDom(dom, options, { boc, eoc })
+    if (options.showHeader) makeDayHeaderDom(dom, options, { boc, eoc })
     makeWeekGridDom(dom, options, targetEvents, { boc, eoc })
     if (options.displayLegend) displayLegend(dom, targetEvents, options)
     if (options.customHeader) customHeaderDom(dom, options, { boc, eoc })

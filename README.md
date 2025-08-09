@@ -153,6 +153,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`customHeader` | false | See `customHeader` section.
 |`headerTitleOptions`|{month: 'long'} | The format of header of the view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `December`. See `customHeader` section. (Since 1.9.0, behaviour changed.) |
 |`maxEventLines` | 5 | How many events will be displayed in 1-day cell. The overflowed events will be hidden. <br> (Since 1.9.0) This value could be an array or an object define multi value for week the rows of the calendar. See the `dynamic eventlines` part.|
+|`showHeader` | true | If set `false`, the headers are disabled. Useful if have two instances running with one above the other to not have the headers repeat. |
 
 
 ## Notification
