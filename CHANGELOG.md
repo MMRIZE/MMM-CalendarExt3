@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.9.6...v1.10.0) - 2025-08-09
+
+### Added
+
+- chore: add "type" field to `package.json`
+- feat: new option `showHeader` (#221)
+
+### Changed
+
+- chore: sort scripts in package.json for clarity
+- chore: update devDependencies
+
 ## [1.9.6](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.9.5...v1.9.6) - 2025-07-25
 
 ### Changed
