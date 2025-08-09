@@ -3,6 +3,7 @@
   "version": "1.9.6",
   "description": "MagicMirror module for calendar view",
   "main": "MMM-CalendarExt3.js",
+  "type": "commonjs",
   "scripts": {
     "test": "node --run lint",
     "postinstall": "git submodule update --init --recursive",
