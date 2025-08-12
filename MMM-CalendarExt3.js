@@ -538,6 +538,23 @@ Module.register("MMM-CalendarExt3", {
 
     const makeDayHeaderDom = (dom, options, range) => {
       let wm = new Date(range.boc.valueOf())
+      let headerContainer = document.createElement("div")
+      headerContainer.classList.add("headerNavigationContainer")
+
+      // Create left arrow
+      let leftArrow = document.createElement("div")
+      leftArrow.classList.add("calendarArrow", "leftArrow")
+      leftArrow.innerHTML = "&#10094;"
+      leftArrow.addEventListener("click", () => {
+        let setWeekIndex = options.weekIndex - options.weeksInView
+        let payload = { weekIndex: setWeekIndex }
+        this.activeConfig = this.regularizeConfig({ ...this.activeConfig, ...payload })
+        this.updateAnimate()
+        this.sendNotification("CX3_SET_CONFIG", { weekIndex: setWeekIndex })
+      })
+      headerContainer.appendChild(leftArrow)
+
+      // Create days header
       let dayDom = document.createElement("div")
       dayDom.classList.add("headerContainer", "weekGrid")
       for (let i = 0; i < 7; i++) {
@@ -551,8 +568,21 @@ Module.register("MMM-CalendarExt3", {
         dDom.innerHTML = new Intl.DateTimeFormat(options.locale, options.headerWeekDayOptions).format(dm)
         dayDom.append(dDom)
       }
+      headerContainer.appendChild(dayDom)
 
-      dom.append(dayDom)
+      // Create right arrow
+      let rightArrow = document.createElement("div")
+      rightArrow.classList.add("calendarArrow", "rightArrow")
+      rightArrow.innerHTML = "&#10095;"
+      rightArrow.addEventListener("click", () => {
+        let setWeekIndex = options.weekIndex + options.weeksInView
+        let payload = { weekIndex: setWeekIndex }
+        this.activeConfig = this.regularizeConfig({ ...this.activeConfig, ...payload })
+        this.updateAnimate()
+      })
+      headerContainer.appendChild(rightArrow)
+
+      dom.append(headerContainer)
     }
 
     const makeWeekGridDom = (dom, options, events, { boc, eoc }) => {

@@ -605,3 +605,51 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 #CX3_POPOVER .criteriaItem.calendar .name::before {
   content: "CALENDAR";
 }
+
+/* Navigation arrows */
+.CX3 .headerNavigationContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.CX3 .calendarArrow {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  height: 30px;
+  width: 30px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.CX3 .calendarArrow:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.CX3 .calendarArrow:active {
+  transform: scale(0.95);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.CX3 .leftArrow {
+  margin-right: 10px;
+}
+
+.CX3 .rightArrow {
+  margin-left: 10px;
+}
+
+.CX3 .headerContainer.weekGrid {
+  flex: 1;
+}
