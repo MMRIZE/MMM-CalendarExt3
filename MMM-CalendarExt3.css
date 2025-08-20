@@ -105,6 +105,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   background-color: white;
   z-index: 30;
   text-overflow: "+";
+  line-height: 18px;
 }
 
 .CX3 .cellHeader {
