@@ -124,10 +124,10 @@ Module.register("MMM-CalendarExt3", {
 
     options.locale = Intl.getCanonicalLocales(options.locale ?? config?.locale ?? config?.language)?.[0] ?? ""
     const calInfo = new Intl.Locale(options.locale)
-    if (calInfo?.weekInfo) {
-      options.firstDayOfWeek = (options.firstDayOfWeek !== null) ? options.firstDayOfWeek : (calInfo.weekInfo?.firstDay ?? weekInfoFallback.firstDay)
-      options.minimalDaysOfNewYear = (options.minimalDaysOfNewYear !== null) ? options.minimalDaysOfNewYear : (calInfo.weekInfo?.minimalDays ?? weekInfoFallback.minDays)
-      options.weekends = ((Array.isArray(options.weekends) && options.weekends?.length) ? options.weekends : (calInfo.weekInfo?.weekend ?? [])).map((d) => d % 7)
+    if (calInfo?.getWeekInfo()) {
+      options.firstDayOfWeek = (options.firstDayOfWeek !== null) ? options.firstDayOfWeek : (calInfo.getWeekInfo()?.firstDay ?? weekInfoFallback.firstDay)
+      options.minimalDaysOfNewYear = (options.minimalDaysOfNewYear !== null) ? options.minimalDaysOfNewYear : (calInfo.getWeekInfo()?.minimalDays ?? weekInfoFallback.minDays)
+      options.weekends = ((Array.isArray(options.weekends) && options.weekends?.length) ? options.weekends : (calInfo.getWeekInfo()?.weekend ?? [])).map((d) => d % 7)
     }
 
     options.instanceId = options.instanceId ?? this.identifier
