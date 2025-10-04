@@ -98,6 +98,12 @@ Module.register("MMM-CalendarExt3", {
     return css
   },
 
+  getScripts () {
+    // Load the polyfill for browsers that don't support Intl.Locale.getWeekInfo() (e.g., Firefox)
+    // TODO: Remove this polyfill when Firefox supports getWeekInfo() natively
+    return ["polyfill-getWeekInfo.js"]
+  },
+
   getMoment (options) {
     let moment = (options.referenceDate) ? new Date(options.referenceDate) : new Date(Date.now())
     //let moment = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
@@ -124,11 +130,13 @@ Module.register("MMM-CalendarExt3", {
 
     options.locale = Intl.getCanonicalLocales(options.locale ?? config?.locale ?? config?.language)?.[0] ?? ""
     const calInfo = new Intl.Locale(options.locale)
-    if (calInfo?.getWeekInfo()) {
-      options.firstDayOfWeek = (options.firstDayOfWeek !== null) ? options.firstDayOfWeek : (calInfo.getWeekInfo()?.firstDay ?? weekInfoFallback.firstDay)
-      options.minimalDaysOfNewYear = (options.minimalDaysOfNewYear !== null) ? options.minimalDaysOfNewYear : (calInfo.getWeekInfo()?.minimalDays ?? weekInfoFallback.minDays)
-      options.weekends = ((Array.isArray(options.weekends) && options.weekends?.length) ? options.weekends : (calInfo.getWeekInfo()?.weekend ?? [])).map((d) => d % 7)
-    }
+
+    // Use getWeekInfo() - works in all browsers (polyfilled for Firefox)
+    const weekInfo = calInfo.getWeekInfo()
+
+    options.firstDayOfWeek = (options.firstDayOfWeek !== null) ? options.firstDayOfWeek : (weekInfo.firstDay ?? weekInfoFallback.firstDay)
+    options.minimalDaysOfNewYear = (options.minimalDaysOfNewYear !== null) ? options.minimalDaysOfNewYear : (weekInfo.minimalDays ?? weekInfoFallback.minimalDays)
+    options.weekends = ((Array.isArray(options.weekends) && options.weekends?.length) ? options.weekends : (weekInfo.weekend ?? [])).map((d) => d % 7)
 
     options.instanceId = options.instanceId ?? this.identifier
     this.notifications = {
