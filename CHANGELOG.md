@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.2](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.10.1...v1.10.2) - 2025-10-04
+
+### Added
+
+- chore: update dependabot schedule to quarterly for GitHub Actions and npm
+- docs: add Code of Conduct
+- feat: add comprehensive bug report template for improved issue tracking
+- feat: add polyfill for Intl.Locale.getWeekInfo() to support Firefox compatibility
+
+### Changed
+
+- chore: reorder fields in package.json in the npm standard way
+- chore: update devDependencies
+- refactor: use getWeekInfo() instead of weekInfo (#237)
+
+### Fixed
+
+- chore: update CX3_Shared submodule with ensureString() fix
+
 ## [1.10.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.10.0...v1.10.1) - 2025-08-31
 
 ### Changed

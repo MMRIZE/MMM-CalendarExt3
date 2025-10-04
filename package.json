@@ -1,9 +1,25 @@
 {
   "name": "mmm-calendarext3",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "description": "MagicMirror module for calendar view",
-  "main": "MMM-CalendarExt3.js",
+  "keywords": [
+    "MM",
+    "MagicMirror",
+    "calendar",
+    "CALEXT3"
+  ],
+  "homepage": "https://github.com/MMRIZE/MMM-CalendarExt3#readme",
+  "bugs": {
+    "url": "https://github.com/MMRIZE/MMM-CalendarExt3/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MMRIZE/MMM-CalendarExt3.git"
+  },
+  "license": "MIT",
+  "author": "eouia0819@gmail.com",
   "type": "commonjs",
+  "main": "MMM-CalendarExt3.js",
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -11,27 +27,11 @@
     "postupdate": "git submodule update --init --recursive",
     "test": "node --run lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MMRIZE/MMM-CalendarExt3.git"
-  },
-  "keywords": [
-    "MM",
-    "MagicMirror",
-    "calendar",
-    "CALEXT3"
-  ],
-  "author": "eouia0819@gmail.com",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/MMRIZE/MMM-CalendarExt3/issues"
-  },
-  "homepage": "https://github.com/MMRIZE/MMM-CalendarExt3#readme",
   "devDependencies": {
-    "@eslint/css": "^0.11.0",
-    "@eslint/js": "^9.34.0",
-    "@eslint/markdown": "^7.2.0",
-    "eslint": "^9.34.0",
-    "globals": "^16.3.0"
+    "@eslint/css": "^0.11.1",
+    "@eslint/js": "^9.37.0",
+    "@eslint/markdown": "^7.3.0",
+    "eslint": "^9.37.0",
+    "globals": "^16.4.0"
   }
 }
