@@ -1,0 +1,232 @@
+name: Bug Report
+description: Think you found a bug? Let us know!
+labels:
+  - bug
+  - to check
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to help make MMM-CalendarExt3 better!
+        Please share clear steps to reproduce the issue so we can verify and fix it quickly.
+
+        **Before reporting, please check:**
+        1. **Reinstall the module** - Remove and reinstall: https://github.com/MMRIZE/MMM-CalendarExt3#install-or-update
+        2. **Try minimal configuration** - Use the test config from the `example/` folder
+        3. **Check the browser console** - Press `Ctrl+Shift+I` (or `F12`) to open Developer Tools and look for errors
+           - Note: `[CX3] Module is not prepared yet, wait a while.` is just a warning, not an error
+        4. **Run in dev mode** - If needed: `node --run start:dev`
+
+        Not sure it's a bug? Feel free to ask first in the community forum:
+        https://forum.magicmirror.builders/category/29/troubleshooting
+
+        Tip: How to write a great bug report:
+        https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue
+  - type: input
+    attributes:
+      label: OS
+      description: |
+        example:
+        - Raspberry Pi OS (Trixie)
+
+        How to find your OS on the Pi (or other Linux):
+        - Run: `cat /etc/os-release` and copy the value of `PRETTY_NAME`
+        - Alternatively: `lsb_release -a` (if available) or `uname -a`
+      placeholder: "Raspberry Pi OS (Bookworm)"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Node.js Version
+      description: |
+        example:
+        - NodeJS: 24.0.0
+
+        How to check your Node.js version:
+        - Run: `node -v` and paste the exact version
+
+        Important:
+        - Only report a bug if you can reproduce it on a current, supported Node.js version (latest LTS or current stable).
+        - Please upgrade and re-test before filing issues for outdated Node.js versions.
+      placeholder: "24.x.x"
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Version verification
+      description: Please confirm you reproduced the bug on an up-to-date Node.js release.
+      options:
+        - label: I verified the issue also occurs on a current Node.js version (e.g., latest LTS or 24.x), not only on an outdated one.
+          required: true
+  - type: input
+    attributes:
+      label: MagicMirror² Version
+      description: |
+        example:
+        - MM: 2.33.0
+
+        How to check your MagicMirror² version:
+        - When you run MagicMirror², the version is shown in the terminal output at startup.
+        - Or open `~/MagicMirror/package.json` and copy the `version`
+
+        Important:
+        - Please only report bugs reproducible on the current MagicMirror² release.
+        - If you're on an older version, update first and re-test before opening an issue.
+      placeholder: "2.x.x"
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: MagicMirror² version verification
+      description: Please confirm you reproduced the bug on the latest MagicMirror² release.
+      options:
+        - label: I verified the issue also occurs on the latest MagicMirror² release (not only on an outdated one).
+          required: true
+  - type: input
+    attributes:
+      label: MMM-CalendarExt3 Version
+      description: |
+        example:
+        - MMM-CalendarExt3: 1.11.0
+      placeholder: "1.x.x"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Browser/Electron Version
+      description: |
+        example:
+        - Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.190 Electron/26.2.4 Safari/537.36
+
+        How to check:
+        1. Open Developer Tools (Ctrl+Shift+I or F12)
+        2. Go to Console tab
+        3. Type `navigator.userAgent` and press Enter
+        4. Copy the output
+
+        Or specify if you're using:
+        - Dedicated Electron client
+        - Chrome/Chromium Browser
+        - Firefox Browser (with polyfill)
+      placeholder: "Electron 26.2.4 / Chrome 116.x / Firefox 123.x"
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Minimal reproduction
+      options:
+        - label: I tested with the minimal configuration from the `example/` folder and the issue still occurs.
+          required: true
+        - label: I tested with only MMM-CalendarExt3 and the default `calendar` module enabled (other modules disabled).
+          required: true
+        - label: I checked the browser console (Ctrl+Shift+I) for error messages.
+          required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: Short explanation of what you were going to do, what did you want to accomplish?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: What should actually happen?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Current behavior
+      description: What happened instead?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Possible solution
+      description: You can suggest a reason for the bug, if you know about it.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Please provide detailed steps to reproduce the behavior
+      placeholder: |
+        1. Start MM...
+        2. Wait until everything loads
+        3. Click button...
+        4. See error...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots (optional)
+      description: If helpful, paste screenshots or a short screen recording.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Log
+      description: |
+        Paste the relevant log output and any error messages from:
+        - Terminal output (when running MagicMirror)
+        - Browser console (Developer Tools → Console tab)
+        
+        **Important: Make sure that none of your personal information, such as IP addresses, passwords, or private calendar URLs are exposed.**
+        
+        To run in dev mode for more detailed logs:
+        ```
+        cd ~/MagicMirror
+        node --run start:dev
+        ```
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: config.js
+      description: |
+        Paste here your config.js file - specifically the MMM-CalendarExt3 and calendar module configurations.
+
+        **Important: Remove all personal data:**
+        - Replace IP addresses with `***`
+        - Replace calendar URLs with `https://example.com/calendar.ics` (unless you want to share the actual URL for debugging)
+        - Remove any API keys, passwords, or tokens
+        
+        Example:
+        ```javascript
+        {
+          module: "calendar",
+          config: {
+            broadcastPastEvents: true,
+            calendars: [
+              {
+                url: "https://example.com/my-calendar.ics",
+                name: "my_calendar",
+                color: "red"
+              }
+            ]
+          }
+        },
+        {
+          module: "MMM-CalendarExt3",
+          position: "bottom_bar",
+          config: {
+            mode: "week",
+            locale: "de-DE",
+            // ... your config
+          }
+        }
+        ```
+      render: javascript
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional context (optional)
+      description: |
+        Any other information that might be helpful:
+        - If the issue is related to a specific calendar, you can send the full config with real ICS URL to eouia0819@gmail.com (rename as config.txt)
+        - Screenshots or screen recordings
+        - Does it work with other calendar sources?
+        - Any recent changes to your setup?
+    validations:
+      required: false
