@@ -71,7 +71,7 @@ Module.register("MMM-CalendarExt3", {
     popoverDateOptions: {
       dateStyle: "full"
     },
-    displayCW: true,
+    showWeekNumber: true,
     animateIn: "fadeIn",
     animateOut: "fadeOut",
     skipPassedEventToday: false,
@@ -82,7 +82,7 @@ Module.register("MMM-CalendarExt3", {
     skipDuplicated: true,
     monthIndex: 0,
     referenceDate: null,
-    showHeader: true, 
+    showHeader: true,
     customHeader: false // true or function
   },
 
@@ -470,14 +470,17 @@ Module.register("MMM-CalendarExt3", {
       let h = document.createElement("div")
       h.classList.add("cellHeader")
 
-      let cwDom = document.createElement("div")
-      cwDom.innerHTML = getWeekNo(tm, options)
-      cwDom.classList.add("cw")
-      if (tm.getDay() === startDayOfWeek) {
-        cwDom.classList.add("cwFirst")
-      }
+	  // Show Hide Calendar Week number ("cw##")
+	  if (options.showWeekNumber) {
+		let cwDom = document.createElement("div")
+		cwDom.innerHTML = getWeekNo(tm, options)
+		cwDom.classList.add("cw")
+		if (tm.getDay() === startDayOfWeek) {
+			cwDom.classList.add("cwFirst")
+		}
 
-      h.append(cwDom)
+		h.append(cwDom)
+	  }
 
       let forecasted = this.forecast.find((e) => {
         return (tm.toLocaleDateString("en-CA") === e.dateId)
