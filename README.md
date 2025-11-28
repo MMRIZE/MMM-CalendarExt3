@@ -1,14 +1,14 @@
 # MMM-CalendarExt3
 
-MagicMirror module for calendar view.
+**MMM-CalendarExt3** is a lightweight calendar module for [MagicMirror²](https://magicmirror.builders/) with week/month views, weather integration, and interactive popovers.
 
 ## Screenshot
 
-![screenshot](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/calendarext3.png)
+![screenshot](screenshot.png)
 
 ## Concept
 
-My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty to use. I need a more easy and light one. So I re-write this from scratch newly.
+The previous module, `MMM-CalendarExt2`, was always notorious for its difficulty to use. I need a more easy and light one. So I re-write this from scratch newly.
 
 ## Features
 
