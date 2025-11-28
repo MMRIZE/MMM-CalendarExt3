@@ -71,7 +71,7 @@ Module.register("MMM-CalendarExt3", {
     popoverDateOptions: {
       dateStyle: "full"
     },
-    showWeekNumber: false, // Show Hide Calendar Week number ('cw##')
+    showWeekNumber: true,
     animateIn: "fadeIn",
     animateOut: "fadeOut",
     skipPassedEventToday: false,
@@ -82,7 +82,7 @@ Module.register("MMM-CalendarExt3", {
     skipDuplicated: true,
     monthIndex: 0,
     referenceDate: null,
-    showHeader: true, 
+    showHeader: true,
     customHeader: false // true or function
   },
 
