@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.10.2...v1.11.0) - 2025-11-28
+
+### Added
+
+- feat: add `showWeekNumber` option to hide CW number (#246)
+
+### Changed
+
+- docs: optimize description and change screenshot link in README
+- chore: add stylistic rules to ESLint and lint code
+- chore: update devDependencies
+
 ## [1.10.2](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.10.1...v1.10.2) - 2025-10-04
 
 ### Added
@@ -67,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.9.4](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.9.3...v1.9.4) - 2024-12-26
 
 - **ADDED** : outgoing notification `CX3_DOM_UPDATED` with payload `{ instanceId }`
-- **FIXED** : logical bug on counting weeks in the December 
+- **FIXED** : logical bug on counting weeks in the December
 
 ## [1.9.3](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.9.2...v1.9.3) - 2024-12-10
 

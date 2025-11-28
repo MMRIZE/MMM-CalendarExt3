@@ -1,14 +1,14 @@
 # MMM-CalendarExt3
 
-MagicMirror module for calendar view.
+**MMM-CalendarExt3** is a lightweight calendar module for [MagicMirror²](https://magicmirror.builders/) with week/month views, weather integration, and interactive popovers.
 
 ## Screenshot
 
-![screenshot](https://raw.githubusercontent.com/MMRIZE/public_ext_storage/main/MMM-CalendarExt3/calendarext3.png)
+![screenshot](screenshot.png)
 
 ## Concept
 
-My previous module, `MMM-CalendarExt2`, was always notorious for its difficulty to use. I need a more easy and light one. So I re-write this from scratch newly.
+The previous module, `MMM-CalendarExt2`, was always notorious for its difficulty to use. I need a more easy and light one. So I re-write this from scratch newly.
 
 ## Features
 
@@ -123,6 +123,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`instanceId` | (auto-generated) | When you want more than 1 instance of this module, each instance would need this value to distinguish each other. If you don't assign this property, the `identifier` of the module instance will be assigned automatically but not recommended to use it. (Hard to guess the auto-assigned value.)|
 |`locale` | (`language` of MM config) | `de` or `ko-KR` or `ja-Jpan-JP-u-ca-japanese-hc-h12`. It defines how to handle and display your date-time values by the locale. When omitted, the default `language` config value of MM. |
 |`calendarSet` | [] | When you want to display only selected calendars, fulfil this array with the targeted calendar name(of the default `calendar` module). <br>e.g) `calendarSet: ['us_holiday', 'office'],`<br> `[]` or `null` will allow all the calendars. |
+|`showWeekNumber` | `true` | Whether to show calendar week number `cw##` |
 |`fontSize` | '18px' | Default font size of this module. |
 |`eventHeight` | '22px' | The height of each event. |
 |`cellDateOptions` | {month: 'short', <br>day: 'numeric'} | The format of day cell date. It varies by the `locale` and this option. <br>`locale:'en-US'`, the default displaying will be `Jun 1` or `1`. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
