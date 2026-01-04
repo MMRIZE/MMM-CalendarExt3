@@ -552,13 +552,14 @@ Module.register("MMM-CalendarExt3", {
       dayDom.classList.add("headerContainer", "weekGrid")
       for (let i = 0; i < 7; i++) {
         const dm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + i)
-        const day = (dm.getDay() + 7) % 7
+        const day = dm.getDay()
         const dDom = document.createElement("div")
         dDom.classList.add("weekday", `weekday_${day}`)
-        options.weekends.forEach((w, i) => {
-          if (day === w) dDom.classList.add("weekend", `weekend_${i + 1}`)
+        options.weekends.forEach((w, idx) => {
+          if (day === w) dDom.classList.add("weekend", `weekend_${idx + 1}`)
         })
-        dDom.innerHTML = new Intl.DateTimeFormat(options.locale, options.headerWeekDayOptions).format(dm)
+        const headerText = new Intl.DateTimeFormat(options.locale, options.headerWeekDayOptions).format(dm)
+        dDom.innerHTML = headerText
         dayDom.append(dDom)
       }
 
@@ -616,13 +617,13 @@ Module.register("MMM-CalendarExt3", {
 
         const boundary = []
 
-        let cm = new Date(wm.valueOf())
         for (let i = 0; i < 7; i++) {
-          if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
+          const cm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + i)
           ccDom.append(makeCellDom(cm, i))
           boundary.push(cm.getTime())
         }
-        boundary.push(cm.setHours(23, 59, 59, 999))
+        const lastDay = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 6, 23, 59, 59, 999)
+        boundary.push(lastDay.getTime())
 
         const sw = new Date(wm.valueOf())
         const ew = new Date(sw.getFullYear(), sw.getMonth(), sw.getDate() + 6, 23, 59, 59, 999)
