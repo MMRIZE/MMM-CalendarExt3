@@ -1,9 +1,27 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.11.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.0...v1.11.1) (2026-01-04)
+
+
+### Fixed
+
+* ensure consistent maxEventLines behavior across all days ([#248](https://github.com/MMRIZE/MMM-CalendarExt3/issues/248)) ([6095abb](https://github.com/MMRIZE/MMM-CalendarExt3/commit/6095abb932adcb67b01496bc10288618d2777bb8)), closes [#226](https://github.com/MMRIZE/MMM-CalendarExt3/issues/226)
+
+
+### Chores
+
+* add demo config and script ([fbca66d](https://github.com/MMRIZE/MMM-CalendarExt3/commit/fbca66dc521e8ae8fb9a502b4c8f532d897962a8))
+* add global ignores for CX3_Shared in ESLint config ([eb3b40f](https://github.com/MMRIZE/MMM-CalendarExt3/commit/eb3b40f6cc0fde2b64d1bf8e4c43290059a107b9))
+* add release script ([aa181b7](https://github.com/MMRIZE/MMM-CalendarExt3/commit/aa181b7438a90932db2e0d3eff5cd3db0760fdee))
+* update devDependencies ([56bc727](https://github.com/MMRIZE/MMM-CalendarExt3/commit/56bc72702d0080861a26a4a48727fdc7c119dcbf))
+
+
+### Code Refactoring
+
+* improve date calculation clarity in calendar grid ([8ef7846](https://github.com/MMRIZE/MMM-CalendarExt3/commit/8ef7846301554c43f2a58888e507672929c67009))
+* simplify end column calculation for event display ([a9cc827](https://github.com/MMRIZE/MMM-CalendarExt3/commit/a9cc827ace536cb8817f04590a12cd1f87d3b34d))
 
 ## [1.11.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.10.2...v1.11.0) - 2025-11-28
 
