@@ -21,6 +21,7 @@
   "type": "commonjs",
   "main": "MMM-CalendarExt3.js",
   "scripts": {
+	"demo": "cd ../../ && MM_CONFIG_FILE=modules/MMM-CalendarExt3/demo.config.js node --run start:wayland:dev",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "postinstall": "git submodule update --init --recursive",

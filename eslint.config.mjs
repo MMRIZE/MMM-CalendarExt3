@@ -47,6 +47,7 @@ export default defineConfig([
       "no-var": "error"
     }
   },
+  { files: ["demo.config.js"], rules: { "prefer-const": "off" } },
   {
     files: ["**/*.md"],
     plugins: { markdown },
