@@ -569,8 +569,10 @@ Please see the [Code of Conduct](CODE_OF_CONDUCT.md). By contributing you agree 
 
 ### Developer commands
 
+- `node --run demo` - Start MagicMirror with demo config showcasing and testing the module.
 - `node --run lint` - Run linting and formatter checks.
 - `node --run lint:fix` - Fix linting and formatter issues.
+- `node --run release` - Create a new release. (Bumps version, creates changelog, commits, tags)
 
 ## License
 

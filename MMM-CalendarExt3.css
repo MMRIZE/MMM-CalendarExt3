@@ -56,7 +56,6 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   );
   grid-auto-rows: 0;
   overflow-y: hidden;
-  grid-auto-flow: column dense;
 }
 
 .CX3 .cellContainer {
@@ -104,7 +103,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   border-radius: 9px;
   background-color: white;
   z-index: 30;
-  text-overflow: "+";
+  text-align: center;
   line-height: 18px;
 }
 

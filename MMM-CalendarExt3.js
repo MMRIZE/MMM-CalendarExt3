@@ -552,13 +552,14 @@ Module.register("MMM-CalendarExt3", {
       dayDom.classList.add("headerContainer", "weekGrid")
       for (let i = 0; i < 7; i++) {
         const dm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + i)
-        const day = (dm.getDay() + 7) % 7
+        const day = dm.getDay()
         const dDom = document.createElement("div")
         dDom.classList.add("weekday", `weekday_${day}`)
-        options.weekends.forEach((w, i) => {
-          if (day === w) dDom.classList.add("weekend", `weekend_${i + 1}`)
+        options.weekends.forEach((w, idx) => {
+          if (day === w) dDom.classList.add("weekend", `weekend_${idx + 1}`)
         })
-        dDom.innerHTML = new Intl.DateTimeFormat(options.locale, options.headerWeekDayOptions).format(dm)
+        const headerText = new Intl.DateTimeFormat(options.locale, options.headerWeekDayOptions).format(dm)
+        dDom.innerHTML = headerText
         dayDom.append(dDom)
       }
 
@@ -616,54 +617,103 @@ Module.register("MMM-CalendarExt3", {
 
         const boundary = []
 
-        let cm = new Date(wm.valueOf())
         for (let i = 0; i < 7; i++) {
-          if (i) cm = new Date(cm.getFullYear(), cm.getMonth(), cm.getDate() + 1)
+          const cm = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + i)
           ccDom.append(makeCellDom(cm, i))
           boundary.push(cm.getTime())
         }
-        boundary.push(cm.setHours(23, 59, 59, 999))
+        const lastDay = new Date(wm.getFullYear(), wm.getMonth(), wm.getDate() + 6, 23, 59, 59, 999)
+        boundary.push(lastDay.getTime())
 
         const sw = new Date(wm.valueOf())
         const ew = new Date(sw.getFullYear(), sw.getMonth(), sw.getDate() + 6, 23, 59, 59, 999)
         const eventsOfWeek = events.filter(ev => {
           return !(ev.endDate <= sw.getTime() || ev.startDate >= ew.getTime())
         })
-        for (const event of eventsOfWeek) {
-          if (options.skipPassedEventToday) {
-            if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) event.skip = true
-          }
-          if (event?.skip) continue
 
+        // Packing algorithm: assign explicit row to each event
+        const assignEventRows = eventList => {
+          // Track which rows are occupied per day (0-6)
+          const rowsPerDay = Array(7).fill(null).map(() => new Set())
+
+          // Calculate start/end column for each event
+          const eventsWithColumns = eventList.map(event => {
+            let startCol = 0
+            if (event.startDate >= boundary.at(0)) {
+              startCol = boundary.findIndex((b, idx, bounds) => {
+                return (event.startDate >= b && event.startDate < bounds[idx + 1])
+              })
+            }
+
+            // Find the last day (0-6) the event is still running
+            const weekDays = boundary.slice(0, 7) // Days 0-6 (7 weekdays), exclude boundary[7] (week end marker)
+            const lastDayIndex = weekDays.findLastIndex(b => event.endDate > b)
+            const endCol = lastDayIndex >= 0 ? lastDayIndex : 6
+
+            const days = []
+            for (let d = startCol; d <= endCol; d++) days.push(d)
+            return { event, startCol, endCol, days, span: endCol - startCol + 1 }
+          })
+
+          // Sort: longer (multi-day) events first, then by start date
+          eventsWithColumns.sort((a, b) => {
+            return b.span - a.span || a.event.startDate - b.event.startDate
+          })
+
+          // Assign rows
+          for (const ev of eventsWithColumns) {
+            let row = 1
+            while (true) {
+              const isFree = ev.days.every(day => !rowsPerDay[day].has(row))
+              if (isFree) break
+              row++
+            }
+            ev.assignedRow = row
+            ev.days.forEach(day => rowsPerDay[day].add(row))
+          }
+
+          return eventsWithColumns
+        }
+
+        // Filter skipped events and assign rows
+        const activeEvents = eventsOfWeek.filter(event => {
+          if (options.skipPassedEventToday) {
+            if (event.today && event.isPassed && !event.isFullday && !event.isMultiday && !event.isCurrent) {
+              event.skip = true
+            }
+          }
+          return !event?.skip
+        })
+
+        const packedEvents = assignEventRows(activeEvents)
+
+        // Track hidden events per day for "+N" display
+        const hiddenPerDay = Array(7).fill(0)
+
+        for (const packed of packedEvents) {
+          const { event, startCol, endCol, assignedRow } = packed
           const eDom = renderEventAgenda(event, options, moment)
 
-          let startLine = 0
-          if (event.startDate >= boundary.at(0)) {
-            startLine = boundary.findIndex((b, idx, bounds) => {
-              return (event.startDate >= b && event.startDate < bounds[idx + 1])
-            })
-          } else {
+          // Set grid position explicitly
+          eDom.style.gridColumnStart = startCol + 1
+          eDom.style.gridColumnEnd = endCol + 2
+          eDom.style.gridRowStart = assignedRow
+
+          if (event.startDate < boundary.at(0)) {
             eDom.classList.add("continueFromPreviousWeek")
           }
-
-          let endLine = boundary.length - 1
-          if (event.endDate <= boundary.at(-1)) {
-            endLine = boundary.findIndex((b, idx, bounds) => {
-              return (event.endDate <= b && event.endDate > bounds[idx - 1])
-            })
-          } else {
+          if (event.endDate > boundary.at(-1)) {
             eDom.classList.add("continueToNextWeek")
           }
 
-          eDom.style.gridColumnStart = startLine + 1
-          eDom.style.gridColumnEnd = endLine + 1
+          // Hide events beyond maxEventLines
+          if (assignedRow > maxEventLines) {
+            eDom.style.display = "none"
+            packed.days.forEach(day => hiddenPerDay[day]++)
+          }
 
           if (event?.noMarquee) {
             eDom.dataset.noMarquee = true
-          }
-
-          if (event?.skip) {
-            eDom.dataset.skip = true
           }
 
           if (popoverSupported) {
@@ -692,10 +742,9 @@ Module.register("MMM-CalendarExt3", {
           }
 
           if (options.showMore) {
+            // Use pre-calculated hidden count from packing algorithm
             const skipped = thatDayEvents.filter(ev => ev.skip).length
-            const noskip = thatDayEvents.length - skipped
-            const noskipButOverflowed = (noskip > maxEventLines) ? noskip - maxEventLines : 0
-            const hidden = skipped + noskipButOverflowed
+            const hidden = skipped + hiddenPerDay[i]
             if (hidden) {
               dateCell.classList.add("hasMore")
               dateCell.style.setProperty("--more", hidden)
