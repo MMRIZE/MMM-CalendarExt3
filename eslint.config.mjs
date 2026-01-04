@@ -1,11 +1,12 @@
 import css from "@eslint/css"
-import { defineConfig } from "eslint/config"
+import { defineConfig, globalIgnores } from "eslint/config"
 import globals from "globals"
 import js from "@eslint/js"
 import markdown from "@eslint/markdown"
 import stylistic from "@stylistic/eslint-plugin"
 
 export default defineConfig([
+  globalIgnores(["CX3_Shared/**"]),
   {
     files: ["**/*.css"],
     languageOptions: { tolerant: true },
