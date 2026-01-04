@@ -644,14 +644,12 @@ Module.register("MMM-CalendarExt3", {
                 return (event.startDate >= b && event.startDate < bounds[idx + 1])
               })
             }
-            let endCol = 6
-            if (event.endDate <= boundary.at(-1)) {
-              endCol = boundary.findIndex((b, idx, bounds) => {
-                return (event.endDate <= b && event.endDate > bounds[idx - 1])
-              })
-              if (endCol === -1) endCol = 6
-              else endCol = Math.max(0, endCol - 1)
-            }
+
+            // Find the last day (0-6) the event is still running
+            const weekDays = boundary.slice(0, 7) // Days 0-6 (7 weekdays), exclude boundary[7] (week end marker)
+            const lastDayIndex = weekDays.findLastIndex(b => event.endDate > b)
+            const endCol = lastDayIndex >= 0 ? lastDayIndex : 6
+
             const days = []
             for (let d = startCol; d <= endCol; d++) days.push(d)
             return { event, startCol, endCol, days, span: endCol - startCol + 1 }
