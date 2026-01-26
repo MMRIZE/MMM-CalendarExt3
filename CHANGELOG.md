@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.11.2](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.1...v1.11.2) (2026-01-26)
+
+
+### Performance Improvements
+
+* optimize marquee animation performance ([d6ea9b3](https://github.com/MMRIZE/MMM-CalendarExt3/commit/d6ea9b3a15de3a91cf0c4d2c363f109bbda460ae))
+
+
+### Chores
+
+* update CX3_Shared submodule to latest version ([1660433](https://github.com/MMRIZE/MMM-CalendarExt3/commit/1660433e0f74ea7e35f7483ce3a975b7c6f61e81))
+* update devDependencies ([bd929e8](https://github.com/MMRIZE/MMM-CalendarExt3/commit/bd929e8ec2e165f2e24060625bc91c01bb206bbe))
+* update devDependencies ([6e5f31f](https://github.com/MMRIZE/MMM-CalendarExt3/commit/6e5f31fe5c276d015ccb75a5eb5a32a1211fbf52))
+
 ## [1.11.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.0...v1.11.1) (2026-01-04)
 
 
