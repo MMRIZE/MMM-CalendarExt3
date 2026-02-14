@@ -86,7 +86,7 @@ Module.register("MMM-CalendarExt3", {
     customHeader: false // true or function
   },
 
-  defaulNotifications: {
+  defaultNotifications: {
     weatherNotification: "WEATHER_UPDATED",
     weatherPayload: payload => { return payload },
     eventNotification: "CALENDAR_EVENTS",
@@ -140,10 +140,10 @@ Module.register("MMM-CalendarExt3", {
 
     options.instanceId = options.instanceId ?? this.identifier
     this.notifications = {
-      weatherNotification: options.weatherNotification ?? this.defaulNotifications.weatherNotification,
-      weatherPayload: (typeof options.weatherPayload === "function") ? options.weatherPayload : this.defaulNotifications.weatherPayload,
-      eventNotification: options.eventNotification ?? this.defaulNotifications.eventNotification,
-      eventPayload: (typeof options.eventPayload === "function") ? options.eventPayload : this.defaulNotifications.eventPayload
+      weatherNotification: options.weatherNotification ?? this.defaultNotifications.weatherNotification,
+      weatherPayload: (typeof options.weatherPayload === "function") ? options.weatherPayload : this.defaultNotifications.weatherPayload,
+      eventNotification: options.eventNotification ?? this.defaultNotifications.eventNotification,
+      eventPayload: (typeof options.eventPayload === "function") ? options.eventPayload : this.defaultNotifications.eventPayload
     }
 
     options.mode = (["day", "month", "week"].includes(options.mode)) ? options.mode : "week"
