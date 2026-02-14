@@ -365,9 +365,6 @@ Module.register("MMM-CalendarExt3", {
       }
     }
 
-    if (["CX3_GLANCE_CALENDAR", "CX3_MOVE_CALENDAR", "CX3_SET_DATE"].includes(notification)) {
-      console.warn("[DEPRECATED]'CX3_GLANCE_CALENDAR' notification was deprecated. Use 'CX3_SET_CONFIG' instead. (README.md)")
-    }
     if (payload?.instanceId && payload?.instanceId !== this.activeConfig?.instanceId) return
 
     if (notification === "CX3_GET_CONFIG") {

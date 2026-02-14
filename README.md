@@ -170,12 +170,6 @@ All the properties are omittable, and if omitted, a default value will be applie
 
 ### Incoming Notifications
 
-#### **(deprecated)** `CX3_MOVE_CALENDAR`, payload: {instanceId, step}
-
-#### **(deprecated)** `CX3_GLANCE_CALENDAR`, payload: {instanceId, step}
-
-#### **(deprecated)** `CX3_SET_DATE`, payload: {instanceId, date}
-
 #### `CX3_GET_CONFIG`, payload: { callback, instanceId? }
 
 Get current config properties.
