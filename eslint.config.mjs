@@ -28,8 +28,8 @@ export default defineConfig([
         ...globals.node
       }
     },
-    plugins: { js, stylistic },
-    extends: ["js/recommended", "stylistic/recommended"],
+    plugins: { js },
+    extends: ["js/recommended", stylistic.configs.recommended],
     rules: {
       "@stylistic/indent": ["error", 2],
       "@stylistic/quotes": ["error", "double"],
