@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.11.3](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.2...v1.11.3) (2026-02-14)
+
+
+### Fixed
+
+* correct typo in defaultNotifications object ([90c3692](https://github.com/MMRIZE/MMM-CalendarExt3/commit/90c3692d5ab8ebca79f26f5097879aa4bc49a3f2))
+
+
+### Documentation
+
+* align README defaults with actual module config ([1d08119](https://github.com/MMRIZE/MMM-CalendarExt3/commit/1d08119ea672c4ac0723c13ccf712724bfcd8fb8))
+
+
+### Chores
+
+* add automated testing workflow ([bbe48fd](https://github.com/MMRIZE/MMM-CalendarExt3/commit/bbe48fd3a94c8c7f50b34ebadb4d018b8daf79e3))
+* remove deprecated notifications (CX3_SET_DATE, CX3_MOVE_CALENDAR, CX3_GLANCE_CALENDAR) ([070961c](https://github.com/MMRIZE/MMM-CalendarExt3/commit/070961cb0e40a66504e5ab737991ffdf0a847245))
+* reorder test script to run lint before unit tests ([fead5d1](https://github.com/MMRIZE/MMM-CalendarExt3/commit/fead5d1bb38b5bf7b72afad03188a02a976a527d))
+* update devDependencies + ESLint config ([11510d9](https://github.com/MMRIZE/MMM-CalendarExt3/commit/11510d980a6681c601ced4a295c0d2e3b6ff0b3b))
+* update subproject commit reference in CX3_Shared ([fc863de](https://github.com/MMRIZE/MMM-CalendarExt3/commit/fc863de6d29b362b0036a25f0429876edc0805c5))
+
+
+### Code Refactoring
+
+* remove unused function parameters in event handling ([a667d2f](https://github.com/MMRIZE/MMM-CalendarExt3/commit/a667d2f648c8f2b345465f6b56db4a0f3d745c47))
+* simplify event payload cloning with structuredClone ([5295dd6](https://github.com/MMRIZE/MMM-CalendarExt3/commit/5295dd62f11bea5192c650189b966cdf08e2ba54))
+* use deterministic DOM IDs instead of timestamps ([5611e77](https://github.com/MMRIZE/MMM-CalendarExt3/commit/5611e77b8370269a9012eb5c0c3e5d1593e2a073))
+
+
+### Tests
+
+* add unit tests ([4edbcfe](https://github.com/MMRIZE/MMM-CalendarExt3/commit/4edbcfe9bc5af9f8a2ebec5853ae0c9b4829dc7c))
+
 ## [1.11.2](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.1...v1.11.2) (2026-01-26)
 
 
