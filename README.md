@@ -133,8 +133,8 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`eventSorter`| callback function | See the `Sorting` part.|
 |`eventTransformer`| callback function | See the `Transforming` part.|
 |`waitFetch`| 5000 | (ms) waiting the fetching of last calendar to prevent flickering view by too frequent fetching. |
-|`refreshInterval`| 1800000 | (ms) refresh view by force if you need it. |
-|`animationSpeed` | 1000 | (ms) Refreshing the view smoothly. |
+|`refreshInterval`| 600000 | (ms) refresh view by force if you need it. |
+|`animationSpeed` | 2000 | (ms) Refreshing the view smoothly. |
 |`useSymbol` | true | Whether to show font-awesome symbold instead of simple dot icon. |
 |`displayLegend` | false | If you set as true, legend will be displayed. (Only the clanear which has name assigned)|
 |`eventNotification`| 'CALENDAR_EVENTS' | A carrier notification of event source.|
@@ -154,7 +154,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`animateOut` | 'fadeOut' | Animation effect on refresh. |
 |`skipPassedEventToday`| false | If set `true`, the passed singleday events (not fullday, not multiday events) of today will be disappeard to save screen asset. It will be useful when you have too many events to show in `maxEventLines`. It will be applied only for `today`.|
 |`showMore` | true | When the number of events is more than `maxEventLines`, the number of overflowed events would be displayed in the right-bottom cornor of the cell. And also it will popover whole day event list by click/touch it.|
-|`useIconify` | false | If set `true`, You can use `iconify-icon` instead of `fontawesome`. |
+|`useIconify` | true | If set `true`, You can use `iconify-icon` instead of `fontawesome`. |
 |`weekends` | auto-filled by locale. |(Array of day order). e.g. `weekends: [1, 3]` means Monday and Wedneseday would be regarded as weekends. Usually you don't have to set this value. <br> **Auto-filled by locale unless you set manually.** |
 |`firstDayOfWeek`| auto-filled by locale | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 <br> **Auto-filled by locale unless you set manually.** |
 |`minimalDaysOfNewYear` | auto-filled by locale | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. <br> **Auto-filled by locale unless you set manually.** |
