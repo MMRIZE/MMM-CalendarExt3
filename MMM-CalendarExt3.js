@@ -1,5 +1,4 @@
 /* global Log, Module, config */
-/* eslint-disable no-unused-vars */
 
 const popoverSupported = Object.prototype.hasOwnProperty.call(HTMLElement.prototype, "popover")
 /*
@@ -43,7 +42,7 @@ Module.register("MMM-CalendarExt3", {
     // Also, it could be possible to use [] like [8, 8, 7, 6, 5] to set different lines by the number of week of the month.
     fontSize: "18px",
     eventHeight: "22px",
-    eventFilter: ev => { return true },
+    eventFilter: () => { return true },
     eventSorter: null,
     eventTransformer: ev => { return ev },
     refreshInterval: 1000 * 60 * 10, // too frequent refresh. 10 minutes is enough.
@@ -55,7 +54,7 @@ Module.register("MMM-CalendarExt3", {
     useWeather: true,
     weatherLocationName: null,
     // notification: 'CALENDAR_EVENTS', /* reserved */
-    manipulateDateCell: (cellDom, events) => { },
+    manipulateDateCell: () => { },
     weatherNotification: "WEATHER_UPDATED",
     weatherPayload: payload => { return payload },
     eventNotification: "CALENDAR_EVENTS",
