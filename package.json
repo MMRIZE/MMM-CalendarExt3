@@ -27,7 +27,8 @@
     "postinstall": "git submodule update --init --recursive",
     "postupdate": "git submodule update --init --recursive",
     "release": "commit-and-tag-version --config ./changelog.config.js",
-    "test": "node --run lint"
+    "test": "node --run test:unit && node --run lint",
+    "test:unit": "node --test tests/unit/**/*.test.cjs"
   },
   "devDependencies": {
     "@eslint/css": "^0.14.1",
