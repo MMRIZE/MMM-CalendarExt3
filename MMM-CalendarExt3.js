@@ -713,7 +713,7 @@ Module.register("MMM-CalendarExt3", {
           }
 
           if (popoverSupported) {
-            if (!eDom.id) eDom.id = `${eDom.dataset.calendarSeq}_${eDom.dataset.startDate}_${eDom.dataset.endDate}_${new Date(Date.now()).getTime()}`
+            if (!eDom.id) eDom.id = `${this.identifier}_ev_${eDom.dataset.calendarSeq}_${eDom.dataset.startDate}_${eDom.dataset.endDate}`
             eDom.dataset.popoverble = true
             eDom.onclick = () => {
               this.eventPopover(eDom, options)
@@ -748,7 +748,7 @@ Module.register("MMM-CalendarExt3", {
           }
 
           if (popoverSupported) {
-            if (!dateCell.id) dateCell.id = `${dateCell.dataset.date}_${new Date(Date.now()).getTime()}`
+            if (!dateCell.id) dateCell.id = `${this.identifier}_dc_${dateCell.dataset.date}`
             dateCell.dataset.popoverble = true
             dateCell.onclick = () => {
               this.dayPopover(dateCell, thatDayEvents, options)
