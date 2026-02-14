@@ -328,7 +328,7 @@ Module.register("MMM-CalendarExt3", {
 
     if (notification === this.notifications.eventNotification) {
       const convertedPayload = this.notifications.eventPayload(payload)
-      this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(convertedPayload)))
+      this.eventPool.set(sender.identifier, structuredClone(convertedPayload))
     }
 
     if (notification === "MODULE_DOM_CREATED") {
