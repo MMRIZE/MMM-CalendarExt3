@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.12.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.4...v1.12.0) (2026-03-25)
+
+
+### Added
+
+* add opt-in dynamic week height for event rows ([ab7d730](https://github.com/MMRIZE/MMM-CalendarExt3/commit/ab7d730b3c2601cd77032d23fa2f079ca7da0115))
+
+
+### Chores
+
+* update devDependencies ([8451859](https://github.com/MMRIZE/MMM-CalendarExt3/commit/8451859ab311305067aabc7aa2bee453a0a01f00))
+
 ## [1.11.4](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.3...v1.11.4) (2026-02-22)
 
 
