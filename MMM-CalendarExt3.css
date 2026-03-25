@@ -37,7 +37,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   padding: 0 5px;
   height: calc(
     var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--maxeventlines))
+      calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)))
   );
   position: relative;
 }
@@ -51,7 +51,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 
 .CX3 .weekGridRow {
   grid-template-rows: repeat(
-    var(--maxeventlines),
+    var(--weekeventlines, var(--maxeventlines)),
     [event-start] minmax(0, 1fr) [event-end]
   );
   grid-auto-rows: 0;
@@ -62,7 +62,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   width: 100%;
   height: calc(
     var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--maxeventlines))
+      calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)))
   );
   position: absolute;
   top: 0;
@@ -75,7 +75,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   bottom: var(--cellfooterheight);
   left: 0;
   width: 100%;
-  height: calc(var(--eventheight) * var(--maxeventlines));
+  height: calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)));
 }
 
 .CX3 .cell {
@@ -83,7 +83,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   background-color: var(--cellbgcolor);
   height: calc(
     var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--maxeventlines))
+      calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)))
   );
   position: relative;
 }
@@ -124,7 +124,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 }
 
 .CX3 .cellBody {
-  height: calc(var(--eventheight) * var(--maxeventlines));
+  height: calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)));
 }
 
 .CX3 .cw {

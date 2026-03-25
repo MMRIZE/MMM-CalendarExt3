@@ -163,6 +163,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`customHeader` | false | See `customHeader` section.
 |`headerTitleOptions`|{month: 'long'} | The format of header of the view. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `December`. See `customHeader` section. |
 |`maxEventLines` | 5 | How many events will be displayed in 1-day cell. The overflowed events will be hidden. <br> This value could be an array or an object define multi value for week the rows of the calendar. See the `dynamic eventlines` part.|
+|`dynamicWeekHeight` | false | If set `true`, each week row height will shrink to the actually used event lines in that week (up to `maxEventLines`). This is useful for compact layouts but may cause visible layout jumping while events change. |
 |`showHeader` | true | If set `false`, the headers are disabled. Useful if have two instances running with one above the other to not have the headers repeat. |
 
 
@@ -258,6 +259,8 @@ You can handle almost all of the visual things with CSS. See the `module.css` an
 The most commonly used values would be defined in the `.CX3` selector as variables.
 
 `--fontsize`, `--maxeventlines`, `--eventheight` would be imported from configuration for your setup convenience.
+
+When `dynamicWeekHeight: true`, each `.week` node gets `--weekeventlines` and `data-week-event-lines` to represent the actually used lines of that week.
 
 - `.cell` : Each day cell has this selector. Each cell could have these class names together by its condition.
   - `.today`, `.thisMonth`, `.thisYear`
@@ -521,6 +524,17 @@ So you can adjust the view more detailly.
   ...
 }
 ```
+
+### dynamic week height by actual event usage
+
+Enable this option when you want each week row to use only the needed event lines.
+
+```js
+dynamicWeekHeight: true,
+```
+
+- Uses `maxEventLines` as the upper bound.
+- Empty weeks become very compact.
 
 ### Weather forecast
 

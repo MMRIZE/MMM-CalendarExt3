@@ -68,6 +68,22 @@ test("normalizes mode dependent indexes", () => {
   assert.equal(dayOptions.dayIndex, 3)
 })
 
+test("normalizes dynamicWeekHeight to strict boolean", () => {
+  const instance = createInstance({ mmConfig: { language: "en" } })
+
+  const enabled = instance.regularizeConfig({
+    ...instance.defaults,
+    dynamicWeekHeight: true
+  })
+  assert.equal(enabled.dynamicWeekHeight, true)
+
+  const disabled = instance.regularizeConfig({
+    ...instance.defaults,
+    dynamicWeekHeight: "yes"
+  })
+  assert.equal(disabled.dynamicWeekHeight, false)
+})
+
 test("applies and resets config via notifications", () => {
   const instance = createInstance({ mmConfig: { language: "en" } })
   let animationCalls = 0

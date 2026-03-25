@@ -38,6 +38,7 @@ Module.register("MMM-CalendarExt3", {
     },
     calendarSet: [],
     maxEventLines: 5, // How many events will be shown in a day cell.
+    dynamicWeekHeight: false, // If true, each week row shrinks to the actually used event lines.
     // It could be possible to use {} like {"4": 6, "5": 5, "6": 4} to set different lines by the number of the week of the month.
     // Also, it could be possible to use [] like [8, 8, 7, 6, 5] to set different lines by the number of week of the month.
     fontSize: "18px",
@@ -149,6 +150,7 @@ Module.register("MMM-CalendarExt3", {
     options.weekIndex = (options.mode === "month") ? 0 : options.weekIndex
     options.weeksInView = (options.mode === "month") ? 6 : options.weeksInView
     options.dayIndex = (options.mode === "day") ? options.dayIndex : 0
+    options.dynamicWeekHeight = (options.dynamicWeekHeight === true)
 
     return options
   },
@@ -691,6 +693,12 @@ Module.register("MMM-CalendarExt3", {
         })
 
         const packedEvents = assignEventRows(activeEvents)
+        const usedEventLines = packedEvents.reduce((max, packed) => {
+          return (packed.assignedRow > max) ? packed.assignedRow : max
+        }, 0)
+        const weekEventLines = options.dynamicWeekHeight ? Math.min(maxEventLines, usedEventLines) : maxEventLines
+        wDom.style.setProperty("--weekeventlines", weekEventLines)
+        wDom.dataset.weekEventLines = weekEventLines
 
         // Track hidden events per day for "+N" display
         const hiddenPerDay = Array(7).fill(0)

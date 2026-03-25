@@ -48,6 +48,7 @@ let config = {
         firstDayOfWeek: 1,
         weeksInView: 3,
         maxEventLines: 5,
+        dynamicWeekHeight: true,
         displayLegend: true,
         useMarquee: true,
         showWeekNumber: true,
