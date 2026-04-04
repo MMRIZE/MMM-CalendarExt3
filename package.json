@@ -31,12 +31,12 @@
     "test:unit": "node --test tests/unit/**/*.test.cjs"
   },
   "devDependencies": {
-    "@eslint/css": "^1.0.0",
+    "@eslint/css": "^1.1.0",
     "@eslint/js": "^10.0.1",
-    "@eslint/markdown": "^7.5.1",
+    "@eslint/markdown": "^8.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "commit-and-tag-version": "^12.7.1",
-    "eslint": "^10.1.0",
+    "eslint": "^10.2.0",
     "globals": "^17.4.0"
   }
 }
