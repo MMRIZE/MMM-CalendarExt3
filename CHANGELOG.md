@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.12.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.12.0...v1.12.1) (2026-04-04)
+
+
+### Fixed
+
+* restore callback functions lost after MM v2.35.0 ([19a96c0](https://github.com/MMRIZE/MMM-CalendarExt3/commit/19a96c0c43c60b0b0b7103cb75c947307ae3cbc1)), closes [#257](https://github.com/MMRIZE/MMM-CalendarExt3/issues/257)
+
+
+### Chores
+
+* update devDependencies ([e9710e6](https://github.com/MMRIZE/MMM-CalendarExt3/commit/e9710e6c83185e01c1a4beb8a0b292a2f32017f5))
+
 ## [1.12.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.11.4...v1.12.0) (2026-03-25)
 
 
