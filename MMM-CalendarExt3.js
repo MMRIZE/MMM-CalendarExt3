@@ -167,6 +167,14 @@ Module.register("MMM-CalendarExt3", {
 
     this._ready = false
 
+    // Safety timeout: if node_helper never responds (e.g. socket issues),
+    // resolve after 5s so the module still renders.
+    const _functionsRestored = new Promise(resolve => {
+      this._functionsReady = resolve
+      setTimeout(resolve, 5000)
+    })
+    this.sendSocketNotification("CX3_REGISTER", { identifier: this.identifier })
+
     const _moduleLoaded = new Promise((resolve, reject) => {
       import(`/${this.file("CX3_Shared/CX3_shared.mjs")}`).then(m => {
         this.library = m
@@ -182,7 +190,7 @@ Module.register("MMM-CalendarExt3", {
       this._domReady = resolve
     })
 
-    Promise.allSettled([_moduleLoaded, _domCreated]).then(() => {
+    Promise.allSettled([_moduleLoaded, _domCreated, _functionsRestored]).then(() => {
       this._ready = true
       this.library.prepareMagic()
       setTimeout(() => {
@@ -318,6 +326,40 @@ Module.register("MMM-CalendarExt3", {
       o.hidePopover()
     }
     popover.showPopover()
+  },
+
+  /**
+   * Since MagicMirror v2.35.0, config.js is served to the browser as JSON
+   * which strips all function properties (eventTransformer, eventFilter, etc.).
+   * The node_helper reads the original config file server-side where functions
+   * are preserved, converts them to strings, and sends them here for
+   * reconstruction via new Function().
+   */
+  socketNotificationReceived(notification, payload) {
+    if (notification !== "CX3_FUNCTIONS_RESTORED") return
+    if (payload.identifier !== this.identifier) return
+
+    const configKeys = ["eventTransformer", "eventFilter", "eventSorter", "manipulateDateCell", "customHeader"]
+    const notificationKeys = ["eventPayload", "weatherPayload"]
+
+    for (const key of [...configKeys, ...notificationKeys]) {
+      if (!payload.functions[key]) continue
+      try {
+        const fn = new Function("return " + payload.functions[key])()
+        if (typeof fn !== "function") continue
+        if (configKeys.includes(key)) {
+          this.activeConfig[key] = fn
+          this.originalConfig[key] = fn
+        }
+        if (notificationKeys.includes(key)) {
+          this.notifications[key] = fn
+        }
+      } catch (error) {
+        Log.warn(`[CX3] Could not restore config function "${key}":`, error.message)
+      }
+    }
+
+    this._functionsReady()
   },
 
   notificationReceived(notification, payload, sender) {

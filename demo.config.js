@@ -53,7 +53,13 @@ let config = {
         useMarquee: true,
         showWeekNumber: true,
         referenceDate: 1767571200000, // Jan 5, 2026 (Monday)
-        calendarSet: []
+        calendarSet: [],
+        // This function tests that callbacks survive MM v2.35.0 (served as JSON).
+        // If the fix works, all event titles are prefixed with "★ ".
+        eventTransformer: event => {
+          event.title = "★ " + event.title
+          return event
+        }
       }
     },
     {
