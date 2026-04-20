@@ -797,9 +797,8 @@ Module.register("MMM-CalendarExt3", {
           }
 
           if (options.showMore) {
-            // Use pre-calculated hidden count from packing algorithm
-            const skipped = thatDayEvents.filter(ev => ev.skip).length
-            const hidden = skipped + hiddenPerDay[i]
+            // showMore reflects only overflowed events hidden by maxEventLines.
+            const hidden = hiddenPerDay[i]
             if (hidden) {
               dateCell.classList.add("hasMore")
               dateCell.style.setProperty("--more", hidden)
