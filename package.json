@@ -36,7 +36,7 @@
     "@eslint/markdown": "^8.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "commit-and-tag-version": "^12.7.1",
-    "eslint": "^10.2.0",
-    "globals": "^17.4.0"
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0"
   }
 }
