@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.12.2](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.12.1...v1.12.2) (2026-04-20)
+
+
+### Fixed
+
+* **showMore:** exclude skipped events from count ([577a0f4](https://github.com/MMRIZE/MMM-CalendarExt3/commit/577a0f42a06fc530c2cfc1c85bce5999d1df0866)), closes [#259](https://github.com/MMRIZE/MMM-CalendarExt3/issues/259)
+
+
+### Chores
+
+* update devDependencies ([68b5ae1](https://github.com/MMRIZE/MMM-CalendarExt3/commit/68b5ae1766a0e058e3cf83e280adf2638832bd8f))
+
 ## [1.12.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v1.12.0...v1.12.1) (2026-04-04)
 
 
