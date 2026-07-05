@@ -226,3 +226,29 @@ test("socketNotificationReceived restores all known config function keys includi
     assert.equal(typeof ctx.originalConfig[key], "function", `${key} must be restored in originalConfig`)
   }
 })
+
+test("socketNotificationReceived restores functions with injected closure variables", () => {
+  const moduleDef = loadModuleDefinition()
+  const ctx = {
+    identifier: "TEST_INSTANCE",
+    activeConfig: {},
+    originalConfig: {},
+    notifications: {},
+    _ready: false,
+    _functionsReady: () => {},
+    updateDom: () => {}
+  }
+
+  moduleDef.socketNotificationReceived.call(ctx, "CX3_FUNCTIONS_RESTORED", {
+    identifier: "TEST_INSTANCE",
+    variablePreamble: "const sharedLabel = 'from preamble'",
+    functions: {
+      eventTransformer: "(event) => ({ ...event, title: sharedLabel })"
+    }
+  })
+
+  const transformed = ctx.activeConfig.eventTransformer({ title: "original" })
+
+  assert.equal(transformed.title, "from preamble")
+  assert.equal(ctx.originalConfig.eventTransformer({}).title, "from preamble")
+})

@@ -4,10 +4,8 @@ const fs = require("node:fs")
 
 module.exports = NodeHelper.create({
   start() {
-    // MM v2.36.0+ serializes functions natively via __mmFunction but loses closure context.
-    // This helper restores closure variables by extracting variable preamble from config.js
-    // and injecting it when reconstructing functions on the frontend.
-    // TODO: Remove when upstream MM adds closure variable support to function reviver.
+    // MagicMirror revives config functions from source strings, but without closure scope.
+    // This helper restores referenced top-level config variables by injecting the config preamble.
     this.functionConfigs = []
     this.variablePreamble = ""
     this.identifierFunctions = new Map()
