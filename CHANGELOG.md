@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.0.4](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.0.3...v2.0.4) (2026-07-05)
+
+
+### Chores
+
+* update checkout action ([1677c5d](https://github.com/MMRIZE/MMM-CalendarExt3/commit/1677c5d5f1d6509d384fcd276f5ce675c0b18572))
+* update CX3_Shared ([6e25797](https://github.com/MMRIZE/MMM-CalendarExt3/commit/6e257976b89f951f1c180e608f01c6c3cba6cc5b))
+* update devDependencies ([2da949e](https://github.com/MMRIZE/MMM-CalendarExt3/commit/2da949e8c217a499d1d018ffccf7771611220d57))
+
+
+### Code Refactoring
+
+* rename moment variables to focusDate ([2c6a70a](https://github.com/MMRIZE/MMM-CalendarExt3/commit/2c6a70a9af095a140e271edc695e72fa0e70cf82))
+
+
+### Tests
+
+* cover closure scope restore ([6edff69](https://github.com/MMRIZE/MMM-CalendarExt3/commit/6edff694a59c490ae212290e28c708bd3cb5fc51))
+
 ## [2.0.3](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.0.2...v2.0.3) (2026-05-03)
 
 
