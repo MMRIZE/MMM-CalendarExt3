@@ -146,20 +146,20 @@ Module.register("MMM-CalendarExt3", {
   },
 
   getMoment(options) {
-    let moment = (options.referenceDate) ? new Date(options.referenceDate) : new Date(Date.now())
-    // let moment = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
+    let focusDate = (options.referenceDate) ? new Date(options.referenceDate) : new Date(Date.now())
+    // let focusDate = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
     switch (options.mode) {
       case "day":
-        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + options.dayIndex)
+        focusDate = new Date(focusDate.getFullYear(), focusDate.getMonth(), focusDate.getDate() + options.dayIndex)
         break
       case "month":
-        moment = new Date(moment.getFullYear(), moment.getMonth() + options.monthIndex, 1)
+        focusDate = new Date(focusDate.getFullYear(), focusDate.getMonth() + options.monthIndex, 1)
         break
       case "week":
       default:
-        moment = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate() + (7 * options.weekIndex))
+        focusDate = new Date(focusDate.getFullYear(), focusDate.getMonth(), focusDate.getDate() + (7 * options.weekIndex))
     }
-    return moment
+    return focusDate
   },
 
   regularizeConfig(options) {
@@ -579,22 +579,22 @@ Module.register("MMM-CalendarExt3", {
       return cell
     }
 
-    const rangeCalendar = (moment, options) => {
+    const rangeCalendar = (focusDate, options) => {
       let boc, eoc
       switch (options.mode) {
         case "day":
-          boc = new Date(moment.getFullYear(), moment.getMonth(), moment.getDate())
+          boc = new Date(focusDate.getFullYear(), focusDate.getMonth(), focusDate.getDate())
           eoc = new Date(boc.valueOf())
           eoc.setDate(boc.getDate() + 7 * options.weeksInView)
           eoc.setMilliseconds(-1)
           break
         case "month":
-          boc = getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), 1), options)
-          eoc = getEndOfWeek(new Date(moment.getFullYear(), moment.getMonth() + 1, 0), options)
+          boc = getBeginOfWeek(new Date(focusDate.getFullYear(), focusDate.getMonth(), 1), options)
+          eoc = getEndOfWeek(new Date(focusDate.getFullYear(), focusDate.getMonth() + 1, 0), options)
           break
         case "week":
         default:
-          boc = getBeginOfWeek(new Date(moment.getFullYear(), moment.getMonth(), moment.getDate()), options)
+          boc = getBeginOfWeek(new Date(focusDate.getFullYear(), focusDate.getMonth(), focusDate.getDate()), options)
           eoc = getEndOfWeek(new Date(boc.getFullYear(), boc.getMonth(), boc.getDate() + (7 * (options.weeksInView - 1))), options)
           break
       }
@@ -753,7 +753,7 @@ Module.register("MMM-CalendarExt3", {
 
         for (const packed of packedEvents) {
           const { event, startCol, endCol, assignedRow } = packed
-          const eDom = renderEventAgenda(event, options, moment)
+          const eDom = renderEventAgenda(event, options, focusDate)
 
           // Set grid position explicitly
           eDom.style.gridColumnStart = startCol + 1
@@ -834,9 +834,9 @@ Module.register("MMM-CalendarExt3", {
           const locale = options.locale
           const titleOptions = options.headerTitleOptions
           if (options.mode === "month") {
-            const moment = this.getMoment(options)
+            const focusDate = this.getMoment(options)
             return new Intl.DateTimeFormat(locale, titleOptions)
-              .formatToParts(new Date(moment.valueOf()))
+              .formatToParts(new Date(focusDate.valueOf()))
               .reduce((prev, cur, curIndex) => {
                 const result = `${prev}<span class="headerTimeParts ${cur.type} seq_${curIndex} ${cur.source}">${cur.value}</span>`
                 return result
@@ -862,8 +862,8 @@ Module.register("MMM-CalendarExt3", {
       dom.prepend(header)
     }
 
-    const moment = this.getMoment(options)
-    const { boc, eoc } = rangeCalendar(moment, options)
+    const focusDate = this.getMoment(options)
+    const { boc, eoc } = rangeCalendar(focusDate, options)
     dom.dataset.beginOfCalendar = boc.valueOf()
     dom.dataset.endOfCalendar = eoc.valueOf()
     const targetEvents = prepareEvents({
@@ -884,10 +884,10 @@ Module.register("MMM-CalendarExt3", {
   getHeader() {
     if (this.data.header && this.data.header.trim() !== "") return this.data.header
     if (!this.activeConfig.customHeader && this.activeConfig.mode === "month") {
-      const moment = this.getMoment(this.activeConfig)
+      const focusDate = this.getMoment(this.activeConfig)
       const locale = this.activeConfig.locale
       const titleOptions = this.activeConfig.headerTitleOptions
-      return new Intl.DateTimeFormat(locale, titleOptions).format(new Date(moment.valueOf()))
+      return new Intl.DateTimeFormat(locale, titleOptions).format(new Date(focusDate.valueOf()))
     }
     return this.data.header
   },

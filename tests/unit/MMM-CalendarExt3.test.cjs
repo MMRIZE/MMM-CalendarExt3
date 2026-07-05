@@ -108,37 +108,37 @@ test("applies and resets config via notifications", () => {
   assert.equal(animationCalls, 2)
 })
 
-test("computes moment by mode and referenceDate", () => {
+test("computes focus date by mode and referenceDate", () => {
   const instance = createInstance({ mmConfig: { language: "en" } })
 
-  const dayMoment = instance.getMoment({
+  const dayFocusDate = instance.getMoment({
     mode: "day",
     referenceDate: "2026-01-15T12:00:00",
     dayIndex: 2,
     weekIndex: 0,
     monthIndex: 0
   })
-  assert.equal(dayMoment.getDate(), 17)
+  assert.equal(dayFocusDate.getDate(), 17)
 
-  const monthMoment = instance.getMoment({
+  const monthFocusDate = instance.getMoment({
     mode: "month",
     referenceDate: "2026-01-15T12:00:00",
     dayIndex: 0,
     weekIndex: 0,
     monthIndex: 1
   })
-  assert.equal(monthMoment.getFullYear(), 2026)
-  assert.equal(monthMoment.getMonth(), 1)
-  assert.equal(monthMoment.getDate(), 1)
+  assert.equal(monthFocusDate.getFullYear(), 2026)
+  assert.equal(monthFocusDate.getMonth(), 1)
+  assert.equal(monthFocusDate.getDate(), 1)
 
-  const weekMoment = instance.getMoment({
+  const weekFocusDate = instance.getMoment({
     mode: "week",
     referenceDate: "2026-01-15T12:00:00",
     dayIndex: 0,
     weekIndex: -1,
     monthIndex: 0
   })
-  assert.equal(weekMoment.getDate(), 8)
+  assert.equal(weekFocusDate.getDate(), 8)
 })
 
 test("getHeader returns explicit header and month fallback", () => {
