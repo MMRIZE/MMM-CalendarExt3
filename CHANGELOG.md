@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.0.5](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.0.4...v2.0.5) (2026-07-31)
+
+### Fixed
+
+* update calendar on event notifications ([#266](https://github.com/MMRIZE/MMM-CalendarExt3/issues/266)) ([1f24619](https://github.com/MMRIZE/MMM-CalendarExt3/commit/1f246192419868f253822fbd35567a81276b18f1))
+
+### Chores
+
+* update devDependencies ([ec8919b](https://github.com/MMRIZE/MMM-CalendarExt3/commit/ec8919bcf8c7d019ec9632bd9eca4aa15d5e3548))
+* update subproject commit reference ([a8fab65](https://github.com/MMRIZE/MMM-CalendarExt3/commit/a8fab65967a29d3a4bd49f088954d05b00c2498c))
+
+### Code Refactoring
+
+* remove unnecessary async from draw ([f5cd83b](https://github.com/MMRIZE/MMM-CalendarExt3/commit/f5cd83b77a6a6193a9de15bec20613d350d3f485))
+* **render:** centralize update scheduling ([ced5233](https://github.com/MMRIZE/MMM-CalendarExt3/commit/ced5233cccc6524ee7b669d556bd7143ff8d470d))
+
+### Tests
+
+* cover weather-triggered rendering ([0df5a4b](https://github.com/MMRIZE/MMM-CalendarExt3/commit/0df5a4b1efb41cbbe3c37f6e8ce5bfb07aa9bc51))
 ## [2.0.4](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.0.3...v2.0.4) (2026-07-05)
 
 
