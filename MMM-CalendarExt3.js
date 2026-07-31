@@ -135,7 +135,7 @@ Module.register("MMM-CalendarExt3", {
     // re-render immediately so transforms/filters are applied without waiting
     // for the next CALENDAR_EVENTS broadcast (which can be many minutes away).
     if (this._ready) {
-      this.updateDom(this.activeConfig.animationSpeed)
+      this.requestRender()
     }
   },
 
@@ -234,7 +234,7 @@ Module.register("MMM-CalendarExt3", {
       this._ready = true
       this.library.prepareMagic()
       setTimeout(() => {
-        this.updateAnimate()
+        this.requestRender()
       }, this.activeConfig.waitFetch)
     })
     if (popoverSupported) {
@@ -378,7 +378,7 @@ Module.register("MMM-CalendarExt3", {
     if (notification === this.notifications.eventNotification) {
       const convertedPayload = this.notifications.eventPayload(payload)
       this.eventPool.set(sender.identifier, structuredClone(convertedPayload))
-      this.updateAnimate()
+      this.requestRender()
     }
 
     if (notification === "MODULE_DOM_CREATED") {
@@ -417,6 +417,7 @@ Module.register("MMM-CalendarExt3", {
           o.dateId = d.toLocaleDateString("en-CA")
           return o
         })
+        this.requestRender()
       } else {
         if (this.activeConfig.weatherLocationName && !convertedPayload.locationName.includes(this.activeConfig.weatherLocationName)) {
           Log.warn(`"weatherLocationName: '${this.activeConfig.weatherLocationName}'" doesn't match with location of weather module ('${convertedPayload.locationName}')`)
@@ -432,13 +433,13 @@ Module.register("MMM-CalendarExt3", {
 
     if (notification === "CX3_SET_CONFIG") {
       this.activeConfig = this.regularizeConfig({ ...this.activeConfig, ...payload })
-      this.updateAnimate()
+      this.requestRender()
       replyCurrentConfig(payload)
     }
 
     if (notification === "CX3_RESET") {
       this.activeConfig = this.regularizeConfig({ ...this.originalConfig })
-      this.updateAnimate()
+      this.requestRender()
       replyCurrentConfig(payload)
     }
   },
@@ -461,7 +462,7 @@ Module.register("MMM-CalendarExt3", {
     this.refreshTimer = setTimeout(() => {
       clearTimeout(this.refreshTimer)
       this.refreshTimer = null
-      this.updateAnimate()
+      this.requestRender()
     }, this.activeConfig.refreshInterval)
     this.sendNotification("CX3_DOM_UPDATED", { instanceId: this.activeConfig.instanceId })
     return dom
@@ -907,5 +908,14 @@ Module.register("MMM-CalendarExt3", {
           }
         }
     )
+  },
+
+  requestRender() {
+    if (this.renderPending) return
+    this.renderPending = true
+    queueMicrotask(() => {
+      this.renderPending = false
+      if (this._ready) this.updateAnimate()
+    })
   }
 })

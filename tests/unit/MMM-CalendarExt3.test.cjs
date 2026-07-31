@@ -85,12 +85,13 @@ test("normalizes dynamicWeekHeight to strict boolean", () => {
   assert.equal(disabled.dynamicWeekHeight, false)
 })
 
-test("applies and resets config via notifications", () => {
+test("applies and resets config via notifications", async () => {
   const instance = createInstance({ mmConfig: { language: "en" } })
   let animationCalls = 0
   instance.updateAnimate = () => {
     animationCalls++
   }
+  instance._ready = true
 
   instance.activeConfig = instance.regularizeConfig({ ...instance.defaults, instanceId: "A", mode: "week", weekIndex: 0 })
   instance.originalConfig = { ...instance.activeConfig }
@@ -103,9 +104,49 @@ test("applies and resets config via notifications", () => {
   assert.equal(instance.activeConfig.dayIndex, 2)
 
   instance.notificationReceived("CX3_RESET", { instanceId: "A" }, null)
+  await Promise.resolve()
   assert.equal(instance.activeConfig.mode, instance.originalConfig.mode)
   assert.equal(instance.activeConfig.weekIndex, instance.originalConfig.weekIndex)
-  assert.equal(animationCalls, 2)
+  assert.equal(animationCalls, 1)
+})
+
+test("renders once for synchronous state changes after startup", async () => {
+  const instance = createInstance({ mmConfig: { language: "en" } })
+  let animationCalls = 0
+  instance.updateAnimate = () => {
+    animationCalls++
+  }
+  instance._ready = true
+  instance.eventPool = new Map()
+  instance.notifications = { eventNotification: "CALENDAR_EVENTS", eventPayload: payload => payload }
+
+  instance.notificationReceived("CALENDAR_EVENTS", [{ title: "First" }], { identifier: "CALENDAR_A" })
+  instance.notificationReceived("CALENDAR_EVENTS", [{ title: "Second" }], { identifier: "CALENDAR_B" })
+
+  assert.equal(animationCalls, 0)
+  await Promise.resolve()
+
+  assert.equal(animationCalls, 1)
+  assert.deepEqual(instance.eventPool.get("CALENDAR_A"), [{ title: "First" }])
+  assert.deepEqual(instance.eventPool.get("CALENDAR_B"), [{ title: "Second" }])
+})
+
+test("does not refresh before startup is ready", async () => {
+  const instance = createInstance({ mmConfig: { language: "en" } })
+  let animationCalls = 0
+  instance.updateAnimate = () => {
+    animationCalls++
+  }
+  instance.eventPool = new Map()
+  instance.notifications = {
+    eventNotification: "CALENDAR_EVENTS",
+    eventPayload: payload => payload
+  }
+
+  instance.notificationReceived("CALENDAR_EVENTS", [], { identifier: "CALENDAR_A" })
+  await Promise.resolve()
+
+  assert.equal(animationCalls, 0)
 })
 
 test("computes focus date by mode and referenceDate", () => {
