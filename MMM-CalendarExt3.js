@@ -488,7 +488,7 @@ Module.register("MMM-CalendarExt3", {
     })
   },
 
-  async draw(dom, options) {
+  draw(dom, options) {
     if (!this.library?.loaded) return dom
     const {
       isToday, isPastDay, isFutureDay, isThisMonth, isThisYear, getWeekNo, renderEventAgenda,
