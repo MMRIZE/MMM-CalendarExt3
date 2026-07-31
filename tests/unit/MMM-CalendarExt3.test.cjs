@@ -149,6 +149,29 @@ test("does not refresh before startup is ready", async () => {
   assert.equal(animationCalls, 0)
 })
 
+test("renders after valid weather updates", async () => {
+  const instance = createInstance({ mmConfig: { language: "en" } })
+  let animationCalls = 0
+  instance.updateAnimate = () => {
+    animationCalls++
+  }
+  instance._ready = true
+  instance.activeConfig = instance.regularizeConfig({ ...instance.defaults, useWeather: true })
+  instance.forecast = []
+  instance.notifications.weatherNotification = "WEATHER_UPDATED"
+  instance.notifications.weatherPayload = payload => payload
+
+  instance.notificationReceived("WEATHER_UPDATED", {
+    locationName: "Home",
+    forecastArray: [{ date: "2026-07-31", weatherType: "clear", maxTemperature: 25, minTemperature: 15 }]
+  }, null)
+  await Promise.resolve()
+
+  assert.equal(animationCalls, 1)
+  assert.equal(instance.forecast.length, 1)
+  assert.equal(instance.forecast[0].weatherType, "clear")
+})
+
 test("computes focus date by mode and referenceDate", () => {
   const instance = createInstance({ mmConfig: { language: "en" } })
 
