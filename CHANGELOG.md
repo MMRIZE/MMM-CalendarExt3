@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.1.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.0.5...v2.1.0) (2026-09-24)
+
+### Added
+
+* **calendar:** add two-line event layout ([838c0d7](https://github.com/MMRIZE/MMM-CalendarExt3/commit/838c0d788143622c8e26e0073b01c76285e2e3c0))
+
+### Documentation
+
+* fix some typos ([5829780](https://github.com/MMRIZE/MMM-CalendarExt3/commit/58297804fee95165e66b97d6c72f99147095d214))
+
+### Chores
+
+* update devDependencies ([310f97e](https://github.com/MMRIZE/MMM-CalendarExt3/commit/310f97e28862060c8743cc4d5dfe20e915e67d3e))
+* update Node.js setup action ([9650099](https://github.com/MMRIZE/MMM-CalendarExt3/commit/9650099f065101fe33e23b85ca0684e7dee69a17))
+
+### Tests
+
+* **demo:** add timed two-line event ([a444a69](https://github.com/MMRIZE/MMM-CalendarExt3/commit/a444a69cb76ad9b8fec2674e0a081fdae3b6ddde))
+* mock popover API ([833f8d0](https://github.com/MMRIZE/MMM-CalendarExt3/commit/833f8d0858b6040620c62c8ebaba07ec77ed655f))
+
 ## [2.0.5](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.0.4...v2.0.5) (2026-07-31)
 
 ### Fixed
