@@ -38,7 +38,7 @@ npm ci
 git submodule update --init --recursive
 ```
 
-> Usually, the last line is needless because it would be executed automatically in `npm ci`, but many people forgot to execute `npm ci`, so I'm exaggarating.
+> Usually, the last line is needless because it would be executed automatically in `npm ci`, but many people forget to execute `npm ci`, so I'm exaggerating.
 
 ### Update
 
@@ -115,7 +115,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |**property**|**default**|**description**|
 |---|---|---|
 |`mode`| 'week' | Calendar view type. You can choose between 'week', 'month', 'day'|
-|`referenceDate` | null | If `null`, the reference moment would be now(today, this week, this month). <br>Or you can assign any valid ISO-8601/RFC-2822(limited) date and time format. <br>(e.g.) `"2024-12-25"`, "2024-10-10T14:48:00.000+09:00" or "01 Jun 2016"(some browser wmay not support this RFC-2822 format)|
+|`referenceDate` | null | If `null`, the reference moment would be now(today, this week, this month). <br>Or you can assign any valid ISO-8601/RFC-2822(limited) date and time format. <br>(e.g.) `"2024-12-25"`, "2024-10-10T14:48:00.000+09:00" or "01 Jun 2016"(some browsers may not support this RFC-2822 format)|
 |`monthIndex`| 0 | Which month starts in a `month` view. `-1` is the previous month of the current focusing moment. `0` is the focusing month of the moment. `1` will be the next month, and so on. <br> Ignored on `mode:'week'` and `mode:'day'`.|
 |`weekIndex`| -1 | Which week starts in a `week` view. `-1` is the previous week of the current focusing moment. `0` is the focusing week of the moment. `1` will be the next week, and so on.<br>Ignored on `mode:'month'` and `mode:'week'`.|
 |`dayIndex` | -1 | Which day starts in a `day` view. `-1` is the previous day of the current focusing moment, `0` is the focusing day of the moment. `1` will be the next day, and so on.<br> Ignored on `mode:'month'` and `mode:'week'`.|
@@ -136,14 +136,14 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`waitFetch`| 5000 | (ms) waiting the fetching of last calendar to prevent flickering view by too frequent fetching. |
 |`refreshInterval`| 600000 | (ms) refresh view by force if you need it. |
 |`animationSpeed` | 2000 | (ms) Refreshing the view smoothly. |
-|`useSymbol` | true | Whether to show font-awesome symbold instead of simple dot icon. |
-|`displayLegend` | false | If you set as true, legend will be displayed. (Only the clanear which has name assigned)|
+|`useSymbol` | true | Whether to show a Font Awesome symbol instead of a simple dot icon. |
+|`displayLegend` | false | If you set as true, legend will be displayed. (Only calendars which have a name assigned)|
 |`eventNotification`| 'CALENDAR_EVENTS' | A carrier notification of event source.|
 |`eventPayload` | callback function | A converter for event payload before using it.|
 |`useWeather` | true | Whether to show forecasted weather information of default weather module. |
 |`weatherLocationName` | null | When you have multi forecasting instances of several locations, you can describe specific weather location to show. |
 |`weatherNotification`| 'WEATHER_UPDATED' | A carrier notification of weather forecasting source |
-|`weatherPayload` | callback function | A converter for weather foracasting payload before using it. |
+|`weatherPayload` | callback function | A converter for weather forecasting payload before using it. |
 |`displayWeatherTemp` | false | If you want to show the temperature of the forecasting, set this to `true`|
 |`preProcessor` | callback function | See the `preProcessing` part. |
 |`manipulateDateCell` | callback function | See the `manipulating dateCell` part. |
@@ -153,10 +153,10 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`popoverTimeout`| 30000 | (ms) The popover has `light dismiss` but for the convenience, I added timeout dismission. <br>`0` will not dismiss popover forever unless other popover activated or you dismiss popover by click outside manually |
 |`animateIn` | 'fadeIn' | Animation effect on refresh. |
 |`animateOut` | 'fadeOut' | Animation effect on refresh. |
-|`skipPassedEventToday`| false | If set `true`, the passed singleday events (not fullday, not multiday events) of today will be disappeard to save screen asset. It will be useful when you have too many events to show in `maxEventLines`. It will be applied only for `today`.|
+|`skipPassedEventToday`| false | If set `true`, passed single-day events (not full-day or multi-day events) from today will disappear to save screen space. It is useful when you have too many events to show in `maxEventLines`. It is applied only to `today`.|
 |`showMore` | true | When the number of visible events exceeds `maxEventLines`, the number of overflowed events is displayed in the right-bottom corner of the cell. This count reflects only events hidden by `maxEventLines` (not events flagged with `skip: true`). It also opens a whole-day event list popover on click/touch.|
 |`useIconify` | true | If set `true`, You can use `iconify-icon` instead of `fontawesome`. |
-|`weekends` | auto-filled by locale. |(Array of day order). e.g. `weekends: [1, 3]` means Monday and Wedneseday would be regarded as weekends. Usually you don't have to set this value. <br> **Auto-filled by locale unless you set manually.** |
+|`weekends` | auto-filled by locale. |(Array of day order). e.g. `weekends: [1, 3]` means Monday and Wednesday would be regarded as weekends. Usually you don't have to set this value. <br> **Auto-filled by locale unless you set manually.** |
 |`firstDayOfWeek`| auto-filled by locale | Monday is the first day of the week according to the international standard ISO 8601, but in the US, Canada, Japan and some cultures, it's counted as the second day of the week. If you want to start the week from Monday, set this property to `1`. If you want Sunday, set `0`. <br> Sunday:0, Monday:1, Tuesday:2, ..., Saturday:6 <br> **Auto-filled by locale unless you set manually.** |
 |`minimalDaysOfNewYear` | auto-filled by locale | ISO 8601 also says **each week's year is the Gregorian year in which the Thursday falls**. The first week of the year, hence, always contains 4 January. However, the US (Yes, it is.) system differs from standards. In the US, **containing 1 January** defines the first week. In that case, set this value to `1`. And under some other culture, you might need to modify this. <br> **Auto-filled by locale unless you set manually.** |
 |`useMarquee`| false | On `true`, if the title of event is too long to display, it will have marquee animation. |
