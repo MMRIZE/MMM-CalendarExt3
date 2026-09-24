@@ -44,6 +44,7 @@ Module.register("MMM-CalendarExt3", {
     // Also, it could be possible to use [] like [8, 8, 7, 6, 5] to set different lines by the number of week of the month.
     fontSize: "18px",
     eventHeight: "22px",
+    eventLayout: "single-line",
     eventFilter: () => { return true },
     eventSorter: null,
     eventTransformer: ev => { return ev },
@@ -192,6 +193,7 @@ Module.register("MMM-CalendarExt3", {
     options.weeksInView = (options.mode === "month") ? 6 : options.weeksInView
     options.dayIndex = (options.mode === "day") ? options.dayIndex : 0
     options.dynamicWeekHeight = (options.dynamicWeekHeight === true)
+    options.eventLayout = (["single-line", "two-line"].includes(options.eventLayout)) ? options.eventLayout : "single-line"
 
     return options
   },
@@ -503,6 +505,7 @@ Module.register("MMM-CalendarExt3", {
     dom.style.setProperty("--displayEndTime", (options.displayEndTime) ? "inherit" : "none")
     dom.style.setProperty("--displayWeatherTemp", (options.displayWeatherTemp) ? "inline-block" : "none")
     dom.dataset.mode = options.mode
+    dom.dataset.eventLayout = options.eventLayout
 
     const makeCellDom = d => {
       const tm = new Date(d.valueOf())

@@ -126,6 +126,7 @@ All the properties are omittable, and if omitted, a default value will be applie
 |`showWeekNumber` | `true` | Whether to show the calendar week number (`CW 42`). Set to `false` to hide it. |
 |`fontSize` | '18px' | Default font size of this module. |
 |`eventHeight` | '22px' | The height of each event. |
+|`eventLayout` | 'single-line' | Event layout. Use `'two-line'` to show the icon and time on the first line and the event title on the second line. The event row height is doubled automatically, so fewer events may fit within the configured `maxEventLines`. |
 |`cellDateOptions` | {month: 'short', <br>day: 'numeric'} | The format of day cell date. It varies by the `locale` and this option. <br>`locale:'en-US'`, the default displaying will be `Jun 1` or `1`. <br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`eventTimeOptions` | {timeStyle: 'short'} | The format of event time. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `3:45 pm`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |
 |`headerWeekDayOptions`|{weekday: 'long'} | The format of weekday header. It varies by the `locale` and this option. <br> `locale:'en-US'`, the default displaying will be `Tuesday`.<br> See [options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#parameters) |

@@ -85,6 +85,22 @@ test("normalizes dynamicWeekHeight to strict boolean", () => {
   assert.equal(disabled.dynamicWeekHeight, false)
 })
 
+test("normalizes event layout", () => {
+  const instance = createInstance({ mmConfig: { language: "en" } })
+
+  const twoLine = instance.regularizeConfig({
+    ...instance.defaults,
+    eventLayout: "two-line"
+  })
+  assert.equal(twoLine.eventLayout, "two-line")
+
+  const invalid = instance.regularizeConfig({
+    ...instance.defaults,
+    eventLayout: "wrapped"
+  })
+  assert.equal(invalid.eventLayout, "single-line")
+})
+
 test("applies and resets config via notifications", async () => {
   const instance = createInstance({ mmConfig: { language: "en" } })
   let animationCalls = 0

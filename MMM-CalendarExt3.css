@@ -12,6 +12,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   --cellfooterheight: 2px;
   --defaultcolor: #fff;
   --eventheight: calc(var(--fontsize) + 4px);
+  --eventrowheight: var(--eventheight);
   --displayEndTime: none;
   --displayWeatherTemp: none;
 
@@ -37,7 +38,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   padding: 0 5px;
   height: calc(
     var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)))
+      calc(var(--eventrowheight) * var(--weekeventlines, var(--maxeventlines)))
   );
   position: relative;
 }
@@ -62,7 +63,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   width: 100%;
   height: calc(
     var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)))
+      calc(var(--eventrowheight) * var(--weekeventlines, var(--maxeventlines)))
   );
   position: absolute;
   top: 0;
@@ -75,7 +76,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   bottom: var(--cellfooterheight);
   left: 0;
   width: 100%;
-  height: calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)));
+  height: calc(var(--eventrowheight) * var(--weekeventlines, var(--maxeventlines)));
 }
 
 .CX3 .cell {
@@ -83,7 +84,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   background-color: var(--cellbgcolor);
   height: calc(
     var(--cellheaderheight) + var(--cellfooterheight) +
-      calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)))
+      calc(var(--eventrowheight) * var(--weekeventlines, var(--maxeventlines)))
   );
   position: relative;
 }
@@ -124,7 +125,11 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 }
 
 .CX3 .cellBody {
-  height: calc(var(--eventheight) * var(--weekeventlines, var(--maxeventlines)));
+  height: calc(var(--eventrowheight) * var(--weekeventlines, var(--maxeventlines)));
+}
+
+.CX3[data-event-layout="two-line"] {
+  --eventrowheight: calc(var(--eventheight) * 2);
 }
 
 .CX3 .cw {
@@ -210,6 +215,11 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   flex: 1;
 }
 
+.CX3[data-event-layout="two-line"] .event .headline {
+  flex-wrap: wrap;
+  align-content: center;
+}
+
 .CX3 .event .headline .title.marquee {
   overflow: hidden;
   white-space: nowrap;
@@ -268,6 +278,13 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   white-space: nowrap;
   padding-left: 2px;
   order: 3;
+}
+
+.CX3[data-event-layout="two-line"] .event .headline .title {
+  flex-basis: 100%;
+  width: 100%;
+  min-width: 0;
+  padding-left: 0;
 }
 
 .CX3 .event .headline .symbol {
