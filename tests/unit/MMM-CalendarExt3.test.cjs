@@ -7,6 +7,7 @@ const loadModuleDefinition = ({ mmConfig } = {}) => {
   let registered
 
   global.HTMLElement = class HTMLElement {}
+  Object.defineProperty(global.HTMLElement.prototype, "popover", { value: "" })
   global.config = mmConfig ?? { language: "en" }
   global.Log = { warn: () => {}, error: () => {}, log: () => {} }
   global.Module = {
