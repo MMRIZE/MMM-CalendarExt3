@@ -49,6 +49,8 @@ let config = {
         weeksInView: 3,
         maxEventLines: 5,
         dynamicWeekHeight: true,
+        eventLayout: "two-line",
+        displayEndTime: true,
         displayLegend: true,
         useMarquee: true,
         showWeekNumber: true,
