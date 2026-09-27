@@ -218,6 +218,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 .CX3[data-event-layout="two-line"] .event:not(.fullday) .headline {
   flex-wrap: wrap;
   align-content: center;
+  line-height: calc(var(--eventheight) - 1px);
 }
 
 .CX3 .event .headline .title.marquee {
