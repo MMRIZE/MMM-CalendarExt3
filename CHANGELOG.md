@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.2.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.1.0...v2.2.0) (2026-09-27)
+
+### Added
+
+* **calendar:** make headline item order overridable via CSS vars ([0fa94f6](https://github.com/MMRIZE/MMM-CalendarExt3/commit/0fa94f6619e3f726351f97fa70824547e5a237d5))
+
+### Fixed
+
+* **calendar:** keep full-day events single-line ([61e1991](https://github.com/MMRIZE/MMM-CalendarExt3/commit/61e19916a6e05e3ee48949898ed5abae20cffc80))
+* **calendar:** prevent overlap in two-line events ([dd6d543](https://github.com/MMRIZE/MMM-CalendarExt3/commit/dd6d543f0247915e3ef265537222aa648ba8db83))
+
 ## [2.1.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.0.5...v2.1.0) (2026-09-24)
 
 ### Added
