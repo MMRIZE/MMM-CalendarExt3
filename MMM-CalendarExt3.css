@@ -215,7 +215,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   flex: 1;
 }
 
-.CX3[data-event-layout="two-line"] .event .headline {
+.CX3[data-event-layout="two-line"] .event:not(.fullday) .headline {
   flex-wrap: wrap;
   align-content: center;
 }
@@ -280,7 +280,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   order: 3;
 }
 
-.CX3[data-event-layout="two-line"] .event .headline .title {
+.CX3[data-event-layout="two-line"] .event:not(.fullday) .headline .title {
   flex-basis: 100%;
   width: 100%;
   min-width: 0;
