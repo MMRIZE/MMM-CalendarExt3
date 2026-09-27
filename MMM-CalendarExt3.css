@@ -15,6 +15,10 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   --eventrowheight: var(--eventheight);
   --displayEndTime: none;
   --displayWeatherTemp: none;
+  /* override in custom.css to reorder headline items, e.g. title first */
+  --headline-order-symbol: 1;
+  --headline-order-time: 2;
+  --headline-order-title: 3;
 
   font-size: var(--fontsize);
   color: var(--defaultcolor);
@@ -278,7 +282,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   overflow: hidden;
   white-space: nowrap;
   padding-left: 2px;
-  order: 3;
+  order: var(--headline-order-title);
 }
 
 .CX3[data-event-layout="two-line"] .event:not(.fullday) .headline .title {
@@ -289,11 +293,11 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 }
 
 .CX3 .event .headline .symbol {
-  order: 1;
+  order: var(--headline-order-symbol);
 }
 
 .CX3 .event .headline .time {
-  order: 2;
+  order: var(--headline-order-time);
   display: inline-block;
 }
 
