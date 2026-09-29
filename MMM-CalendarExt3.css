@@ -225,6 +225,11 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   line-height: calc(var(--eventheight) - 1px);
 }
 
+.CX3[data-event-layout="two-line"] .event.fullday {
+  align-self: start;
+  height: var(--eventheight);
+}
+
 .CX3 .event .headline .title.marquee {
   overflow: hidden;
   white-space: nowrap;
