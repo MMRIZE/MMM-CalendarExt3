@@ -393,8 +393,10 @@ Module.register("MMM-CalendarExt3", {
         }
       }
       const MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-      const observer = new MutationObserver(callback)
-      observer.observe(moduleContainer, { childList: true })
+      if (!moduleContainer || !MutationObserver) return
+      this.domObserver?.disconnect()
+      this.domObserver = new MutationObserver(callback)
+      this.domObserver.observe(moduleContainer, { childList: true })
     }
 
     if (notification === "NEW_PAGE") {
