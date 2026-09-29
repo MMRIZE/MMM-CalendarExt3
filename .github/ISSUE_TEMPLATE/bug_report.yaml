@@ -107,7 +107,7 @@ body:
         Or specify if you're using:
         - Dedicated Electron client
         - Chrome/Chromium Browser
-        - Firefox Browser (with polyfill)
+        - Firefox Browser
       placeholder: "Electron 26.2.4 / Chrome 116.x / Firefox 123.x"
     validations:
       required: true
@@ -169,9 +169,9 @@ body:
         Paste the relevant log output and any error messages from:
         - Terminal output (when running MagicMirror)
         - Browser console (Developer Tools → Console tab)
-        
+
         **Important: Make sure that none of your personal information, such as IP addresses, passwords, or private calendar URLs are exposed.**
-        
+
         To run in dev mode for more detailed logs:
         ```
         cd ~/MagicMirror
@@ -190,7 +190,7 @@ body:
         - Replace IP addresses with `***`
         - Replace calendar URLs with `https://example.com/calendar.ics` (unless you want to share the actual URL for debugging)
         - Remove any API keys, passwords, or tokens
-        
+
         Example:
         ```javascript
         {

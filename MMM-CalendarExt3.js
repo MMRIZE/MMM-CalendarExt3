@@ -140,12 +140,6 @@ Module.register("MMM-CalendarExt3", {
     }
   },
 
-  getScripts() {
-    // Load the polyfill for browsers that don't support Intl.Locale.getWeekInfo() (e.g., Firefox)
-    // TODO: Remove this polyfill when Firefox supports getWeekInfo() natively
-    return ["polyfill-getWeekInfo.js"]
-  },
-
   getMoment(options) {
     let focusDate = (options.referenceDate) ? new Date(options.referenceDate) : new Date(Date.now())
     // let focusDate = (this.tempMoment) ? new Date(this.tempMoment.valueOf()) : new Date()
@@ -173,7 +167,7 @@ Module.register("MMM-CalendarExt3", {
     options.locale = Intl.getCanonicalLocales(options.locale ?? config?.locale ?? config?.language)?.[0] ?? ""
     const calInfo = new Intl.Locale(options.locale)
 
-    // Use getWeekInfo() - works in all browsers (polyfilled for Firefox)
+    // Use the native Intl.Locale.getWeekInfo() implementation.
     const weekInfo = calInfo.getWeekInfo()
 
     options.firstDayOfWeek = (options.firstDayOfWeek !== null) ? options.firstDayOfWeek : (weekInfo.firstDay ?? weekInfoFallback.firstDay)
