@@ -15,7 +15,7 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   --eventrowheight: var(--eventheight);
   --displayEndTime: none;
   --displayWeatherTemp: none;
-  /* override in custom.css to reorder headline items, e.g. title first */
+  /* override in custom.css to reorder headline items; lower values come first */
   --headline-order-symbol: 1;
   --headline-order-time: 2;
   --headline-order-title: 3;
@@ -220,7 +220,9 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
 }
 
 .CX3[data-event-layout="two-line"] .event:not(.fullday) .headline {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   align-content: center;
   line-height: calc(var(--eventheight) - 1px);
 }
@@ -287,22 +289,21 @@ selector-pseudo-class-no-unknown, keyframes-name-pattern,
   overflow: hidden;
   white-space: nowrap;
   padding-left: 2px;
-  order: var(--headline-order-title);
+  order: calc(var(--headline-order-title) * 10 - 1);
 }
 
 .CX3[data-event-layout="two-line"] .event:not(.fullday) .headline .title {
-  flex-basis: 100%;
-  width: 100%;
+  grid-column: 1 / -1;
   min-width: 0;
   padding-left: 0;
 }
 
 .CX3 .event .headline .symbol {
-  order: var(--headline-order-symbol);
+  order: calc(var(--headline-order-symbol) * 10);
 }
 
 .CX3 .event .headline .time {
-  order: var(--headline-order-time);
+  order: calc(var(--headline-order-time) * 10);
   display: inline-block;
 }
 

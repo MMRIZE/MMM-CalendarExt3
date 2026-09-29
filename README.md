@@ -261,6 +261,18 @@ The most commonly used values would be defined in the `.CX3` selector as variabl
 
 `--fontsize`, `--maxeventlines`, `--eventheight` would be imported from configuration for your setup convenience.
 
+In the `two-line` layout, you can reorder the headline items with CSS variables. Lower values come first. For example, to show the title on the first line and the symbol and time on the second line:
+
+```css
+.CX3 {
+  --headline-order-title: 1;
+  --headline-order-symbol: 2;
+  --headline-order-time: 3;
+}
+```
+
+The title takes the full width of its row. If two items use the same order value, the title takes precedence.
+
 When `dynamicWeekHeight: true`, each `.week` node gets `--weekeventlines` and `data-week-event-lines` to represent the actually used lines of that week.
 
 - `.cell` : Each day cell has this selector. Each cell could have these class names together by its condition.
