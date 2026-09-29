@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.2.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.2.0...v2.2.1) (2026-09-29)
+
+### Fixed
+
+* **calendar:** compact full-day events ([ebe44d9](https://github.com/MMRIZE/MMM-CalendarExt3/commit/ebe44d9c5fb4f9901fb5ca8c2adccb6211676c57))
+* **calendar:** fix two-line headline ordering ([90ad99c](https://github.com/MMRIZE/MMM-CalendarExt3/commit/90ad99c3aa05b8be8dcdc74d93a8116988b565aa))
+* **dom:** prevent duplicate mutation observers ([e859078](https://github.com/MMRIZE/MMM-CalendarExt3/commit/e8590788f546e6e2b48f9cade64f9878e2621471))
+
+### Code Refactoring
+
+* **calendar:** drop obsolete week info polyfill ([66e7233](https://github.com/MMRIZE/MMM-CalendarExt3/commit/66e72330b04896f488cbc42bc9e5ee1e6c0f2bfb))
+
 ## [2.2.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.1.0...v2.2.0) (2026-09-27)
 
 ### Added
