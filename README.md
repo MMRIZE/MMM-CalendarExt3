@@ -261,17 +261,28 @@ The most commonly used values would be defined in the `.CX3` selector as variabl
 
 `--fontsize`, `--maxeventlines`, `--eventheight` would be imported from configuration for your setup convenience.
 
-In the `two-line` layout, you can reorder the headline items with CSS variables. Lower values come first. For example, to show the title on the first line and the symbol and time on the second line:
+In the `two-line` layout, use `--headline-row-*` to choose which line contains each item. The title spans the full width of its line by default. For example, to show the title on the first line and the symbol and time on the second line:
 
 ```css
 .CX3 {
-  --headline-order-title: 1;
-  --headline-order-symbol: 2;
-  --headline-order-time: 3;
+  --headline-row-title: 1;
+  --headline-row-symbol: 2;
+  --headline-row-time: 2;
 }
 ```
 
-The title takes the full width of its row. If two items use the same order value, the title takes precedence.
+Items assigned to the same row are ordered by their `--headline-order-*` values; equal values keep their normal order (symbol, time, title). To put the symbol and title on the first line and the time on the second, place the title after the symbol with `--headline-title-column`. The value `2 / -1` means from the second grid line to the last:
+
+```css
+.CX3 {
+  --headline-row-symbol: 1;
+  --headline-row-title: 1;
+  --headline-row-time: 2;
+  --headline-title-column: 2 / -1;
+}
+```
+
+`--headline-order-*` controls item order within each row in both layouts.
 
 When `dynamicWeekHeight: true`, each `.week` node gets `--weekeventlines` and `data-week-event-lines` to represent the actually used lines of that week.
 
