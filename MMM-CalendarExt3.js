@@ -212,7 +212,7 @@ Module.register("MMM-CalendarExt3", {
     this.sendSocketNotification("CX3_REGISTER", { identifier: this.identifier })
 
     const _moduleLoaded = new Promise((resolve, reject) => {
-      import(`/${this.file("CX3_Shared/CX3_shared.mjs")}`).then(m => {
+      import(`/${this.file("CX3_Shared/CX3_shared.js")}`).then(m => {
         this.library = m
         if (this.config.useIconify) this.library.prepareIconify()
         resolve()
@@ -227,6 +227,7 @@ Module.register("MMM-CalendarExt3", {
     })
 
     Promise.allSettled([_moduleLoaded, _domCreated, _functionsRestored]).then(() => {
+      if (!this.library) return
       this._ready = true
       this.library.prepareMagic()
       setTimeout(() => {
