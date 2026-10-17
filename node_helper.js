@@ -1,13 +1,13 @@
-const NodeHelper = require("node_helper")
-const path = require("node:path")
-const fs = require("node:fs")
+const NodeHelper = require('node_helper')
+const path = require('node:path')
+const fs = require('node:fs')
 
 module.exports = NodeHelper.create({
   start() {
     // MagicMirror revives config functions from source strings, but without closure scope.
     // This helper restores referenced top-level config variables by injecting the config preamble.
     this.functionConfigs = []
-    this.variablePreamble = ""
+    this.variablePreamble = ''
     this.identifierFunctions = new Map()
     this.loadFunctionConfigs()
   },
@@ -28,26 +28,27 @@ module.exports = NodeHelper.create({
     try {
       const configPath = path.resolve(
         global.root_path,
-        process.env.MM_CONFIG_FILE || "config/config.js"
+        process.env.MM_CONFIG_FILE || 'config/config.js',
       )
-      const configContent = fs.readFileSync(configPath, "utf-8")
+      const configContent = fs.readFileSync(configPath, 'utf-8')
 
       // Find where the config object starts (let/var/const config = {)
       const configMatch = configContent.match(/(let|var|const)\s+config\s*=/)
       if (!configMatch) {
-        return ""
+        return ''
       }
 
       const configStartIndex = configMatch.index
       // Get everything before the config declaration (the variable preamble)
       const preamble = configContent.substring(0, configStartIndex).trim()
       return preamble
-    } catch (error) {
+    }
+    catch (error) {
       console.warn(
         `[${this.name}] Could not extract variable preamble:`,
-        error.message
+        error.message,
       )
-      return ""
+      return ''
     }
   },
 
@@ -68,14 +69,14 @@ module.exports = NodeHelper.create({
    */
   loadFunctionConfigs() {
     const functionKeys = [
-      "preProcessor",
-      "eventTransformer",
-      "eventFilter",
-      "eventSorter",
-      "manipulateDateCell",
-      "customHeader",
-      "eventPayload",
-      "weatherPayload"
+      'preProcessor',
+      'eventTransformer',
+      'eventFilter',
+      'eventSorter',
+      'manipulateDateCell',
+      'customHeader',
+      'eventPayload',
+      'weatherPayload',
     ]
 
     // Extract variable preamble once (used for all module instances)
@@ -84,7 +85,7 @@ module.exports = NodeHelper.create({
     try {
       const configPath = path.resolve(
         global.root_path,
-        process.env.MM_CONFIG_FILE || "config/config.js"
+        process.env.MM_CONFIG_FILE || 'config/config.js',
       )
       delete require.cache[require.resolve(configPath)]
       const userConfig = require(configPath)
@@ -94,22 +95,23 @@ module.exports = NodeHelper.create({
 
         const fnStrings = {}
         for (const key of functionKeys) {
-          if (typeof mod.config[key] === "function") {
+          if (typeof mod.config[key] === 'function') {
             fnStrings[key] = mod.config[key].toString()
           }
         }
         this.functionConfigs.push(fnStrings)
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.warn(
         `[${this.name}] Could not load config functions:`,
-        error.message
+        error.message,
       )
     }
   },
 
   socketNotificationReceived(notification, payload) {
-    if (notification === "CX3_REGISTER") {
+    if (notification === 'CX3_REGISTER') {
       const { identifier } = payload
       // On first registration of a given identifier, assign the next functionConfig in order
       // (MagicMirror initializes modules sequentially, preserving config.modules order).
@@ -119,11 +121,11 @@ module.exports = NodeHelper.create({
         const index = this.identifierFunctions.size
         this.identifierFunctions.set(identifier, this.functionConfigs[index] || {})
       }
-      this.sendSocketNotification("CX3_FUNCTIONS_RESTORED", {
+      this.sendSocketNotification('CX3_FUNCTIONS_RESTORED', {
         identifier,
         variablePreamble: this.variablePreamble,
-        functions: this.identifierFunctions.get(identifier)
+        functions: this.identifierFunctions.get(identifier),
       })
     }
-  }
+  },
 })
