@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.3.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.3.0...v2.3.1) (2026-10-17)
+
+### Chores
+
+* update devDependencies ([738d48d](https://github.com/MMRIZE/MMM-CalendarExt3/commit/738d48d52350c9e494bd1ca7cd57583078c9e3cf))
+* update subproject commit reference ([4c99488](https://github.com/MMRIZE/MMM-CalendarExt3/commit/4c9948832c12a7e2fb6cdd1bea5a800e6d89fca9))
+
+### Code Refactoring
+
+* simplify eslint rules and apply them ([bb14484](https://github.com/MMRIZE/MMM-CalendarExt3/commit/bb14484ec908297769a9ec454053e18a8259e18c))
+
 ## [2.3.0](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.2.1...v2.3.0) (2026-09-30)
 
 ### Added
