@@ -168,8 +168,11 @@ Module.register('MMM-CalendarExt3', {
     options.locale = Intl.getCanonicalLocales(options.locale ?? config?.locale ?? config?.language)?.[0] ?? ''
     const calInfo = new Intl.Locale(options.locale)
 
-    // Use the native Intl.Locale.getWeekInfo() implementation.
-    const weekInfo = calInfo.getWeekInfo()
+    // Safari on iPadOS 16 has `weekInfo`, but not `getWeekInfo()`.
+    // TODO: Remove this workaround by 2031; nobody should still use such an old browser by then.
+    const weekInfo = (typeof calInfo.getWeekInfo === 'function')
+      ? calInfo.getWeekInfo()
+      : (calInfo.weekInfo ?? weekInfoFallback)
 
     options.firstDayOfWeek = (options.firstDayOfWeek !== null) ? options.firstDayOfWeek : (weekInfo.firstDay ?? weekInfoFallback.firstDay)
     options.minimalDaysOfNewYear = (options.minimalDaysOfNewYear !== null) ? options.minimalDaysOfNewYear : (weekInfo.minimalDays ?? weekInfoFallback.minimalDays)

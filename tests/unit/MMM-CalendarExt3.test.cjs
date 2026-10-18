@@ -45,6 +45,26 @@ test("uses default notifications fallback when options are missing", () => {
   assert.equal(instance.notifications.weatherNotification, "WEATHER_UPDATED")
 })
 
+test("uses legacy weekInfo when getWeekInfo is unavailable", () => {
+  const originalLocale = Intl.Locale
+  Intl.Locale = class {
+    constructor() {
+      this.weekInfo = { firstDay: 7, minimalDays: 1, weekend: [6, 7] }
+    }
+  }
+
+  try {
+    const instance = createInstance({ mmConfig: { language: "en" } })
+    const options = instance.regularizeConfig({ ...instance.defaults })
+
+    assert.equal(options.firstDayOfWeek, 7)
+    assert.equal(options.minimalDaysOfNewYear, 1)
+    assert.deepEqual(options.weekends, [6, 0])
+  } finally {
+    Intl.Locale = originalLocale
+  }
+})
+
 test("normalizes mode dependent indexes", () => {
   const instance = createInstance({ mmConfig: { language: "en" } })
 
