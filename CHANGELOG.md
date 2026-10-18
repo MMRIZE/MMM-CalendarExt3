@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.3.2](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.3.1...v2.3.2) (2026-10-18)
+
+### Fixed
+
+* support legacy weekInfo ([5911512](https://github.com/MMRIZE/MMM-CalendarExt3/commit/5911512525993af1939ef95e62a5fdadfb52d102))
+
 ## [2.3.1](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.3.0...v2.3.1) (2026-10-17)
 
 ### Chores
