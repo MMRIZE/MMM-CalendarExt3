@@ -511,6 +511,8 @@ Module.register('MMM-CalendarExt3', {
     dom.dataset.mode = options.mode
     dom.dataset.eventLayout = options.eventLayout
 
+    const cellDateFormatter = new Intl.DateTimeFormat(options.locale, options.cellDateOptions)
+
     const makeCellDom = (d) => {
       const tm = new Date(d.valueOf())
       const cell = document.createElement('div')
@@ -567,7 +569,7 @@ Module.register('MMM-CalendarExt3', {
       }
       const dateDom = document.createElement('div')
       dateDom.classList.add('cellDate')
-      const dParts = new Intl.DateTimeFormat(options.locale, options.cellDateOptions).formatToParts(tm)
+      const dParts = cellDateFormatter.formatToParts(tm)
       const dateHTML = dParts.reduce((prev, cur, curIndex) => {
         const result = `${prev}<span class="dateParts ${cur.type} seq_${curIndex}">${cur.value}</span>`
         return result
@@ -612,6 +614,7 @@ Module.register('MMM-CalendarExt3', {
 
     const makeDayHeaderDom = (dom, options, range) => {
       const wm = new Date(range.boc.valueOf())
+      const weekdayFormatter = new Intl.DateTimeFormat(options.locale, options.headerWeekDayOptions)
       const dayDom = document.createElement('div')
       dayDom.classList.add('headerContainer', 'weekGrid')
       for (let i = 0; i < 7; i++) {
@@ -622,7 +625,7 @@ Module.register('MMM-CalendarExt3', {
         options.weekends.forEach((w, idx) => {
           if (day === w) dDom.classList.add('weekend', `weekend_${idx + 1}`)
         })
-        const headerText = new Intl.DateTimeFormat(options.locale, options.headerWeekDayOptions).format(dm)
+        const headerText = weekdayFormatter.format(dm)
         dDom.innerHTML = headerText
         dayDom.append(dDom)
       }
