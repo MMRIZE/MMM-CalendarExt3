@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.3.3](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.3.2...v2.3.3) (2026-10-19)
+
+### Performance Improvements
+
+* **render:** reuse date formatters ([a863f35](https://github.com/MMRIZE/MMM-CalendarExt3/commit/a863f35d167e924f873c064e97251a55917f2bba))
+
+### Chores
+
+* update subproject commit reference ([b9f8148](https://github.com/MMRIZE/MMM-CalendarExt3/commit/b9f8148a37df990bed72a0c2f386fa4ea0bc97dd))
+
 ## [2.3.2](https://github.com/MMRIZE/MMM-CalendarExt3/compare/v2.3.1...v2.3.2) (2026-10-18)
 
 ### Fixed
